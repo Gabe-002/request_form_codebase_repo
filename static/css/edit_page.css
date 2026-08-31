@@ -1,0 +1,39 @@
+body {
+    font-family: "Segoe UI", "Segoe UI Web", "Helvetica Neue", Arial, sans-serif;
+    margin-inline: 20px;
+}
+header {
+    
+    margin-top: 15px;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding-inline: 10px;
+    background-color:#0B132B;
+    color: yellow;
+    margin-bottom: 10px;
+    padding-inline: 15px;
+    top: 10px;
+    position: sticky;
+    z-index: 1000;
+}
+.header-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#return-to-portal-button {
+    font:inherit;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    background-color: yellow;
+    color: black;
+    width: 110px;
+    height: 50px;
+
+    font-size: 14px;
+
+    transition: t
+    ransform 0.35s ease;
+}

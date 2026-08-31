@@ -1,0 +1,56 @@
+from app.database import get_db
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select, insert, delete, and_
+from app.models import Requests, People
+from app.infotech.models import Devices, AddDevice
+
+def format_output(model, request):
+    return {
+        column.name: getattr(request, column.name)
+        for column in model.__table__.columns
+    }
+
+def simple_format(model, objects):
+    return [{
+        column.name: getattr(object, column.name)
+        for column in model.__table__.columns
+    } for object in objects]
+
+def assignment_requests(db: Session):
+    statement = (select(Requests, People)
+    .join(People, People.id == Requests.person_id)
+    .where(and_(
+        Requests.pm_review_status == 'approved',
+        Requests.fd_review_status == 'approved',
+        Requests.it_review == 'pending'
+    )))
+    full_requests = db.execute(statement=statement).all()
+    output = []
+    for full_request in full_requests:
+        request = format_output(Requests, full_request[0])
+        people = format_output(People, full_request[1])
+        output.append(people | request) # This combines the resulting dictionaries
+    return output
+
+def get_devices(db: Session):
+    statement = select(Devices)
+    devices = db.execute(statement=statement).scalars().all()
+    return simple_format(Devices, devices)
+
+def add_device(db: Session, device: AddDevice):
+    statement = insert(Devices).values(**device.model_dump())
+    try:   
+        db.execute(statement=statement)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+
+if __name__ == '__main__':
+    db = get_db()
+    db = next(db)
+
+    requests = get_devices(db)
+    for request in requests:
+        print(request)
+        print()

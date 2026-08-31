@@ -1,0 +1,82 @@
+body {
+    font-family: "Segoe UI", "Segoe UI Web", "Helvetica Neue", Arial, sans-serif;
+    margin-inline: 20px;
+}
+
+header {
+    
+    margin-top: 15px;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding-inline: 10px;
+    background-color:#0B132B;
+    color: yellow;
+    margin-bottom: 10px;
+    padding-inline: 15px;
+    top: 10px;
+    position: sticky;
+    z-index: 1000;
+}
+.header-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#return-to-portal-button {
+    font:inherit;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    background-color: yellow;
+    color: black;
+    width: 110px;
+    height: 50px;
+
+    font-size: 14px;
+
+    transition: t
+    ransform 0.35s ease;
+}
+.pending-requests {
+    margin-block: 30px;
+}
+.request-item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-radius: 6px;
+    box-sizing: border-box;
+    text-decoration: none;
+    color:black;
+    padding: 15px;
+    margin-bottom: 10px;
+
+    border-left: 10px solid rgb(255, 152, 0);
+}
+.request-item p {
+    margin-block: 2px;
+}
+.request-item p:first-child {
+    font-weight: 600;
+    font-size: 14px;
+    color: gray;
+}
+.request-item p:nth-child(2) {
+    font-weight: 600;
+    font-size: 18px;
+}
+.request-item p:last-child {
+    font-size: 15px;
+}
+
+.pending-empty {
+    border: none;
+    border-radius: 6px;
+    box-sizing: border-box;
+    box-shadow: 1px 1px 3px 3px rgb(154, 154, 154);
+    text-align: center;
+    padding-block: 20px;
+    width: 50%;
+    margin-inline: auto;
+}

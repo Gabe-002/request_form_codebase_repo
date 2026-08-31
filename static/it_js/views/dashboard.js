@@ -1,0 +1,186 @@
+export const dashboardView = {
+    async mount(container) {
+        container.innerHTML = `<p>Loading...</p>`;
+        let body = `
+            <div class="dashboard-header">
+                <div class="site-heading">
+                <h2>Dashboard</h2>
+                <p>site overview</p>
+                </div>
+                <div class="quick-buttons">
+                    <button id="add-device" type="button">+ Add Device</button>
+                    <button id="new-assignment" type="button">+ New Assignment</button>
+                </div>
+            </div>
+
+            <div id="device-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add a new device</h3>
+                    </div>
+                    <form id="new-device-form" method="POST" action="/it/api/devices">
+                        <label>Asset Number
+                            <input type="text" id="asset_number" name="asset_number" required>
+                        </label>
+                        <label>Serial Number
+                            <input type="text" id="serial_number" name="serial_number" required>
+                        </label>
+                        <label>Manufacturer
+                            <input type="text" id="manufacturer" name="manufacturer" required>
+                        </label>
+                        <label>Model
+                            <input type="text" id="model" name="model" required>
+                        </label>
+                        <label>Asset Type
+                            <select name="asset_type">
+                                <option value="Laptop">Laptop</option>
+                                <option value="Monitor">Monitor</option>
+                                <option value="Phone">Phone</option>
+                            </select>
+                        </label>
+                        <label>Status
+                            <select name="status">
+                                <option value="available">Available</option>
+                                <option value="assigned">Assigned</option>
+                            </select>
+                        </label>
+                        <div class="form-buttons">
+                            <button id="submit-device" type="submit">Add Device</button>
+                            <button id="cancel-device" type="button">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `
+
+        const [response, deviceResponse] = await Promise.all([
+            fetch(`/it/api/requests`),
+            fetch(`/it/api/devices`)
+        ]);
+        if (!response.ok){
+            container.innerHTML = `<p>Could not fetch the pending requests</p>`;
+            return;
+        }
+        if (!deviceResponse.ok) {
+            container.innerHTML = `<p>Failed to capture devices!</p>`;
+            return;
+        }
+        const awaiting_assignments = await response.json();
+        const devices = await deviceResponse.json();
+        const numberPending = awaiting_assignments.length;
+        body += renderQuickView(devices, numberPending)
+        body += `<div class="activity-and-assignments">`
+        body += renderPendingAssignments(awaiting_assignments);
+        body += renderRecentActivity()
+        body += `</div>`
+        container.innerHTML = body;
+
+        const addDeviceBtn = document.getElementById('add-device')
+        const modal = document.getElementById('device-modal')
+        addDeviceBtn.addEventListener('click', () => {
+            modal.classList.toggle('open')
+        })
+
+        const cancelDeviceBtn = document.getElementById('cancel-device');
+        const deviceForm = document.getElementById('new-device-form');
+
+        cancelDeviceBtn.addEventListener("click", () => {
+            modal.classList.remove('open');
+            deviceForm.reset();
+        })
+
+        deviceForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(deviceForm);
+            const payload = Object.fromEntries(formData.entries())
+            try {
+                const response = await fetch('/it/api/devices', {
+                    method: 'POST',
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                })
+                // If the response fails
+                if (!response.ok) {
+                    throw new Error("Failed to add new device")
+                }
+                modal.classList.remove('open')
+                deviceForm.reset();
+                window.location.reload();
+            } catch (err) {
+                alert("Could not connect to the database correctly")
+            }
+        })
+        document.getElementById("pending-assignments-block")?.addEventListener('click', (event)=> {
+            if (event.target.classList.contains('review-button')) {
+                console.log(event.target.dataset.requestid)
+            }
+        }) 
+    }
+}
+
+function renderQuickView(devices, numberPending) {
+    const stats = devices.reduce((acc, device) => {
+        acc.byType[device.asset_type] = (acc.byType[device.asset_type] || 0) + 1;
+        if (device.asset_type === 'Laptop')
+            acc.byStatus[device.status] = (acc.byStatus[device.status] || 0) + 1;
+        return acc;
+    }, {byType: {}, byStatus: {}})
+    const totalLaptops = stats.byType.Laptop
+    const availableLaptops = stats.byStatus.available
+    const assignedLaptops = totalLaptops - availableLaptops
+
+    return `
+        <h3>Quick View</h3>
+        <div class="quick-view">
+            <div class="quick-view-item">
+                <p>Total Devices</p>
+                <p>${totalLaptops}</p>
+            </div>
+            <div class="quick-view-item">
+                <p>Assigned</p>
+                <p>${assignedLaptops}</p>
+            </div>
+            <div class="quick-view-item">
+                <p>Available</p>
+                <p>${availableLaptops}</p>
+            </div>
+            <div class="quick-view-item pending-item">
+                <p>Pending Assignments</p>
+                <p>${numberPending}</p>
+            </div>
+        </div>
+    `
+}
+
+function renderPendingAssignments(items) {
+    if (!items?.length)
+        return `<div id="pending-assignments-block"><h3>Pending Assignments</h3><p>There are not requerts pending!</p></div>`
+    return `
+        <div id="pending-assignments-block">
+            <h3>Pending Assignments</h3>
+                ${items.map(aw => 
+                    `<div class="pending-assignment-item">
+                        <div class="pending-assignment-info">
+                            <p>${aw.first_name} ${aw.surname}</p>
+                            <p>Project Code: ${aw.project_code}</p>
+                        </div>
+                        <button class="review-button" type="button" data-requestId=${aw.id}>Review</button>
+                    </div>`).join('')}
+        </div>`
+}
+
+function renderRecentActivity(){
+    return `
+        <div class="recent-activity-block">
+            <h3>Recent Activity</h3>
+            <div class="recent-activity">
+                <p>Here is some holder text</p>
+            </div>
+        </div>
+    `
+}
+
+function renderReviewPage(request_id) {
+    const response = fetch('/')
+}

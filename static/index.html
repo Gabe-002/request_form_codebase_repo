@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+        <title>Device Inventory</title>
+        <link rel="stylesheet" href="/static/css/infotech_css.css">
+        <script type="text/javascript" src="/static/it_js/darkmode.js" defer></script>
+    </head>
+
+    <body> 
+        <header>
+            <div class="logo">
+                <h2>TIECHMANN PROJECTS</h2>
+                <p>Device Inventory</p>
+            </div>
+        </header>
+        <nav class="nav-links">
+            <a href="/infotech/" data-link>Dashboard</a>
+            <a href="/infotech/assignments" data-link>Assignments</a>
+            <a href="/infotech/devices" data-link>Devices</a>
+        </nav>
+
+        <main id="app"></main>
+
+        <div id="theme-switch">
+            <input type="checkbox" id="switch">
+            <label for="switch" class="button"></label>
+        </div>
+
+        <script type="module" src="/static/it_js/router.js"></script>
+    </body>
+</html>

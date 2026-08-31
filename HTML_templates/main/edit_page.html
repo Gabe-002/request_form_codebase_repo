@@ -1,0 +1,93 @@
+{% from "_macros.html" import standard_field, select_field, drop_down_checkbox, noteblock_form_field, select_field_display %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Holder</title>
+        <link rel="stylesheet" href="/static/css/requests_page.css">
+        <script src="/static/js/back_to_portal.js" defer></script>
+        <script src="/static/js/edit_page.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="header-content">
+                <h1>Edit Request</h1>
+                <button id="return-to-portal-button" type="button">Back to Portal</button>
+            </div>
+        </header>
+
+        <form method="POST" action="/requests/pending/edit/{{request_info.id}}">
+            <input name="requestor_user_id" type="hidden" value={{request_info.requestor_user_id}}>
+            <input name="person_id" type="hidden" value={{person_info.id}}>
+            <h3>Section A (Personal Info)</h3>
+
+            {{ standard_field("first_name", "First Name", value=person_info.first_name, required=false) }}
+            {{ standard_field("surname", "Surname", value=person_info.surname, required=false) }}
+            {{ standard_field("national_id_number", "National ID Number", value=person_info.national_id_number, required=false) }}
+
+            <fieldset class="contact-details">
+                <legend>Contact Details</legend>
+                    <div class="contact-numbers">
+                        {{ standard_field("work_number", "Work Number", value=person_info.work_number, required=false) }}
+                        {{ standard_field("mobile_number", "Mobile Number", value=person_info.mobile_number, required=false) }}
+                    </div>
+                    {{ standard_field("contact_email", "Contact Email", value=person_info.contact_email, required=false) }}
+            </fieldset>
+
+            {{ standard_field("employee_type", "Employee Type", value=request_info.employee_type, required=false) }}
+            {{ standard_field("direct_line_manager", "Direct Line Manager", value=request_info.direct_line_manager, required=false) }}
+            {{ standard_field("professional_title", "Professional Title", value=request_info.professional_title, required=false) }}
+
+            {{ standard_field("starting_date", "Starting Date", type="date", value=request_info.starting_date, required=false) }}
+            {{ standard_field("expiry_date", "Expiry Date", type="date", value=request_info.expiry_date, required=false) }}
+
+            {% set ns = namespace(project_codes=[], software=[], project_managers=[]) %}
+            {% for project_code in project_codes %}
+                {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
+            {% endfor %}
+            {% for software_item in software %}
+                {% set ns.software = ns.software + [(software_item.get("software"), software_item.get("display_name"))] %}
+            {% endfor %}
+            {% for manager in project_managers %}
+                {% set ns.project_managers = ns.project_managers + [(manager.get("id"), manager.get("user_first_name") + " " + manager.get("user_surname"))]%}
+            {% endfor %}
+            {{ select_field("project_code", "Project Code", ns.project_codes, value=request_info.project_code) }}
+
+            {{ standard_field("employee_number", "Employee Number", value=request_info.employee_number, required=false) }}
+
+            {{ select_field_display("employee_division", "Employee Division", value=request_info.employee_division.title() )}}
+            {{ select_field_display("base_country_computer", "Country (where computer is based)", value=request_info.base_country_computer.title())}}
+
+            <h3>Section B (IT Requirements)</h3>
+
+            {{ select_field_display("computer_required", "Does the User Require a Computer?", value=request_info.computer_required.title() )}}
+            {{ select_field_display("desk_phone_required", "Does the User Require a Desk Phone?", value=request_info.desk_phone_required.title() )}}
+
+            {{ drop_down_checkbox("Please Select Required Software", ns.software, selected_values=request_info.required_software) }}
+
+            {{ noteblock_form_field(name="other_it_requirements", field_description="Are there any other IT requirements?", value=request_info.other_it_requirements) }}
+            {{ noteblock_form_field(name="sharepoint_file_rights", field_description="Any SharePoint files that need view rights?",value=request_info.sharepoint_file_rights) }}
+
+            <h3>Section C (Authorization)</h3>
+
+            <fieldset class="address-block">
+                <legend>Request By</legend>
+                <div class="standard-address-line">
+                    {{ standard_field("requested_by_name", "Name", required=true, value=user[0].user_first_name) }}
+                </div>
+                <div class="standard-address-line">
+                    {{ standard_field("requested_by_surname", "Surname", required=true, value=user[0].user_surname) }}
+                </div>         
+            </fieldset>
+
+            {{ select_field("project_manager_id", "Project Manager", ns.project_managers, value=request_info.project_manager_id) }}
+
+            <div id="edit-buttons">
+                <button id="cancel-edit" type="button" class="button-item cancel-color">Cancel Edit</button>
+                <button id="commit-edit" type="submit" class="button-item commit-color">Commit Edit</button>
+            </div>
+        </form>
+    </body>
+
+</html>

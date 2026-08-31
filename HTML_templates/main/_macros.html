@@ -1,0 +1,54 @@
+{# _macros.html #}
+
+{% macro standard_field(name, field_description, type="text", required=true, placeholder="", value="", readonly=false) %}
+<div class="standard-form-field">
+    <label for="{{name}}">{{field_description}}{% if required %}<span class="required-field">*</span>{% endif %}</label>
+    <input type="{{type}}" id = "{{name}}" name = "{{name}}" placeholder="{{placeholder}}" value="{{value}}"
+    {% if required and not readonly %}required{% endif %}
+    {% if readonly %}readonly{% endif %}>
+</div>
+{% endmacro %}
+
+{% macro select_field(name, field_description, options, required=true, value="") %}
+<div class="select-form-field">
+    <label for="{{name}}">{{field_description}}{% if required %}<span class="required-field">*</span>{% endif %}</label>
+    <select id="{{name}}" name="{{name}}"
+        {% if required %}required{% endif %}>
+    <option value="" disabled {% if not value %}selected{% endif %}> -- Select -- </option>
+            {% for opt_value, text in options %}
+    <option value="{{opt_value}}" {% if opt_value == value %}selected{% endif %}>{{text}}</option>
+            {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+{% macro select_field_display(name, field_description, value="") %}
+<div class="select-form-field">
+    <label for="{{name}}">{{field_description}}</label>
+    <select id="{{name}}" name="{{name}}">
+        <option value="{{value}}" selected>{{value}}</option>
+    </select>
+</div>
+{% endmacro %}
+
+{% macro drop_down_checkbox(summary_name, options, required=false, selected_values=[]) %}
+<details class="software-drop-down" {% if selected_values %}open{% endif %}>
+    <summary>{{summary_name}}{% if required %}<span class="required-field">*</span>{% endif %}</summary>
+    <div class="checkbox-group">
+        {% for name, label in options %}
+        <div class="checkbox-item">
+        <input type="checkbox" id="{{name}}" name="required_software" value="{{name}}" {% if name in selected_values %}checked{% endif %}>
+        <label for="{{name}}">{{label}}</label>
+        </div>
+        {% endfor %}
+    </div>
+</details>
+{% endmacro %}
+
+{% macro noteblock_form_field(name, field_description, placeholder="", value="", readonly=false) %}
+<div class="noteblock-field">
+    <label for="{{name}}">{{field_description}}</label>
+    <textarea id="{{name}}" name="{{name}}" rows="2" placeholder="{{placeholder}}"
+    {% if readonly %}readonly{% endif %}>{{value}}</textarea>
+</div>
+{% endmacro %}

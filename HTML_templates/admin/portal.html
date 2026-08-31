@@ -1,0 +1,218 @@
+{% macro input(name, description, type="text") %}
+<div class="input-fields">
+    <label for="{{name}}">{{description}}</label>
+    <input name="{{name}}" id="{{name}}" type="{{type}}">
+</div>
+{% endmacro %}
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Holder</title>
+        <link rel="stylesheet" href="/static/css/admin.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <script src="/static/js/members.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <h1>Admin Portal</h1>
+        </header>
+
+        <div class="portal-header">
+            <h1>Members</h1>
+            <button id="add-new-member">+ Add User</button>
+        </div>
+
+        <div id="add-new-member-page" data-test="I'm here!" style="display: none;">
+            <h3>New User</h3>
+            {{ input("username", "Username") }}
+            {{ input("password", "Password", "password") }}
+            {{ input("user_first_name", "First Name") }}
+            {{ input("user_surname", "Surname") }}
+            {{ input("user_email", "Email") }}
+            <div class="select-fields">
+                <label for="role">Role</label>
+                <select name="role" id="role">
+                    <option value="admin">Admin</option>
+                    <option value="pm">Project Manager</option>
+                    <option value="fd">Financial Director</option>
+                    <option value="super_user">Super User</option>
+                </select>
+            </div>
+            <button id="create-new-user">Create new user</button>
+        </div>
+
+        <input id="admin-member-search" placeholder="Search by name or user email address">
+        <div id="member-list">
+            {% for user in users %}
+            <div class="member-item" data-name="{{user.user_first_name|lower}}" data-surname="{{user.user_surname}}" data-user_email="{{user.user_email|lower}}" data-id="{{user.id}}">
+                <div class="info-box">
+                    <div class="member-graphic">{{user.get("user_first_name")[0]}}{{user.get("user_surname")[0]}}</div>
+                    <div class="name-and-email">
+                        <p>{{user.get("user_first_name")}} {{user.get("user_surname")}}</p>
+                        <p>{{user.get("user_email")}}</p>
+                    </div>    
+                </div>
+                <div class="functions">
+                    <select class="roles">
+                        <option {% if user.role == 'admin' %}selected{% endif %} value="admin">Admin</option>
+                        <option {% if user.role == 'pm' %}selected{% endif %} value="pm">Project Manager</option>
+                        <option {% if user.role == 'fd' %}selected{% endif %} value="fd">Financial Director</option>
+                        <option {% if user.role == 'super_user' %}selected{% endif %} value="super_user">Super User</option>
+                    </select>
+
+                    <button type="button" class="remove-user">
+                        <i class="fa-solid fa-trash"></i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <h1>Codes and Software</h1>
+
+        <div class="pc-and-soft-wrapper">
+            <div class="project-codes">
+                <div class="heading-and-button">
+                    <h3>Project Codes</h3>
+                    <button id="new-project-code">+ Project Code</button>
+                </div>
+
+                <!-- This is all of the HTML relating to the project codes -->
+                <div id="project-code-list">
+                    {% for code in project_codes %}
+                    <div class="code-item" data-project_code_id="{{code.get('id', 0)}}">
+                        <div class="code-info">
+                            <p>{{code.get("project_code")}}</p>
+                            <p>{{code.get("description")}}</p>
+                        </div>
+                        <button type="button" class="remove-project-code">Delete</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <template id="code-item-template">
+                <div class="code-item">
+                    <div class="code-info">
+                        <p class="pc-text"></p>
+                        <p class="desc-text"></p>
+                    </div>
+                    <button type="button" class="remove-project-code">Delete</button>
+                </div>
+            </template>
+
+            <template id="code-item-input-template">
+                <div class="code-item code-item-new">
+                    <div class="code-info">
+                        <input type="text" class="pc-input" placeholder="Project code">
+                        <input type="text" class="desc-input" placeholder="Description">
+                    </div>
+                    <div class="save-cancel-buttons">
+                        <button type="button" class="cancel-project-code">Cancel</button>
+                        <button type="button" class="save-project-code">Add</button>
+                    </div>    
+                </div>
+            </template>
+
+
+            <!-- This is for all the software -->
+            <div class="software">
+                <div class="heading-and-button">
+                    <h3>Software</h3>
+                    <button id="new-software">+ Software</button>
+                </div>
+
+                <div id="software-list">
+                    {% for software_item in software %}
+                    <div class="software-item" data-software_id="{{software_item.get('id')}}">
+                        <div class="software-info">
+                            <p>{{software_item.get("display_name")}}</p>
+                        </div>
+                        <button type="button" class="remove-software">Delete</button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <template id="software-item-template">
+                    <div class="software-item">
+                        <div class="software-info">
+                            <p class="software-name"></p>
+                        </div>
+                        <button type="button" class="remove-software">Delete</button>
+                    </div>
+                </template>
+
+                <template id="software-input-item">
+                    <div class="software-item software-item-new">
+                        <div class="sofware-info">
+                            <input type="text" class="software-input" placeholder="Software">
+                        </div>
+                        <div class="save-cancel-buttons">
+                            <button type="button" class="cancel-software">Cancel</button>
+                            <button type="button" class="save-software">Add</button>
+                        </div> 
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <h1>Countries and Divisions</h1>
+        <div class="pc-and-soft-wrapper">
+            
+            <div class="base-countries">
+                <div class="heading-and-button">
+                    <h3>Countries</h3>
+                    <button id="new-country">+ Country</button>
+                </div>
+                
+                <div id="base-countries-list">
+                {% for country in base_country %}
+                    <div class="standard-item" data-itemId="{{country.id}}">
+                        <p class="item-description">{{country.country_name}}</p>
+                        <button type="button" class="remove-button">Delete</button>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+
+
+            <div class="employee-divisions">
+                <div class="heading-and-button">
+                    <h3>Divisions</h3>
+                    <button id="new-division">+ Division</button>
+                </div>
+
+                <div id="employee-division-list">
+                {% for division in employee_divisions %}
+                    <div class="standard-item" data-itemId="{{division.id}}">
+                        <p class="item-description">{{division.division_name}}</p>
+                        <button type="button" class="remove-button">Delete</button>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+
+            <!-- We can now create a generalised template for both -->
+
+            <!-- This will be the template for the input -->
+            <template id="input-template">
+                <div class="template-item">
+                    <input class="template-input">
+                    <div class="template-button">
+                        <button type="button" class="template-cancel">Cancel</button>
+                        <button type="button" class="template-save">Add</button>
+                    </div>
+                </div>
+            </template>
+            <!-- This will be the template for the new item -->
+            
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,89 @@
+{% from "_macros.html" import standard_field, select_field, drop_down_checkbox, noteblock_form_field %}
+<!-- We are passing in user, project_codes and software {"user": user, "project_codes": project_codes, "software": software} -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Holder</title>
+        <link rel="stylesheet" href="/static/css/requests_page.css">
+        <script src="/static/js/back_to_portal.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="header-content">
+                <h1>New Request Form</h1>
+                <button id="return-to-portal-button" type="button">Back to Portal</button>
+            </div>
+        </header>
+
+        <form method="POST" action="/requests/new">
+            <h3>Section A (Personal Info)</h3>
+            <input name="requestor_user_id" type="hidden" value="{{user.id}}">
+            {{ standard_field("first_name", "First Name", placeholder="John") }}
+            {{ standard_field("surname", "Surname", placeholder="Doe") }}
+            {{ standard_field("national_id_number", "National ID Number") }}
+
+            <fieldset class="contact-details">
+                <legend>Contact Details</legend>
+                    <div class="contact-numbers">
+                        {{ standard_field("work_number", "Work Number", required=false) }}
+                        {{ standard_field("mobile_number", "Mobile Number", placeholder="+27 12 345 6789") }}
+                    </div>
+                    {{ standard_field("contact_email", "Contact Email", placeholder="johndoe@t3projects.com") }}
+            </fieldset>
+
+            {{ standard_field("employee_type", "Employee Type", placeholder="i.e. Employee or External...") }}
+            {{ standard_field("direct_line_manager", "Direct Line Manager") }}
+            {{ standard_field("professional_title", "Professional Title", placeholder="i.e. Manager, Financial Director...") }}
+
+            {{ standard_field("starting_date", "Starting Date", type="date") }}
+            {{ standard_field("expiry_date", "Expiry Date", type="date", required=false) }}
+
+            {% set ns = namespace(project_codes=[], software=[], project_managers=[]) %}
+            {% for project_code in project_codes %}
+                {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
+            {% endfor %}
+            {% for software_item in software %}
+                {% set ns.software = ns.software + [(software_item.get("software"), software_item.get("display_name"))] %}
+            {% endfor %}
+            {% for manager in project_managers %}
+                {% set ns.project_managers = ns.project_managers + [(manager.get("id"), manager.get("user_first_name") + " " + manager.get("user_surname"))]%}
+            {% endfor %}
+             
+            {{ select_field("project_code", "Project Code", ns.project_codes) }}
+
+            {{ standard_field("employee_number", "Employee Number", required=false, placeholder="Required only for an existing employee...") }}
+            {{ select_field("employee_division", "Employee Division", [("finance", "Finance"), ("estimating", "Estimating"), ("e&i", "E&I"), ("smp", "SMP"), ("hr", "HR"), ("other", "Other")]) }}
+            
+            {{ select_field("base_country_computer", "Country (where computer is based)", [("south_africa", "South Africa"), ("namibia", "Namibia"), ("zambia", "Zambia"), ("drc", "DRC")]) }}
+            
+
+            <h3>Section B (IT Requirements)</h3>
+
+            {{ select_field("computer_required", "Does the User Require a Computer?", [("yes", "Yes"), ("no", "No")]) }}
+            {{ select_field("desk_phone_required", "Does the User Require a Desk Phone?", [("yes", "Yes"), ("no", "No")]) }}
+
+            {{ drop_down_checkbox("Please Select Required Software", ns.software) }}
+
+            {{ noteblock_form_field("other_it_requirements", "Are there any other IT requirements?","This my be left blank is nothing else is required...") }}
+            {{ noteblock_form_field("sharepoint_file_rights", "Any SharePoint files that need view rights?", "This my be left blank is nothing else is required...") }}
+
+            <h3>Section C (Authorization)</h3>
+            
+            <fieldset class="address-block">
+                <legend>Request By</legend>
+                <div class="standard-address-line">
+                    {{ standard_field("requested_by_name", "Name", required=true, value=user.user_first_name) }}
+                </div>
+                <div class="standard-address-line">
+                    {{ standard_field("requested_by_surname", "Surname", required=true, value=user.user_surname) }}
+                </div>         
+            </fieldset>
+
+            {{ select_field("project_manager_id", "Project Manager", ns.project_managers) }}
+
+            <button type="submit">Submit Request</button>
+        </form>
+    </body>
+</html>

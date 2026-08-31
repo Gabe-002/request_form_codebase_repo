@@ -1,0 +1,113 @@
+{% from "_macros.html" import standard_field, select_field, drop_down_checkbox, noteblock_form_field, select_field_display %}
+<!-- We are passing in user, project_codes and software {"user": user, "project_codes": project_codes, "software": software} -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Holder</title>
+        <link rel="stylesheet" href="/static/css/requests_page.css">
+        <script src="/static/js/back_to_portal.js" defer></script>
+        <script src="/static/js/review_page.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="header-content">
+                <h1>New Request Form</h1>
+                <button id="return-to-portal-button" type="button">Back to Portal</button>
+            </div>
+        </header>
+
+        <form method="POST" action="/requests/new">
+            <h3>Section A (Personal Info)</h3>
+
+            {{ standard_field("first_name", "First Name", value=person_info.first_name, readonly=true, required=false) }}
+            {{ standard_field("surname", "Surname", value=person_info.surname, readonly=true, required=false) }}
+            {{ standard_field("national_id_number", "National ID Number", value=person_info.national_id_number, readonly=true, required=false) }}
+
+            <fieldset class="contact-details">
+                <legend>Contact Details</legend>
+                    <div class="contact-numbers">
+                        {{ standard_field("work_number", "Work Number", value=person_info.work_number, readonly=true, required=false) }}
+                        {{ standard_field("mobile_number", "Mobile Number", value=person_info.mobile_number, readonly=true, required=false) }}
+                    </div>
+                    {{ standard_field("contact_email", "Contact Email", value=person_info.contact_email, readonly=true, required=false) }}
+            </fieldset>
+
+            {{ standard_field("employee_type", "Employee Type", value=request_info.employee_type, readonly=true, required=false) }}
+            {{ standard_field("direct_line_manager", "Direct Line Manager", value=request_info.direct_line_manager, readonly=true, required=false) }}
+            {{ standard_field("professional_title", "Professional Title", value=request_info.professional_title, readonly=true, required=false) }}
+
+            {{ standard_field("starting_date", "Starting Date", type="date", value=request_info.starting_date, readonly=true, required=false) }}
+            {{ standard_field("expiry_date", "Expiry Date", type="date", value=request_info.expiry_date, readonly=true, required=false) }}
+            {{ standard_field("project_code", "Project Code", value=request_info.project_code, readonly=true, required=false) }}
+            {{ standard_field("employee_number", "Employee Number", value=request_info.employee_number, readonly=true, required=false) }}
+
+            {{ select_field_display("employee_division", "Employee Division", value=request_info.employee_division.title() )}}
+            {{ select_field_display("base_country_computer", "Country (where computer is based)", value=request_info.base_country_computer.title())}}
+
+            <h3>Section B (IT Requirements)</h3>
+
+            {{ select_field_display("computer_required", "Does the User Require a Computer?", value=request_info.computer_required.title() )}}
+            {{ select_field_display("desk_phone_required", "Does the User Require a Desk Phone?", value=request_info.desk_phone_required.title() )}}
+
+            {% if request_info.required_software %}
+            <div style="margin-top: 20px; margin-bottom: 20px;">
+                <p style="margin-bottom: 0px; font-weight: bold; color: #2d3543">Required Software</p>
+                <ul style="margin-top: 5px;">
+                    {% for software in request_info['required_software'] %}
+                    <li>{{software.replace("_", " ").title()}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {{ noteblock_form_field(name="other_it_requirements", field_description="Are there any other IT requirements?", value=request_info.other_it_requirements, readonly=true) }}
+            {{ noteblock_form_field(name="sharepoint_file_rights", field_description="Any SharePoint files that need view rights?",value=request_info.sharepoint_file_rights, readonly=true) }}
+
+            
+            <h3>Section C (Authorization)</h3>
+            <fieldset class="address-block">
+                <legend>Request By</legend>
+                <div class="standard-address-line">
+                    {{ standard_field("requested_by_name", "Name", value=requestor_info.user_first_name, readonly=true, required=false) }}
+                </div>
+                <div class="standard-address-line">
+                    {{ standard_field("requested_by_surname", "Surname", value=requestor_info.user_surname, readonly=true, required=false) }}
+                </div>         
+            </fieldset>
+
+            {% set pm_name = pm_info.user_first_name.replace("_", " ").title() + " " + pm_info.user_surname.replace("_", " ").title()%}
+            {{ select_field_display("project_manager", "Project Manager", value=pm_name)}}
+            <div id="review-area">
+                <div id="buttons"></div>
+            </div>
+
+            <table id="form-info">
+                <thead>
+                    <th>Role</th>
+                    <th>Action</th>
+                    <th>Time</th>
+                </thead>
+                <tbody id="table-body">
+
+                </tbody>
+            </table>
+        </form>
+
+        <script id="page-data" type="application/json">
+        {
+            "requestId": {{request_info.id}},
+            "userId": {{user[0].id}},
+            "userRole": "{{user[0].role}}",
+            "pmReviewStatus": "{{request_info.pm_review_status}}",
+            "fdReviewStatus": "{{request_info.fd_review_status}}",
+            "submittedAt": "{{request_info.submitted_at}}",
+            "pmReviewTime": "{{request_info.pm_review_date}}",
+            "fdReviewTime": "{{request_info.fd_review_date}}",
+            "projectManagerId": {{request_info.project_manager_id}}
+        }
+        </script>
+        <div id="not-raise-alert"></div>
+    </body>
+</html> 

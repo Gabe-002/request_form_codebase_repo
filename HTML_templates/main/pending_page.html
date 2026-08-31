@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Holder</title>
+        <link rel="stylesheet" href="/static/css/pending_page.css">
+        <script src="/static/js/back_to_portal.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="header-content">
+                <h1>Pending requests for {{user[0].get("user_first_name")}}</h1>
+                <button id="return-to-portal-button" type="button">Back to Portal</button>
+            </div>
+        </header>
+
+        <div class="pending-requests">
+        {% if pending_requests %}
+            {% for request in pending_requests %}
+            <a href="/requests/pending/{{request.request_id}}" class="request-item">
+                <p>PENDING</p>
+                {% set fullname = request.first_name + ' ' + request.surname%}
+                <p>{{fullname}}</p>
+                <p>Project Code: {{request.project_code}}</p>
+            </a>
+            {% endfor %}
+        {% else %}
+        <div class="pending-empty">
+            <p>There are no pending requests. All clear!</p>
+        </div>
+        {% endif %}
+        </div>
+    </body>
+    <div id="not-raise-alert"></div>
+
+</html>

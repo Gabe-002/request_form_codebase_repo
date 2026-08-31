@@ -1,0 +1,312 @@
+body {
+    font-family: "Segoe UI", "Segoe UI Web", "Helvetica Neue", Arial, sans-serif;
+}
+header {
+    margin-inline: 10px;
+    margin-top: 15px;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding-inline: 10px;
+    background-color:#0B132B;
+    color: yellow;
+    margin-bottom: 10px;
+    padding-inline: 15px;
+    top: 10px;
+    position: sticky;
+    z-index: 1000;
+}
+.header-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#return-to-portal-button {
+    font:inherit;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    background-color: yellow;
+    color: black;
+    width: 110px;
+    height: 50px;
+
+    font-size: 14px;
+
+    transition: transform 0.35s ease;
+}
+
+form {
+    max-width: 900px;
+    margin: 40px auto;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px 3px rgba(0, 0, 0, 0.15);
+    border-left: 5px solid yellow;
+    border-top: 5px solid yellow;
+}
+.standard-form-field {
+    display: flex;
+    flex-direction: column;
+    margin-top: 18px;
+}
+.standard-form-field input {
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border: 1px solid #000000;
+    background-color: #F3F4F6;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-top: 3px;
+
+    max-width: 1000px;
+}
+.standard-form-field input:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 1px 2px 1px 1px #4e46e572;
+    transform: translateY(-1px);
+}
+label, summary{
+    font-weight: bold;
+}
+.contact-details {
+    min-width: 0;
+    width: 100%;
+    margin-top: 18px;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+.contact-numbers {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+.contact-numbers > .standard-form-field {
+    flex: 1;
+}
+select {
+    font-size: 16px;
+}
+.select-form-field {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin-top: 18px;
+}
+.select-form-field select {
+    background-color: #F3F4F6;
+    margin-top: 3px;
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+
+.software-drop-down {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.checkbox-group {
+    margin-top: 5px;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: #00ff3c; 
+    margin-left: 15px;
+    margin-top: 3px;
+}
+/* 1. Target the checkboxes inside your dropdown macro */
+.checkbox-item input[type="checkbox"] {
+    /* Tell the browser to strip away the default ugly OS styling */
+    appearance: none;
+    -webkit-appearance: none;
+    
+    /* Create your custom charcoal box dimensions */
+    width: 20px;
+    height: 20px;
+    background-color: #F3F4F6; /* Default unchecked light grey background */
+    border: 1px solid #0B132B;   /* Default border matching your company slate */
+    border-radius: 4px;
+    cursor: pointer;
+    
+    /* Layout properties so we can center the tick mark perfectly inside */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    vertical-align: middle;
+    
+    transition: all 0.2s ease;
+}
+/* 2. Style what happens when the box is checked */
+.checkbox-item input[type="checkbox"]:checked {
+    background-color: #0B132B; /* Company Charcoal */
+    border-color: #0B132B;
+}
+.checkbox-item input[type="checkbox"]::before {
+    content: "T3"; 
+    font-weight: normal;
+    font-size: 14px;
+    color: yellow; 
+    transform: scale(0);
+}
+.checkbox-item input[type="checkbox"]:checked::before {
+    transform: scale(0.8);
+}
+
+.noteblock-field {
+    display: flex;
+    flex-direction: column;
+    margin-top: 18px;
+}
+.noteblock-field textarea {
+    margin-top: 3px;
+    padding: 8px 10px;
+    border: 1px solid black;
+    box-sizing: border-box;
+    border-radius: 3px;
+    background-color: #f4f2f7;
+    resize: vertical;
+    min-height: 80px;
+    max-height: 200px;
+    font-size: 16px;
+}
+.noteblock-field textarea:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 1px 2px 1px 1px #4e46e572;
+    transform: translateY(-1px);
+}
+.address-block {
+    width: 100%;
+    margin-top: 18px;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+button[type="submit"] {
+    margin-top: 30px;
+    padding: 12px 28px;
+    color: #ffffff;
+    background-color: #2563EB;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 1s ease;
+}
+button[type="submit"]:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(157, 0, 255, 0.3);
+}
+#review-area {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+#buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+.review-button {
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+    border: none;
+    box-sizing: border-box;
+    padding-inline: 10px;
+    padding-block: 10px;
+    border-radius: 6px;
+    margin: 0;
+    transition: transform ease 0.3s;
+    cursor: pointer;
+    margin-top: 30px;
+}
+.review-button--pending {
+    background-color: rgb(255, 152, 0);
+}
+.review-button--approve {
+    background-color: rgb(76, 175, 80);
+}
+.review-button--reject {
+    background-color: rgb(244, 67, 54);
+}
+.review-button--pending:hover {
+    transform: scale(1.03);
+}
+.review-button--approve:hover {
+    transform: scale(1.03);
+}
+.review-button--reject:hover {
+    transform: scale(1.03);
+}
+.pending-color{
+    color: rgb(255, 152, 0);
+}
+.approve-color{
+    color: rgb(76, 175, 80);
+}
+.reject-color{
+    color: rgb(244, 67, 54);
+}
+p {
+    margin: 5;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent; 
+    border: 1px solid #333333;
+}
+th, td {
+    padding: 10px 14px;
+    text-align: left;
+    background-color: transparent; /* Ensures rows stay clear */
+    border: 1px solid #333333;  
+}
+td {
+    font-weight: normal;
+}
+th {
+    font-weight: bold;
+    border-bottom: 1px solid #333333;
+}
+
+#edit-buttons {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    margin-inline: 700px;
+    margin-left: 0;
+}
+.button-item {
+    font: inherit;
+    font-weight: 600;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    justify-items: flex-end;
+}
+.cancel-color {
+    height: 40px;
+    background-color: rgb(255, 152, 0);
+    transition: transform ease 0.3s;
+}
+.cancel-color:hover {
+    transform: scale(1.03);
+}
+.commit-color {
+    background-color: rgb(76, 175, 80);
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Holder</title>
+        <link rel="stylesheet" href="/static/css/request_portal.css">
+        <script src="/static/js/request_portal.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="header-content">
+                <h1>Welcome {{user[0].get("user_first_name")}} {{user[0].get("user_surname")}}</h1>
+                <button id="logout-button" type="button">Logout</button>
+            </div>
+        </header>
+
+        <div class="panels">
+            <a href="/requests/new" id="new-box" style="grid-area: box-1">
+                <div class="fly-in-box">
+                    <h1 class="word word-1" style="margin-right: auto;">New</h1>
+                    <h1 class="word word-2"  style="margin-left: auto;">Request</h1>
+                </div>
+                <div class="label">New Form Request</div>
+            </a>
+            <a href="/requests/pending/page" id="pending-box" style="grid-area: box-2">
+                <div class="fly-in-box">
+                    <h1 class="word word-1" style="margin-right: auto;">Pending</h1>
+                    <h1 class="word word-2"  style="margin-left: auto;">Requests</h1>
+                </div>
+                <div class="label">Pending Forms</div>
+            </a>
+            <a href="/requests/completed/page" id="completed-box" style="grid-area: box-3">
+                <div class="fly-in-box">
+                    <h1 class="word word-1" style="margin-right: auto;">Completed</h1>
+                    <h1 class="word word-2"  style="margin-left: auto;">Requests</h1>
+                </div>
+                <div class="label">Completed Forms</div>
+            </a>
+            <div id="search-box" style="grid-area: box-4">
+                <div class="label">Search for a Request</div>
+                <input id="requests-search-bar" type="text" placeholder="Search for a request...">
+                <div id="search-results">
+                    
+                </div>
+            </div>
+        </div>
+        <script id="page-data" type="application/json">
+            {
+                "userId": {{user[0].id}},
+                "userRole": "{{user[0].role}}"
+            }
+        </script>
+    </body>
+</html>
