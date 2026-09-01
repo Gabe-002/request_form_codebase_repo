@@ -51,6 +51,22 @@ export const dashboardView = {
                     </form>
                 </div>
             </div>
+
+            <div id="review-modal">
+                <div class="review-content">
+                    <h3>Review Request</h3>
+
+                    <div id="review-details">
+
+                    </div>
+
+                    <div class="review-buttons">
+                        <button id="issue-button" type="button">Issue</button>
+                        <button id="transfer-button" type="button">Transfer</button>
+                        <button id="cancel-review" type="button">Cancel</button>
+                    </div>
+                </div>
+            </div>
         `
 
         const [response, deviceResponse] = await Promise.all([
@@ -65,6 +81,8 @@ export const dashboardView = {
             container.innerHTML = `<p>Failed to capture devices!</p>`;
             return;
         }
+
+
         const awaiting_assignments = await response.json();
         const devices = await deviceResponse.json();
         const numberPending = awaiting_assignments.length;
@@ -111,11 +129,20 @@ export const dashboardView = {
                 alert("Could not connect to the database correctly")
             }
         })
+        const reviewModel = document.getElementById("review-modal")
         document.getElementById("pending-assignments-block")?.addEventListener('click', (event)=> {
             if (event.target.classList.contains('review-button')) {
                 console.log(event.target.dataset.requestid)
+                renderReviewPage(event.target.dataset.requestid)
             }
         }) 
+        document.getElementById('cancel-review').addEventListener('click', () => {
+            reviewModel.classList.toggle('open');
+        })
+        document.getElementById('issue-button').addEventListener('click', () => {
+            const reviewModel = document.getElementById("review-modal")
+            reviewModel.classList.toggle('open');
+        })
     }
 }
 
@@ -181,6 +208,46 @@ function renderRecentActivity(){
     `
 }
 
-function renderReviewPage(request_id) {
-    const response = fetch('/')
+async function renderReviewPage(request_id) {
+    const response = await fetch(`/it/api/request?request_id=${request_id}`)
+    if (!response.ok) {
+        alert("Failed to get the request!")
+        return;
+    }
+    const request = await response.json();
+    const reviewModel = document.getElementById("review-modal")
+    reviewModel.classList.toggle('open');
+
+    const reviewDetails = document.getElementById("review-details")
+    let details = `
+        <div class='detail-item'>
+            <p>Full Name:</p> <p>${request.first_name} ${request.surname}</p>
+        </div>
+        <div class='detail-item'>
+            <p>Project Code:</p> <p>${request.project_code}</p>
+        </div>
+        <div class='detail-item'>
+            <p>Employee Division:</p> <p>${request.employee_division}</p>
+        </div>
+        <div class='detail-item'>
+            <p>Country:</p> <p>${request.base_country_computer.replace("_", " ")}</p>
+        </div>
+        <div class='detail-item'>
+            <p>Computer Required:</p> <p>${request.computer_required}</p>
+        </div>
+        <div class='detail-item'>
+            <p>Desk Phone Required:</p> <p>${request.desk_phone_required}</p>
+        </div>
+        <div class='detail-item'>
+            <p>Required Software:</p>
+        </div>
+        <ul class="software-list">`
+    request.required_software.forEach((item) => {
+        details += `<li>${item
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ')}</li>`
+    })
+    details += `</ul>`
+    reviewDetails.innerHTML = details
 }

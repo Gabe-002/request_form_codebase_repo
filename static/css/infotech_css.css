@@ -204,13 +204,13 @@ header h2, p{
     height: 100%;
     z-index: 10;
 }
-.modal-content h3{
+.modal-content h3, .review-content h3{
     margin: 0;
     margin-bottom: 20px;
     text-align: center;
     margin-top: 5px;
 }
-.modal-content {
+.modal-content, .review-content {
     display: flex;
     flex-direction: column;
     border: none;
@@ -249,7 +249,7 @@ header h2, p{
     display: flex;
     justify-content: space-between;
 }
-#submit-device, #cancel-device {
+#submit-device, #cancel-device, .review-buttons button {
     margin-top: 10px;
     font: inherit;
     width: 25%;
@@ -259,4 +259,28 @@ header h2, p{
     border: 1px solid var(--border-color);
     border-radius: 6px;
     cursor: pointer;
+}
+
+
+#review-modal {
+    display: none;
+}
+#review-modal.open {
+    display: flex;
+}
+.detail-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.detail-item p:first-child{
+    font-weight: bold;
+}
+.software-list {
+    margin-top: 5px;
+}
+.review-buttons {
+    display: flex;
+    justify-content: space-evenly;
 }

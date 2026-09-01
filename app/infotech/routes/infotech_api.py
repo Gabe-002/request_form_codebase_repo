@@ -23,4 +23,5 @@ def add_device_post(
 
 @router.get("/request")
 def get_request_info(request_id: int, db: Session = Depends(get_db)):
-    return infotech_request_info(db, request_id)
+    request =  infotech_request_info(db, request_id)
+    return request
