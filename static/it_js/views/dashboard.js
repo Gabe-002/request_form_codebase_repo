@@ -161,7 +161,6 @@ export const dashboardView = {
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(payload)
                 })
-                // If the response fails
                 if (!response.ok) {
                     throw new Error("Failed to add new device")
                 }
@@ -271,14 +270,16 @@ function renderPendingAssignments(items) {
     return `
         <div id="pending-assignments-block">
             <h3>Pending Assignments</h3>
-                ${items.map(aw => 
+                ${items
+                    .map(aw => 
                     `<div class="pending-assignment-item">
                         <div class="pending-assignment-info">
                             <p>${aw.first_name} ${aw.surname}</p>
                             <p>Project Code: ${aw.project_code}</p>
                         </div>
                         <button class="review-button" type="button" data-requestId=${aw.id}>Review</button>
-                    </div>`).join('')}
+                    </div>`)
+                    .join('')}
         </div>`
 }
 
@@ -349,11 +350,9 @@ async function renderIssuePage(requestid) {
     const request = await response.json();
     const name = document.getElementById('issue-name')
     name.value = `${request.first_name} ${request.surname}`
-
-
-
 }
 
+// This is for the search bars
 async function searchResults(event, container, url, renderItem){
     const query = event.target.value
     if (!query) {
