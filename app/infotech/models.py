@@ -20,6 +20,28 @@ class Devices(Base):
     requests_id = Column(Integer, nullable=True)
     asset_number = Column(Text, nullable=True)
 
+class TenantUsers(Base):
+    __tablename__ = 'tenant_users'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    display_name = Column(Text, nullable=False)
+    email = Column(Text, nullable=False)
+    last_synched = Column(DateTime(timezone=True), nullable=False)
+
+class Assignment(Base):
+    __tablename__ = 'assignments'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    request_id = Column(Integer, ForeignKey('requests.id'))
+    device_id = Column(Integer, ForeignKey('devices.id'))
+    assigned_to = Column(Text, nullable=False)
+    assigned_at = Column(DateTime(timezone=True), server_default=func.now())
+    deallocated_at = Column(DateTime(timezone=True))
+    assignee_email = Column(Text)
+    transferred_from = Column(Text)
+    sharepoint_item_id = Column(Integer)
+    tenant_id = Column(UUID(as_uuid=True))
+
 # We'll create a decorator that acts constructor like
 def from_data(cls):
     parameters = [

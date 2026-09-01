@@ -67,6 +67,49 @@ export const dashboardView = {
                     </div>
                 </div>
             </div>
+
+            <div id="issue-modal">
+                <div class="issue-page">
+                    <h3>Issue a device</h3>
+                    <h4>Device Info</h4>
+                    <div class="asset-search">
+                        <label>Asset Number
+                            <input type="text" id="issue-asset-number" name="asset_number" required>
+                            <div id="asset-results"></div>
+                        </label>
+                    </div>
+                        <label>Asset Description
+                            <input type="text" id="issue-model" name="model" required>
+                        </label>
+                        <label>Serial Number
+                            <input type="text" id="issue-serial-number" name="serial_number" required>
+                        </label>
+                    <h4>Transfer Info</h4>
+                        <label>Transfer To
+                            <input type="text" id="issue-name" name="issue-name" required>
+                        </label>
+                        <label>Company No.
+                            <input type="text" id="issue-company-no" name="company-no" required>
+                        </label>
+                        <label>Location
+                            <input type="text" id="" name="" required>
+                        </label>
+                        <div class="user-search">
+                            <label>Username
+                                <input type="text" id="tenant-username" name="tenant-username" required>
+                            </label>
+                            <div id="users-results"></div>
+                        </div>
+                        <label>Tenant Email
+                            <input type="text" id="tenant-email" name="tenant-email" required>
+                        </label>
+
+                    <div class="review-buttons">
+                        <button id="confirm-issue" type="button">Confirm</button>
+                        <button id="cancel-issue" type="button">Cancel</button>
+                    </div>
+                </div>
+            </div>
         `
 
         const [response, deviceResponse] = await Promise.all([
@@ -132,8 +175,8 @@ export const dashboardView = {
         const reviewModel = document.getElementById("review-modal")
         document.getElementById("pending-assignments-block")?.addEventListener('click', (event)=> {
             if (event.target.classList.contains('review-button')) {
-                console.log(event.target.dataset.requestid)
-                renderReviewPage(event.target.dataset.requestid)
+                reviewModel.dataset.requestid = event.target.dataset.requestid;
+                renderReviewPage(event.target.dataset.requestid);
             }
         }) 
         document.getElementById('cancel-review').addEventListener('click', () => {
@@ -142,6 +185,48 @@ export const dashboardView = {
         document.getElementById('issue-button').addEventListener('click', () => {
             const reviewModel = document.getElementById("review-modal")
             reviewModel.classList.toggle('open');
+            renderIssuePage(reviewModel.dataset.requestid);
+        })
+
+        document.getElementById('cancel-issue').addEventListener('click', () => {
+            const confirmation = confirm("Are you sure you would like to cancel this issue?")
+            if (!confirmation) return;
+            document.getElementById('issue-modal').classList.toggle('open')
+            document.getElementById('issue-modal').querySelectorAll('input').forEach(
+                (input) => {
+                    input.value =''
+                }
+            )
+        })
+
+        const deviceResults = document.getElementById('asset-results')
+        deviceResults.style.display = 'none'
+        document.getElementById('issue-asset-number').addEventListener('input', (event) => searchResults(event, deviceResults, `/it/api/query/devices`, (device)=> `$${device.asset_number} - ${device.manufacturer} ${device.model}`))
+
+        deviceResults.addEventListener('click', (event) => {
+            const item = event.target.closest('.device-item')
+            const assetNumber = document.getElementById('issue-asset-number')
+            const modelNumber = document.getElementById('issue-model')
+            const serialNumber = document.getElementById('issue-serial-number')
+
+            assetNumber.value = item.dataset.assetNumber
+            modelNumber.value = `${item.dataset.manufacturer} ${item.dataset.model}`
+            serialNumber.value = item.dataset.serialNumber
+            deviceResults.style.display = 'none'
+        })
+
+        const userResults = document.getElementById('users-results')
+        userResults.style.display = 'none'
+        document.getElementById('tenant-username').addEventListener('input', (event) => searchResults(event, userResults, `/it/api/query/users`, (user)=> `${user.display_name}`))
+  
+        userResults.addEventListener('click', (event)=>{
+            const item = event.target.closest('.device-item')
+            const displayName = document.getElementById('tenant-username')
+            const email = document.getElementById('tenant-email')
+
+            displayName.value = item.dataset.displayName
+            email.value = item.dataset.email
+            userResults.style.display = 'none'
         })
     }
 }
@@ -250,4 +335,45 @@ async function renderReviewPage(request_id) {
     })
     details += `</ul>`
     reviewDetails.innerHTML = details
+}
+
+async function renderIssuePage(requestid) {
+    const issueModal = document.getElementById('issue-modal')
+    issueModal.classList.toggle('open')
+
+    const response = await fetch(`/it/api/request?request_id=${requestid}`)
+    if (!response.ok) {
+        alert("Failed to get the request!")
+        return;
+    }
+    const request = await response.json();
+    const name = document.getElementById('issue-name')
+    name.value = `${request.first_name} ${request.surname}`
+
+
+
+}
+
+async function searchResults(event, container, url, renderItem){
+    const query = event.target.value
+    if (!query) {
+        container.innerHTML = ''
+        container.style.display = 'none'
+        return
+    }
+    const response = await fetch(`${url}?query=${query}`)
+    if (!response.ok) {
+        alert("An error has occured while fetching results")
+        return
+    }
+    container.style.display = 'flex'
+    const items = await response.json()
+    let body = ``
+    items.forEach((item) => {
+        const attrs = Object.entries(item)
+            .map(([key, value]) => `data-${key.replace(/_/g, '-')}="${value}"`)
+            .join(' ')
+        body += `<p class="device-item" ${attrs}>${renderItem(item)}</p>`
+    })
+    container.innerHTML = body
 }

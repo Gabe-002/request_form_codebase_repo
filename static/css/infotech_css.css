@@ -14,6 +14,7 @@
     --pending-background: orange;
 
     --shadow: rgb(126, 126, 126);
+    --hover: rgba(110, 173, 255, 0.721);
 }
 .darkmode {
     --base-color: #212121;
@@ -29,6 +30,7 @@
     --logo-background: #212121;
     --logo-color-one: yellow;
     --logo-color-two: white;
+    --hover: #464646;
 }
 h3 {
     margin: 5px;
@@ -204,13 +206,13 @@ header h2, p{
     height: 100%;
     z-index: 10;
 }
-.modal-content h3, .review-content h3{
+.modal-content h3, .review-content h3, .issue-page h3{
     margin: 0;
     margin-bottom: 20px;
     text-align: center;
     margin-top: 5px;
 }
-.modal-content, .review-content {
+.modal-content, .review-content, .issue-page {
     display: flex;
     flex-direction: column;
     border: none;
@@ -230,13 +232,13 @@ header h2, p{
     display: flex;
     flex-direction: column;
 }
-#new-device-form label {
+#new-device-form label , .issue-page label{
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     margin-bottom: 10px;
 }
-#new-device-form input, select {
+#new-device-form input, .issue-page input, select {
     font: inherit;
     font-size: 16px;
     color: var(--text-color);
@@ -262,10 +264,10 @@ header h2, p{
 }
 
 
-#review-modal {
+#review-modal, #issue-modal {
     display: none;
 }
-#review-modal.open {
+#review-modal.open, #issue-modal.open {
     display: flex;
 }
 .detail-item {
@@ -283,4 +285,37 @@ header h2, p{
 .review-buttons {
     display: flex;
     justify-content: space-evenly;
+}
+
+/* This is for the asset search bar */
+.asset-search, .user-search {
+    position: relative;
+}
+#asset-results, #users-results {
+    position: absolute;
+    z-index: 200;
+    font: inherit;
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--base-varient);
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+}
+#asset-results{
+    top: 100%;
+}
+#users-results {
+    bottom: 100%;    
+}
+.device-item {
+    font:inherit;
+    padding: 10px;
+    cursor: pointer;
+}
+.device-item:hover {
+    background-color: var(--hover);
 }

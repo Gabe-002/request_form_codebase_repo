@@ -1,9 +1,9 @@
 from app.database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, insert, delete, and_
+from sqlalchemy import select, insert, delete, and_, or_
 from app.models import Requests, People
-from app.infotech.models import Devices, AddDevice
+from app.infotech.models import Devices, AddDevice, TenantUsers
 
 def format_output(model, request):
     return {
@@ -46,11 +46,48 @@ def add_device(db: Session, device: AddDevice):
     except IntegrityError:
         db.rollback()
 
+def get_device_by_query(db: Session, query: str):
+    statement = select(
+        Devices.id,
+        Devices.asset_number,
+        Devices.model,
+        Devices.manufacturer,
+        Devices.serial_number).where(
+        or_(
+            Devices.asset_number.ilike(f"%{query}%"),
+            Devices.model.ilike(f"%{query}%"),
+            Devices.manufacturer.ilike(f"%{query}%")
+        ),
+        and_(Devices.status == 'available'),
+        and_(Devices.asset_type == 'Laptop')
+    )
+    results = [
+        row
+        for row in db.execute(statement=statement).mappings().all()
+    ]
+    return results
+
+def get_tenant_user_by_query(db: Session, query: str):
+    statement = select(
+        TenantUsers.id,
+        TenantUsers.email,
+        TenantUsers.display_name).where(
+        or_(
+            TenantUsers.email.ilike(f"%{query}%"),
+            TenantUsers.display_name.ilike(f"%{query}%")
+        )
+    )
+    results =[
+        row
+        for row in db.execute(statement=statement).mappings().all()
+    ]
+    return results
+
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    requests = get_devices(db)
-    for request in requests:
-        print(request)
+    requests = get_tenant_user_by_query(db, "proje")
+    for device in requests:
+        print(device)
         print()
