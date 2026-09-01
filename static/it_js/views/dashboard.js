@@ -96,12 +96,12 @@ export const dashboardView = {
                         </label>
                         <div class="user-search">
                             <label>Username
-                                <input type="text" id="tenant-username" name="tenant-username" required>
+                                <input type="text" id="issue-tenant-username" name="issue-tenant-username" required>
                             </label>
                             <div id="users-results"></div>
                         </div>
                         <label>Tenant Email
-                            <input type="text" id="tenant-email" name="tenant-email" required>
+                            <input type="text" id="issue-tenant-email" name="issue-tenant-email" required>
                         </label>
 
                     <div class="review-buttons">
@@ -200,8 +200,8 @@ export const dashboardView = {
 
         const deviceResults = document.getElementById('asset-results')
         deviceResults.style.display = 'none'
-        document.getElementById('issue-asset-number').addEventListener('input', (event) => searchResults(event, deviceResults, `/it/api/query/devices`, (device)=> `$${device.asset_number} - ${device.manufacturer} ${device.model}`))
-
+        document.getElementById('issue-asset-number').addEventListener('input',
+            (event) => searchResults(event, deviceResults, `/it/api/query/devices`, (device)=> `${device.asset_number} - ${device.manufacturer} ${device.model}`))
         deviceResults.addEventListener('click', (event) => {
             const item = event.target.closest('.device-item')
             const assetNumber = document.getElementById('issue-asset-number')
@@ -211,21 +211,54 @@ export const dashboardView = {
             assetNumber.value = item.dataset.assetNumber
             modelNumber.value = `${item.dataset.manufacturer} ${item.dataset.model}`
             serialNumber.value = item.dataset.serialNumber
+
+            deviceResults.dataset.deviceId = item.dataset.id
             deviceResults.style.display = 'none'
         })
 
         const userResults = document.getElementById('users-results')
         userResults.style.display = 'none'
-        document.getElementById('tenant-username').addEventListener('input', (event) => searchResults(event, userResults, `/it/api/query/users`, (user)=> `${user.display_name}`))
+        document.getElementById('issue-tenant-username').addEventListener('input',
+            (event) => searchResults(event, userResults, `/it/api/query/users`, (user)=> `${user.display_name}`))
   
         userResults.addEventListener('click', (event)=>{
             const item = event.target.closest('.device-item')
-            const displayName = document.getElementById('tenant-username')
-            const email = document.getElementById('tenant-email')
+            const displayName = document.getElementById('issue-tenant-username')
+            const email = document.getElementById('issue-tenant-email')
 
             displayName.value = item.dataset.displayName
             email.value = item.dataset.email
+
+            userResults.dataset.userId = item.dataset.id
             userResults.style.display = 'none'
+        })
+
+        // This if for the issue
+        document.getElementById('confirm-issue').addEventListener('click', async () => {
+            const assetNumber = document.getElementById('issue-asset-number').value
+            const tenantUsername = document.getElementById('issue-tenant-username').value
+            const tenantEmail = document.getElementById('issue-tenant-email').value
+            if (!assetNumber || !tenantUsername)
+                alert('Critical fields are missing. Please fill them in!')
+            const userId = userResults.dataset.userId
+            const deviceId = deviceResults.dataset.deviceId
+            const requestId = reviewModel.dataset.requestid
+            const response = await fetch(`/it/api/assign`, {
+                headers: {"Content-Type": "application/json"},
+                method: "POST",
+                body: JSON.stringify({
+                    "request_id": Number(requestId),
+                    "device_id": Number(deviceId),
+                    "tenant_id": userId,
+                    "assigned_to": tenantUsername,
+                    "assignee_email": tenantEmail
+                })
+            })
+            if(!response.ok){
+                alert("Could not assign device!")
+            } else {
+                window.location.reload()
+            }
         })
     }
 }
@@ -350,6 +383,8 @@ async function renderIssuePage(requestid) {
     const request = await response.json();
     const name = document.getElementById('issue-name')
     name.value = `${request.first_name} ${request.surname}`
+
+
 }
 
 // This is for the search bars

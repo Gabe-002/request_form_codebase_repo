@@ -5,6 +5,8 @@ from sqlalchemy.sql import func
 from pydantic import BaseModel
 from typing import List, Optional
 import inspect
+from uuid import UUID as universal_unique_id
+from datetime import datetime
 from fastapi import Form
 
 class Devices(Base):
@@ -28,7 +30,7 @@ class TenantUsers(Base):
     email = Column(Text, nullable=False)
     last_synched = Column(DateTime(timezone=True), nullable=False)
 
-class Assignment(Base):
+class Assignments(Base):
     __tablename__ = 'assignments'
 
     id = Column(Integer, primary_key=True, nullable=False)
@@ -38,8 +40,8 @@ class Assignment(Base):
     assigned_at = Column(DateTime(timezone=True), server_default=func.now())
     deallocated_at = Column(DateTime(timezone=True))
     assignee_email = Column(Text)
-    transferred_from = Column(Text)
-    sharepoint_item_id = Column(Integer)
+    transferred_from = Column(Text, nullable=True)
+    sharepoint_item_id = Column(Integer, nullable=True)
     tenant_id = Column(UUID(as_uuid=True))
 
 # We'll create a decorator that acts constructor like
@@ -74,3 +76,12 @@ class AddDevice(BaseModel):
     @classmethod
     def from_data(cls, **data):
         return cls(**data)
+
+class AddAssignment(BaseModel):
+    request_id: int
+    device_id: int
+    tenant_id: universal_unique_id
+    assigned_to: str
+    assignee_email: str
+    deallocated_at: Optional[datetime] = None
+    transferred_from: Optional[str] = None
