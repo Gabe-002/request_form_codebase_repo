@@ -1,13 +1,12 @@
 body {
     min-height: 100vh;
+    background-color: var(--base-black);
     margin: 0;
     display: grid;
     place-content: center;
     font-size: 18px;
     font-family: "Segoe UI", "Segoe UI Web", "Helvetica Neue", Arial, sans-serif;
     box-sizing: border-box;
-    outline: 10px solid #0B132B;
-    outline-offset: -20px;
 }
 h1 {
     margin: 8px;
@@ -16,13 +15,13 @@ h1 {
     display: flex;
     flex-direction: column;
     border-radius: 6px;
-    border-left: 5px solid yellow;
-    border-top: 5px solid yellow;
+    border-left: 5px solid var(--base-yellow);
+    border-top: 5px solid var(--base-yellow);
     padding: 15px;
     width: 50vw;
 
-    background-color: white;
-    box-shadow: 3px 3px 5px 3px rgb(176, 176, 176);
+    background-color: var(--base-yellow);
+    /* box-shadow: 3px 3px 5px 3px rgb(176, 176, 176); */
 }
 .format-input {
     margin-top: 10px;
@@ -40,6 +39,10 @@ h1 {
 }
 .input-fields input {
     font: inherit;
+    background-color: var(--base-offwhite);
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
 }
 
 #incorrect-credentials p{
@@ -53,8 +56,8 @@ button {
     height: 35px;
     font: inherit;
     font-weight: 500;
-    background-color: #0B132B;
-    color: rgb(255, 255, 0);
+    background-color: var(--base-black);
+    color: white;
     border:none;
     border-radius: 6px;
     margin-bottom: 10px;

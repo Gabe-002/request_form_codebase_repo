@@ -51,22 +51,23 @@ def submit_form(request: Request,
     person_id = append_person(db, person_info)
     request_id, project_manager_id = append_request(db, request_form=request_info, person_id=person_id)
     project_manager = get_user_by_id(db, project_manager_id)
-    fields = {
-        "Title": f"Pending request for {project_manager[0].get("user_first_name")}",
-        "Description": f"{project_manager[0].get("user_first_name")} {project_manager[0].get("user_surname")}",
-        "ResponsibleManagerLookupId": str(project_manager[0].get("sharepoint_id", 13)),
-        "RequestLink": {
-            "Url": f"http://192.168.64.200:80/requests/pending/{request_id}",
-            "Description": f"{person_info.first_name.capitalize()} {person_info.surname.capitalize()}",
-        },
-        "SubjectofRequest0": f"{person_info.first_name.capitalize()} {person_info.surname.capitalize()}"
-    }
-    body = {"fields": fields}
-    response = call_graph_api(INSERT_URL, "POST", body)
-    if (response.ok):
-        append_sharepoint_info(db, request_id, response.json()['id'], "success")
-    else:
-        append_sharepoint_info(db, request_id, None, "failure")
+
+    # fields = {
+    #     "Title": f"Pending request for {project_manager[0].get("user_first_name")}",
+    #     "Description": f"{project_manager[0].get("user_first_name")} {project_manager[0].get("user_surname")}",
+    #     "ResponsibleManagerLookupId": str(project_manager[0].get("sharepoint_id", 13)),
+    #     "RequestLink": {
+    #         "Url": f"http://192.168.64.200:80/requests/pending/{request_id}",
+    #         "Description": f"{person_info.first_name.capitalize()} {person_info.surname.capitalize()}",
+    #     },
+    #     "SubjectofRequest0": f"{person_info.first_name.capitalize()} {person_info.surname.capitalize()}"
+    # }
+    # body = {"fields": fields}
+    # response = call_graph_api(INSERT_URL, "POST", body)
+    # if (response.ok):
+    #     append_sharepoint_info(db, request_id, response.json()['id'], "success")
+    # else:
+    #     append_sharepoint_info(db, request_id, None, "failure")
     
     return RedirectResponse(url="/requests/", status_code=status.HTTP_303_SEE_OTHER)
 

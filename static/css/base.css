@@ -1,0 +1,15 @@
+:root {
+    --base-yellow: #FFC83E;
+    --base-black: #1B1A19;
+    --base-offwhite: #FFF7D6;
+}
+.left-header-side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 25px;
+}
+.responsive-img {
+    width: auto;
+    height: 60px;
+}

@@ -30,7 +30,7 @@ class People(Base):
     person_status = Column(Text, server_default='pending_request')
 
 class Requests(Base):
-    __tablename__ = 'requests_copy'
+    __tablename__ = 'requests'
 
     id = Column(Integer, primary_key=True, nullable=False)
     person_id = Column(Integer, nullable=False)

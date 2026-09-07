@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Holder</title>
+        <link rel="stylesheet" href="/static/css/base.css">
         <link rel="stylesheet" href="/static/css/pending_page.css">
         <script src="/static/js/back_to_portal.js" defer></script>
     </head>
@@ -10,7 +11,10 @@
     <body>
         <header>
             <div class="header-content">
-                <h1>Pending requests for {{user[0].get("user_first_name")}}</h1>
+                <div class="left-header-side">
+                    <img src="/static/images/getsitelogo.jpeg" alt="TEICHMANN PROJECTS" class="responsive-img">
+                    <h1>Pending requests for {{user[0].get("user_first_name")}}</h1>
+                </div>
                 <button id="return-to-portal-button" type="button">Back to Portal</button>
             </div>
         </header>
