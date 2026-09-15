@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, ARRAY
+from sqlalchemy import Column, Integer, Text, Numeric, ForeignKey, DateTime, ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from pydantic import BaseModel
@@ -8,19 +8,22 @@ import inspect
 from uuid import UUID as universal_unique_id
 from datetime import datetime
 from fastapi import Form
+from decimal import Decimal
 
 class Devices(Base):
     __tablename__ = 'devices'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    serial_number = Column(Text, nullable=False)
+    status = Column(Text, nullable=False)
+    asset_number = Column(Text, nullable=True)
+    asset_type = Column(Text, nullable=False)
     manufacturer = Column(Text, nullable=False)
     model = Column(Text, nullable=False)
-    asset_type = Column(Text, nullable=False)
-    status = Column(Text, nullable=False)
-    assigned_to = Column(Text, nullable=True)
-    requests_id = Column(Integer, nullable=True)
-    asset_number = Column(Text, nullable=True)
+    serial_number = Column(Text, nullable=False)
+    purchase_price = Column(Numeric, nullable=False)
+    order_number = Column(Text, nullable=True)
+    condition_notes = Column(Text, nullable=True)
+    
 
 class TenantUsers(Base):
     __tablename__ = 'tenant_users'
@@ -69,13 +72,10 @@ class AddDevice(BaseModel):
     model: str
     asset_type: str
     status: str
-    assigned_to: Optional[str] = None
-    requests_id: Optional[int] = None
+    purchase_price: Decimal
     asset_number: Optional[str] = None
-
-    @classmethod
-    def from_data(cls, **data):
-        return cls(**data)
+    order_number: Optional[str] = None
+    condition_notes: Optional[str] = None
 
 class AddAssignment(BaseModel):
     request_id: int

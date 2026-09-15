@@ -20,16 +20,16 @@ export const dashboardView = {
                     </div>
                     <form id="new-device-form" method="POST" action="/it/api/devices">
                         <label>Asset Number
-                            <input type="text" id="asset_number" name="asset_number" required>
+                            <input type="text" id="asset_number" name="asset_number" required placeholder="Add asset number">
                         </label>
                         <label>Serial Number
-                            <input type="text" id="serial_number" name="serial_number" required>
+                            <input type="text" id="serial_number" name="serial_number" required placeholder="Add serial number">
                         </label>
                         <label>Manufacturer
-                            <input type="text" id="manufacturer" name="manufacturer" required>
+                            <input type="text" id="manufacturer" name="manufacturer" required placeholder="Add manufacturer">
                         </label>
                         <label>Model
-                            <input type="text" id="model" name="model" required>
+                            <input type="text" id="model" name="model" required placeholder="Add model">
                         </label>
                         <label>Asset Type
                             <select name="asset_type">
@@ -74,7 +74,7 @@ export const dashboardView = {
                     <h4>Device Info</h4>
                     <div class="asset-search">
                         <label>Asset Number
-                            <input type="text" id="issue-asset-number" name="asset_number" required>
+                            <input type="text" id="issue-asset-number" name="asset_number" required">
                             <div id="asset-results"></div>
                         </label>
                     </div>

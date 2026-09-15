@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700;800&family=Public+Sans:wght@400;600;700;800&display=swap');
 :root {
     --base-color: #F9F9F8;
     --base-varient: #FFFFFF;
     --text-color: rgb(46, 46, 46);
     --text-secondary: rgb(98, 98, 98);
     --accent: #0071ff;
-    --border-color: #9c9c9b;
+    --border-color: #e2e4e7;
 
     --logo-background: #212121;
     --logo-color-one: yellow;
@@ -36,7 +37,7 @@ h3 {
     margin: 5px;
 }
 body {
-    font-family: "Segoe UI", "Segoe UI Web", "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Barlow Semi Condensed', sans-serif;
     color: var(--text-color);
     background-color: var(--base-color);
     margin: 20px;
@@ -242,9 +243,9 @@ header h2, p{
     font: inherit;
     font-size: 16px;
     color: var(--text-color);
-    background-color: var(--base-color);
+    background-color: var(--base-varient);
     border: 1px solid var(--border-color);
-    border-radius: 1px;
+    border-radius: 8px;
     padding: 8px;
 }
 .form-buttons {
@@ -287,7 +288,6 @@ header h2, p{
     justify-content: space-evenly;
 }
 
-/* This is for the asset search bar */
 .asset-search, .user-search {
     position: relative;
 }
@@ -319,3 +319,5 @@ header h2, p{
 .device-item:hover {
     background-color: var(--hover);
 }
+
+
