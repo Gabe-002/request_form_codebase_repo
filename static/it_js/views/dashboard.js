@@ -31,6 +31,12 @@ export const dashboardView = {
                         <label>Model
                             <input type="text" id="model" name="model" required placeholder="Add model">
                         </label>
+                        <label>Purchase Price
+                            <input type="value" id="purchase_price" name="purchase_price" placeholder="R...">
+                        </label>
+                        <label>Order Number
+                            <input type="text" id="order_number" name="order_number" placeholder="Add order number">
+                        </label>
                         <label>Asset Type
                             <select name="asset_type">
                                 <option value="Laptop">Laptop</option>
@@ -44,6 +50,10 @@ export const dashboardView = {
                                 <option value="assigned">Assigned</option>
                             </select>
                         </label>
+                        <label>Condition Notes
+                            <textarea id="condition_notes" name="condition_notes" placeholder="Describe the condition of the asset"></textarea>
+                        </label>
+
                         <div class="form-buttons">
                             <button id="submit-device" type="submit">Add Device</button>
                             <button id="cancel-device" type="button">Cancel</button>
