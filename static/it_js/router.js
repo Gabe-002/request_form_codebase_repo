@@ -17,7 +17,7 @@ function matchRoute(path) {
 
 // navigate is responsible for changing the url
 export function navigate(path) {
-    history.pushState({}, "", path);
+    // history.pushState({}, "", path);
     render(path);
 }
 
