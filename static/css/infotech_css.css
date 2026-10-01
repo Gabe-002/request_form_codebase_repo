@@ -328,3 +328,21 @@ textarea {
 }
 
 
+/* ====================================== */
+/* This if for the devices section */
+/* ====================================== */
+.search-options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.search-options input {
+    flex: 4;
+}
+
+.search-options button {
+    flex: 1;
+}
