@@ -13,24 +13,24 @@ export const devicesView = {
             <div>
                 <div class="search-options" id="search-options">
                     <input id="device-search">
-                    <button id="all-devices" class="selected">All</button>
-                    <button id="allocated-devices">Allocated</button>
-                    <button id="free-devices">Free</button>
+                    <button id="all-devices" class="selected" data-status="all">All</button>
+                    <button id="allocated-devices" data-status="allocated">Allocated</button>
+                    <button id="free-devices" data-status="free">Free</button>
                 </div>
             </div>
-            <div class="table-container">
+            <div class="table-container" id="table-container">
                 <div class="table-row table-header">
                     <div>Device</div>
-                    <div>Assignee</div>
+                    <div>Asset Type</div>
                     <div>Site</div>
                     <div>Status</div>
                 </div>
 
-                <template id="">
+                <template id="row-template">
                     <div class="table-row">
                         <div class="asset_number"></div>
-                        <div class="assignee"></div>
-                        <div class="site"></div>
+                        <div class="assignee">-</div>
+                        <div class="site">Storage</div>
                         <div class="status"></div>
                     </div>
                 </template>
@@ -45,9 +45,7 @@ export const devicesView = {
         }
         const devices = await deviceResponse.json()
         console.log(devices)
-        if(devices['site']) {
-            console.log("This shit works somehow")
-        }
+        loadDevices(document.getElementById('row-template'), devices)
     }
 }
 
@@ -63,6 +61,28 @@ function monitorButtons(buttons) {
 }
 
 function loadDevices(template, devices) {
-    const item = template.content.cloneNode(true)
-    
+    const rowContainer = document.getElementById('table-container')
+    devices.forEach(device => {
+        const item = template.content.cloneNode(true)
+        item.querySelector('.asset_number').textContent = device.asset_number
+        item.querySelector('.status').textContent = device.status
+        if (device.asset_type) {
+            item.querySelector('.assignee').textContent = device.asset_type
+        }
+        if (device.site) {
+            item.querySelector('.site').textContent = device.site
+        }
+
+        if (device.status === "available") {
+            item.querySelector('.status').classList.add('free')
+        } else if (device.status === "assigned") {
+            item.querySelector('.status').classList.add('allocated')
+        }
+        rowContainer.appendChild(item)
+    })
 }
+
+// <div class="asset_number"></div>
+// <div class="assignee">-</div>
+// <div class="site">Storage</div>
+// {/* <div class="status"></div> */}

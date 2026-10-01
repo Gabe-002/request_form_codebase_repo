@@ -16,6 +16,11 @@
 
     --shadow: rgb(126, 126, 126);
     --hover: rgba(110, 173, 255, 0.721);
+
+    --free: rgb(38, 255, 0);
+    --free-text: rgb(0, 134, 0);
+    --allocated: rgb(255, 20, 20);
+    --allocated-text: rgb(107, 0, 0);
 }
 .darkmode {
     --base-color: #212121;
@@ -33,6 +38,11 @@
     --logo-color-one: yellow;
     --logo-color-two: white;
     --hover: #464646;
+
+    --free: rgb(0, 134, 0);
+    --free-text: rgb(38, 255, 0);
+    --allocated: rgb(136, 0, 0);
+    --allocated-text: rgb(255, 0, 0);
 }
 h3 {
     margin: 5px;
@@ -366,20 +376,47 @@ textarea {
 .table-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     margin-bottom: 20px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 10px;
+    background: var(--base-varient);
+}
+.table-header {
+    font-weight: bold;
 }
 .table-row.align-center {
 	align-items: center;
 }
 .table-row:first-child {
-    border-top: none;
+    border-top: none; 
+    padding-block: none; 
+    padding-inline: 10px;
 }
 .table-row {
     display: grid;
-    grid-auto-flow: column;
-    border-top: 1px solid var(--border-color);
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    border-top: 1px solid var(--border-color); 
+    padding: 10px;
+}
+
+.free {
+    display: inline-block;
+    width: fit-content;
+    border: none;
+    border-radius: 20px;
+    padding-inline: 10px;
+    color: var(--free-text);
+    background: var(--free);
+    align-items: center;
+}
+
+.allocated {
+    display: inline-block;
+    width: fit-content;
+    border: none;
+    border-radius: 20px;
+    padding-inline: 10px;
+    color: var(--allocated-text);
+    background: var(--allocated);
+    align-items: center;
 }
