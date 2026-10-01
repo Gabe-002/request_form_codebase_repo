@@ -80,16 +80,18 @@ def call_graph_api(url, method="GET", json_body=None):
 
     response = requests.request(url=url, method=method, headers=headers, json=json_body)
     if not response.ok:
-        print(response)
-        raise
+        print("Shit did not go as intended")
     return response
 
 i = 1
-if __name__ == "__main__":
-    INSERT_URL = f"https://graph.microsoft.com/v1.0/sites/{settings.SITE_ID}/lists/{settings.PENDING_REQUESTS_LIST_ID}/columns"
-    for things in call_graph_api(INSERT_URL).json().get('value'):
-        for key, value in things.items():
-            print(key, ": ", value)
-        print(i)
-        print()
-        i += 1
+if __name__ == "__main__": #?$select=id,displayName,mail,userPrincipalName&$top=999
+    response = call_graph_api("https://graph.microsoft.com/v1.0/users/delta?$select=id,displayName,mail,userPrincipalName")
+    response_list = response.json()
+    print(response_list)
+    # i = 0;
+    # for person in response_list:
+    #     if (person['mail']):
+    #         if ('@teichmanngrp.com' in person['mail']):
+    #             i += 1
+    #             print(person['displayName'], ": ", person['mail'])
+    # print(i)
