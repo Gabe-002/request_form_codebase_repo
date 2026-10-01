@@ -337,10 +337,11 @@ textarea {
     align-items: center;
     width: 100%;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .search-options input {
-    flex: 4;
+    flex: 10;
 }
 
 .search-options button {
