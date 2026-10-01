@@ -10,6 +10,14 @@ export const devicesView = {
                     <button id="add-device" type="button">+ Add Device</button>
                 </div>
             </div>
+            <div>
+                <div class="search-options">
+                    <input id="device-search">
+                    <button id="all-devices">All</button>
+                    <button id="allocated-devices">Allocated</button>
+                    <button id="free-devices">Free</button>
+                </div>
+            </div>
         `;
     }
 }
