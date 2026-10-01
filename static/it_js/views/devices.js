@@ -18,6 +18,14 @@ export const devicesView = {
                     <button id="free-devices">Free</button>
                 </div>
             </div>
+            <div class="table-container">
+                <div class="table-row table-header">
+                    <div>Device</div>
+                    <div>Assignee</div>
+                    <div>Site</div>
+                    <div>Status</div>
+                </div>
+            </div>
         `;
         const buttons = document.querySelectorAll('.search-options button')
         monitorButtons(buttons);

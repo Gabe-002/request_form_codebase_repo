@@ -362,3 +362,24 @@ textarea {
 .search-options button.selected {
     background: var(--accent);
 }
+
+.table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+}
+.table-row.align-center {
+	align-items: center;
+}
+.table-row:first-child {
+    border-top: none;
+}
+.table-row {
+    display: grid;
+    grid-auto-flow: column;
+    border-top: 1px solid var(--border-color);
+}
