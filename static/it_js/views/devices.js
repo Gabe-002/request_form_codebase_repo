@@ -25,10 +25,29 @@ export const devicesView = {
                     <div>Site</div>
                     <div>Status</div>
                 </div>
+
+                <template id="">
+                    <div class="table-row">
+                        <div class="asset_number"></div>
+                        <div class="assignee"></div>
+                        <div class="site"></div>
+                        <div class="status"></div>
+                    </div>
+                </template>
             </div>
         `;
         const buttons = document.querySelectorAll('.search-options button')
         monitorButtons(buttons);
+        const deviceResponse = await fetch(`/it/api/devices`)
+        if (!deviceResponse.ok){
+            alert("Could not load in the devices")
+            return
+        }
+        const devices = await deviceResponse.json()
+        console.log(devices)
+        if(devices['site']) {
+            console.log("This shit works somehow")
+        }
     }
 }
 
@@ -41,4 +60,9 @@ function monitorButtons(buttons) {
         buttons.forEach(btn => btn.classList.remove('selected'))
         event.target.classList.add('selected')
     })
+}
+
+function loadDevices(template, devices) {
+    const item = template.content.cloneNode(true)
+    
 }
