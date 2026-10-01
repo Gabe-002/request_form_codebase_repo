@@ -13,7 +13,7 @@ export const devicesView = {
             <div>
                 <div class="search-options">
                     <input id="device-search">
-                    <button id="all-devices">All</button>
+                    <button id="all-devices" class="selected">All</button>
                     <button id="allocated-devices">Allocated</button>
                     <button id="free-devices">Free</button>
                 </div>
@@ -21,3 +21,4 @@ export const devicesView = {
         `;
     }
 }
+

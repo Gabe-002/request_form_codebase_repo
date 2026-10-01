@@ -338,12 +338,18 @@ textarea {
     width: 100%;
     justify-content: space-between;
     gap: 10px;
+    margin-bottom: 20px;
 }
-
 .search-options input {
     flex: 10;
 }
-
 .search-options button {
     flex: 1;
+}
+
+.search-options input,
+.search-options button {
+    font: inherit;
+    height: 30px;
+    box-sizing: border-box;
 }
