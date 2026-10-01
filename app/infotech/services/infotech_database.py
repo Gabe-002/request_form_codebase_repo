@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, insert, update, and_, or_
 from app.models import Requests, People
-from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments,AddAssignment
+from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment
 from uuid import UUID
 from datetime import datetime
 

@@ -11,7 +11,7 @@ export const devicesView = {
                 </div>
             </div>
             <div>
-                <div class="search-options">
+                <div class="search-options" id="search-options">
                     <input id="device-search">
                     <button id="all-devices" class="selected">All</button>
                     <button id="allocated-devices">Allocated</button>
@@ -19,6 +19,18 @@ export const devicesView = {
                 </div>
             </div>
         `;
+        const buttons = document.querySelectorAll('.search-options button')
+        monitorButtons(buttons);
     }
 }
 
+
+
+function monitorButtons(buttons) {
+    const searchOptions = document.getElementById("search-options")
+    searchOptions.addEventListener('click', (event) => {
+        if (!event.target.matches('button')) return
+        buttons.forEach(btn => btn.classList.remove('selected'))
+        event.target.classList.add('selected')
+    })
+}

@@ -23,6 +23,7 @@
     --text-color: white;
     --text-secondary: rgb(195, 195, 195);
     --border-color: #9c9c9b;
+    --accent: #0071ff;
 
     --pending-color: orange;
     --pending-background: rgb(115, 75, 0);
@@ -345,6 +346,10 @@ textarea {
 }
 .search-options button {
     flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--base-varient);
+    color: var(--text-color)
 }
 
 .search-options input,
@@ -352,4 +357,8 @@ textarea {
     font: inherit;
     height: 30px;
     box-sizing: border-box;
+}
+
+.search-options button.selected {
+    background: var(--accent);
 }
