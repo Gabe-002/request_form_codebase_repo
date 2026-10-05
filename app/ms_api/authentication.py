@@ -12,7 +12,7 @@ SP_CERT_THUMBPRINT = settings.SP_CERT_THUMBPRINT
 
 CLIENT_SECRET = settings.CLIENT_SECRET
 
-sp_hostname = "t3projectssa.sharepoint.com"
+sp_hostname = "teichmanngrp.sharepoint.com"
 
 # Certificate app instance, for SharePoint REST only
 with open(SP_KEY_PATH, "r") as f:
@@ -85,13 +85,19 @@ def call_graph_api(url, method="GET", json_body=None):
 
 i = 1
 if __name__ == "__main__": #?$select=id,displayName,mail,userPrincipalName&$top=999
-    response = call_graph_api("https://graph.microsoft.com/v1.0/users/delta?$select=id,displayName,mail,userPrincipalName")
-    response_list = response.json()
-    print(response_list)
-    # i = 0;
-    # for person in response_list:
-    #     if (person['mail']):
-    #         if ('@teichmanngrp.com' in person['mail']):
-    #             i += 1
-    #             print(person['displayName'], ": ", person['mail'])
-    # print(i)
+    site_url = get_site_url()
+    print(site_url)
+
+    sharepoint_hostname = site_url.split('/')[2]
+    token = get_sp_rest_token(sharepoint_hostname)
+
+    r = requests.get(
+        f"{site_url}/_api/web?$select=Title,Url",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/json;odata=nometadata"
+        },
+    )
+    print(r.status_code, r.text)
+
+    print("User ID", ensure_user("gabriel.richard@teichmanngrp.com", site_url))
