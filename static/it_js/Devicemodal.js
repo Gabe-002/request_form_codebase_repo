@@ -54,6 +54,16 @@ export function deviceModalHTML() {
     `
 }
 
+export function assignDeviceModal() {
+    return `
+        <div id="assign-modal">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    `
+}
+
 // Call this AFTER the view's HTML (including deviceModalHTML()) is in the DOM.
 // onAdded runs after a device is saved successfully. Defaults to a full page reload,
 // which is what the dashboard did before.
