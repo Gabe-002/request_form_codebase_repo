@@ -1,3 +1,5 @@
+import { deviceModalHTML, initDeviceModal } from "../Devicemodal.js";
+
 export const dashboardView = {
     async mount(container) {
         container.innerHTML = `<p>Loading...</p>`;
@@ -13,54 +15,7 @@ export const dashboardView = {
                 </div>
             </div>
 
-            <div id="device-modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Add a new device</h3>
-                    </div>
-                    <form id="new-device-form" method="POST" action="/it/api/devices">
-                        <label>Asset Number
-                            <input type="text" id="asset_number" name="asset_number" required placeholder="Add asset number">
-                        </label>
-                        <label>Serial Number
-                            <input type="text" id="serial_number" name="serial_number" required placeholder="Add serial number">
-                        </label>
-                        <label>Manufacturer
-                            <input type="text" id="manufacturer" name="manufacturer" required placeholder="Add manufacturer">
-                        </label>
-                        <label>Model
-                            <input type="text" id="model" name="model" required placeholder="Add model">
-                        </label>
-                        <label>Purchase Price
-                            <input type="value" id="purchase_price" name="purchase_price" placeholder="R...">
-                        </label>
-                        <label>Order Number
-                            <input type="text" id="order_number" name="order_number" placeholder="Add order number">
-                        </label>
-                        <label>Asset Type
-                            <select name="asset_type">
-                                <option value="Laptop">Laptop</option>
-                                <option value="Monitor">Monitor</option>
-                                <option value="Phone">Phone</option>
-                            </select>
-                        </label>
-                        <label>Status
-                            <select name="status">
-                                <option value="available">Available</option>
-                                <option value="assigned">Assigned</option>
-                            </select>
-                        </label>
-                        <label>Condition Notes
-                            <textarea id="condition_notes" name="condition_notes" placeholder="Describe the condition of the asset"></textarea>
-                        </label>
-
-                        <div class="form-buttons">
-                            <button id="submit-device" type="submit">Add Device</button>
-                            <button id="cancel-device" type="button">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            ${deviceModalHTML()}
 
             <div id="review-modal">
                 <div class="review-content">

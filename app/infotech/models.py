@@ -23,6 +23,7 @@ class Devices(Base):
     purchase_price = Column(Numeric, nullable=False)
     order_number = Column(Text, nullable=True)
     condition_notes = Column(Text, nullable=True)
+    sharepoint_id = Column(Integer, nullable=True)
     
 
 class TenantUsers(Base):
@@ -76,6 +77,7 @@ class AddDevice(BaseModel):
     asset_number: Optional[str] = None
     order_number: Optional[str] = None
     condition_notes: Optional[str] = None
+    sharepoint_id: Optional[int] = None
 
 class AddAssignment(BaseModel):
     request_id: int

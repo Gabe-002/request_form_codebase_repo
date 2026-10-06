@@ -1,3 +1,5 @@
+import { deviceModalHTML, initDeviceModal } from "../Devicemodal.js";
+
 export const devicesView = {
     async mount(container) {
         container.innerHTML = `
@@ -10,6 +12,9 @@ export const devicesView = {
                     <button id="add-device" type="button">+ Add Device</button>
                 </div>
             </div>
+
+            ${deviceModalHTML()}
+
             <div>
                 <div class="search-options" id="search-options">
                     <input id="device-search">
@@ -36,20 +41,33 @@ export const devicesView = {
                 </template>
             </div>
         `;
+
         const buttons = document.querySelectorAll('.search-options button')
         monitorButtons(buttons);
-        const deviceResponse = await fetch(`/it/api/devices`)
-        if (!deviceResponse.ok){
-            alert("Could not load in the devices")
-            return
-        }
-        const devices = await deviceResponse.json()
-        console.log(devices)
-        loadDevices(document.getElementById('row-template'), devices)
+
+        // Wire up the modal first so it still works if loading the table fails.
+        // After a successful add we re-fetch the rows instead of reloading the page.
+        initDeviceModal({ onAdded: refreshDevices })
+
+        await refreshDevices()
     }
 }
 
+async function refreshDevices() {
+    const deviceResponse = await fetch(`/it/api/devices`)
+    if (!deviceResponse.ok) {
+        alert("Could not load in the devices")
+        return
+    }
+    const devices = await deviceResponse.json()
+    console.log(devices)
 
+    // Clear existing rows (keeps the header; the <template> content isn't matched by this query)
+    document.querySelectorAll('#table-container .table-row:not(.table-header)')
+        .forEach(row => row.remove())
+
+    loadDevices(document.getElementById('row-template'), devices)
+}
 
 function monitorButtons(buttons) {
     const searchOptions = document.getElementById("search-options")
@@ -81,8 +99,3 @@ function loadDevices(template, devices) {
         rowContainer.appendChild(item)
     })
 }
-
-// <div class="asset_number"></div>
-// <div class="assignee">-</div>
-// <div class="site">Storage</div>
-// {/* <div class="status"></div> */}

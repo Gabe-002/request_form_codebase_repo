@@ -32,4 +32,7 @@ class Settings(BaseSettings):
     PENDING_REQUESTS_LIST_ID: str
     DEVICE_LIST_TESTING_LIST_ID: str
 
+    LIST_URL: str
+    DEVICES_ID: str
+
 settings = Settings()
