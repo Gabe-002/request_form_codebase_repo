@@ -285,10 +285,10 @@ header h2, p {
 /* ====================================== */
 /* Modals                                 */
 /* ====================================== */
-#device-modal, #review-modal, #issue-modal {
+#device-modal, #review-modal, #issue-modal, #assign-modal {
     display: none;
 }
-#device-modal.open, #review-modal.open, #issue-modal.open {
+#device-modal.open, #review-modal.open, #issue-modal.open, #assign-modal.open {
     display: flex;
     position: fixed;
     inset: 0;

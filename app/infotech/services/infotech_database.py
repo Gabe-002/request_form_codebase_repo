@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, insert, update, and_, or_
 from app.models import Requests, People
-from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment
+from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment, CreateTenantUser
 from uuid import UUID
 from datetime import datetime
 
@@ -48,6 +48,14 @@ def add_device(db: Session, device: AddDevice):
     except IntegrityError:
         db.rollback()
 
+def add_tenant_user(
+    db: Session,
+    payload: CreateTenantUser      
+    ):
+    statement = insert(TenantUsers).values(**payload.model_dump())
+    db.execute(statement=statement)
+    db.commit()    
+
 def get_device_by_query(db: Session, query: str):
     statement = select(
         Devices.id,
@@ -69,61 +77,6 @@ def get_device_by_query(db: Session, query: str):
     ]
     return results
 
-def get_tenant_user_by_query(db: Session, query: str):
-    statement = select(
-        TenantUsers.id,
-        TenantUsers.email,
-        TenantUsers.display_name).where(
-        or_(
-            TenantUsers.email.ilike(f"%{query}%"),
-            TenantUsers.display_name.ilike(f"%{query}%")
-        )
-    )
-    results =[
-        row
-        for row in db.execute(statement=statement).mappings().all()
-    ]
-    return results
-
-def create_assignment(
-    db:Session,
-    request_id: int,
-    device_id: int,
-    tenant_id: UUID,
-    assigned_to: str,
-    assignee_email: str,
-    deallocated_at: datetime,
-    transferred_from: str
-    ):
-    try:
-        person_id = db.execute(statement=
-            update(Requests)
-            .where(Requests.id == request_id)
-            .values(it_review='allocated')
-            .returning(Requests.person_id)).scalar_one_or_none()
-        
-        db.execute(statement=
-            update(People)
-            .where(People.id == person_id)
-            .values(person_status='no_request'))
-
-        db.execute(statement=
-            insert(Assignments)
-            .values(
-                request_id=request_id, 
-                device_id=device_id, 
-                tenant_id=tenant_id, 
-                assigned_to=assigned_to,
-                assignee_email=assignee_email))
-        db.execute(statement=
-            update(Devices)
-            .where(Devices.id == device_id)
-            .values(status='assigned'))
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise e
-
     
 
 
@@ -131,7 +84,3 @@ if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    requests = get_tenant_user_by_query(db, "proje")
-    for device in requests:
-        print(device)
-        print()

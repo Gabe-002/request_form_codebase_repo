@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, Text, Numeric, ForeignKey, DateTime, ARRAY
+from sqlalchemy import Column, Integer, Text, Numeric, ForeignKey, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from pydantic import BaseModel
@@ -29,10 +29,31 @@ class Devices(Base):
 class TenantUsers(Base):
     __tablename__ = 'tenant_users'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    graph_id = Column(UUID(as_uuid=True), nullable=False, unique=True)
     display_name = Column(Text, nullable=False)
     email = Column(Text, nullable=False)
-    last_synched = Column(DateTime(timezone=True), nullable=False)
+    account_enabled = Column(Boolean, nullable=True)
+
+class TenantSyncState(Base):
+    __tablename__ = 'tenant_sync_state'
+
+    id = Column(Integer, primary_key=True)
+    delta_link = Column(Text, nullable=True)
+    last_sync_at = Column(DateTime(timezone=True), server_default=func.now())
+    sync_status = Column(Text, nullable=False)
+
+
+class CreateTenantUser(BaseModel):
+    graph_id: universal_unique_id
+    display_name: str
+    email: str
+    account_enabled: Optional[bool] = None
+
+class SetSyncState(Base):
+    display_name: str
+    sync_status: Optional[str] = None
+    last_sync_at: Optional[datetime] = None
 
 class Assignments(Base):
     __tablename__ = 'assignments'
