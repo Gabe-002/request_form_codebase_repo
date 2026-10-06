@@ -85,19 +85,23 @@ def call_graph_api(url, method="GET", json_body=None):
 
 i = 1
 if __name__ == "__main__": #?$select=id,displayName,mail,userPrincipalName&$top=999
-    site_url = get_site_url()
-    print(site_url)
+    # site_url = get_site_url()
+    # print(site_url)
 
-    sharepoint_hostname = site_url.split('/')[2]
-    token = get_sp_rest_token(sharepoint_hostname)
+    # sharepoint_hostname = site_url.split('/')[2]
+    # token = get_sp_rest_token(sharepoint_hostname)
 
-    r = requests.get(
-        f"{site_url}/_api/web?$select=Title,Url",
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/json;odata=nometadata"
-        },
-    )
-    print(r.status_code, r.text)
+    # r = requests.get(
+    #     f"{site_url}/_api/web?$select=Title,Url",
+    #     headers={
+    #         "Authorization": f"Bearer {token}",
+    #         "Accept": "application/json;odata=nometadata"
+    #     },
+    # )
+    # print(r.status_code, r.text)
 
-    print("User ID", ensure_user("gabriel.richard@teichmanngrp.com", site_url))
+    # print("User ID", ensure_user("gabriel.richard@teichmanngrp.com", site_url))
+
+    
+
+    pass
