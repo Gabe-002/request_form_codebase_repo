@@ -87,6 +87,16 @@ def get_delta_link(db: Session):
     delta_link = db.execute(statement=statement).scalar_one_or_none()
     return delta_link
 
+def get_tenant_user(db: Session, graph_id: str):
+    statement = select(TenantUsers).where(TenantUsers.graph_id == graph_id)
+    user = db.execute(statement=statement).scalar_one_or_none()
+    if user is None: 
+        return None
+    return {
+        column.name: getattr(user, column.name)
+        for column in TenantUsers.__table__.columns
+    }
+
 from app.ms_api.authentication import call_graph_api
 
 def sync_tenant_users(db: Session):
@@ -102,17 +112,35 @@ def sync_tenant_users(db: Session):
     response = call_graph_api(delta_link)
 
     changes = response.json().get('value', '')
-    for change in changes:
-        print(change)
+    domain_changes = [
+        change for change in changes 
+        if "teichmanngrp" in (change.get('mail') or '')
+    ]
+    if not domain_changes:
+        return None
+
+    user_changes = []
+    for change in domain_changes:
+        user = {}
+        for key, value in columnMapping.items():
+            user[value] = change.get(key)
+        user_changes.append(user)
+
+    for user in user_changes:
+        if user.get('account_enabled') is False:
+            print("That shit is false")
+            continue
+        existing_user = get_tenant_user(db, user.get('graph_id'))
+        if existing_user:
+            print("The user already exists within the database")
+        else: 
+            print("We keep adding the users")
+            add_tenant_user(db, CreateTenantUser(**user))
 
 
-
-    pass
-
-    
 
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    print(sync_tenant_users(db))
+    sync_tenant_users(db)
