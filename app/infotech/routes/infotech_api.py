@@ -84,6 +84,7 @@ def query_users(query: str, db: Session = Depends(get_db)):
     # return users
     pass
 
+
 # @router.post("/assign")
 # def assign_device(
 #     payload: AddAssignment,

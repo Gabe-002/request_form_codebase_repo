@@ -84,39 +84,45 @@ def call_graph_api(url, method="GET", json_body=None):
     return response
 
 
-
+from app.database import get_db
+from app.infotech.services.infotech_database import get_delta_link
 
 if __name__ == "__main__":
     #Here are some usefull ursls
-    deltaLink = None
-    url = "https://graph.microsoft.com/v1.0/users/delta?$select=id,displayName,mail,userPrincipalName,accountEnabled"
-    members = []
-    while(url):
-        response = call_graph_api(url=url)
-        results = response.json().get('value')
-        members.extend(results)
-        url = response.json().get('@odata.nextLink')
-    deltaLink = response.json().get('@odata.deltaLink')
-    teichmanngrp_members = [
-        member 
-        for member in members 
-        if 'teichmanngrp' in (member.get('mail', '') or '')
-    ]
+    # deltaLink = None
+    # url = "https://graph.microsoft.com/v1.0/users/delta?$select=id,displayName,mail,userPrincipalName,accountEnabled"
+    # members = []
+    # while(url):
+    #     response = call_graph_api(url=url)
+    #     results = response.json().get('value')
+    #     members.extend(results)
+    #     url = response.json().get('@odata.nextLink')
+    # deltaLink = response.json().get('@odata.deltaLink')
+    # teichmanngrp_members = [
+    #     member 
+    #     for member in members 
+    #     if 'teichmanngrp' in (member.get('mail', '') or '')
+    # ]
 
-    keyMapping = {
-        "displayName": "display_name",
-        "mail": "email",
-        "id": "graph_id",
-        "accountEnabled": "account_enabled"
-    }
-    formatted_teichmanngrp_members = []
-    for member_info in teichmanngrp_members:
-        info = {}
-        for key, value in keyMapping.items():
-            info[value] = member_info[key]
-        formatted_teichmanngrp_members.append(info)
+    # keyMapping = {
+    #     "displayName": "display_name",
+    #     "mail": "email",
+    #     "id": "graph_id",
+    #     "accountEnabled": "account_enabled"
+    # }
+    # formatted_teichmanngrp_members = []
+    # for member_info in teichmanngrp_members:
+    #     info = {}
+    #     for key, value in keyMapping.items():
+    #         info[value] = member_info[key]
+    #     formatted_teichmanngrp_members.append(info)
 
-    
+    db = get_db()
+    db = next(db)
+
+    delta_link = get_delta_link(db)
+    response = call_graph_api(delta_link)
+    print(response.json())
 
 
 

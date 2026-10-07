@@ -7,6 +7,7 @@ from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, Ad
 from uuid import UUID
 from datetime import datetime
 
+
 def format_output(model, request):
     return {
         column.name: getattr(request, column.name)
@@ -85,10 +86,33 @@ def get_delta_link(db: Session):
     )
     delta_link = db.execute(statement=statement).scalar_one_or_none()
     return delta_link
+
+from app.ms_api.authentication import call_graph_api
+
+def sync_tenant_users(db: Session):
+
+    columnMapping = {
+        "displayName": "display_name",
+        "mail": "email",
+        "accountEnabled": "account_enabled",
+        "id": "graph_id"
+    }
+
+    delta_link = get_delta_link(db)
+    response = call_graph_api(delta_link)
+
+    changes = response.json().get('value', '')
+    for change in changes:
+        print(change)
+
+
+
+    pass
+
     
 
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    print(get_delta_link(db))
+    print(sync_tenant_users(db))
