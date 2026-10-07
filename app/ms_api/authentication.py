@@ -88,49 +88,48 @@ def call_graph_api(url, method="GET", json_body=None):
 
 if __name__ == "__main__":
 
-    from app.database import get_db
-    from app.infotech.services.infotech_database import get_delta_link
-    from app.infotech.services.infotech_database import add_tenant_user
-    from app.infotech.models import CreateTenantUser
+    # from app.database import get_db
+    # from app.infotech.services.infotech_database import get_delta_link
+    # from app.infotech.services.infotech_database import add_tenant_user
+    # from app.infotech.models import CreateTenantUser
 
-    #Here are some usefull ursls
-    deltaLink = None
-    url = "https://graph.microsoft.com/v1.0/users/delta?$select=id,displayName,mail,userPrincipalName,accountEnabled"
-    members = []
-    while(url):
-        response = call_graph_api(url=url)
-        results = response.json().get('value')
-        members.extend(results)
-        url = response.json().get('@odata.nextLink')
-    deltaLink = response.json().get('@odata.deltaLink')
-    teichmanngrp_members = [
-        member 
-        for member in members 
-        if 'teichmanngrp' in (member.get('mail', '') or member.get('userPrincipalName') or '')
-    ]
+    # #Here are some usefull ursls
+    # deltaLink = None
+    # url = "https://graph.microsoft.com/v1.0/users/delta?$select=id,displayName,mail,userPrincipalName,accountEnabled"
+    # members = []
+    # while(url):
+    #     response = call_graph_api(url=url)
+    #     results = response.json().get('value')
+    #     members.extend(results)
+    #     url = response.json().get('@odata.nextLink')
+    # deltaLink = response.json().get('@odata.deltaLink')
+    # teichmanngrp_members = [
+    #     member 
+    #     for member in members 
+    #     if 'teichmanngrp' in (member.get('mail', '') or member.get('userPrincipalName') or '')
+    # ]
 
-    columnMapping = {
-        "displayName": "display_name",
-        "mail": "email",
-        "accountEnabled": "account_enabled",
-        "id": "graph_id",
-        "userPrincipalName": "upn"
-    }
-    formatted_teichmanngrp_members = []
-    for member_info in teichmanngrp_members:
-        info = {}
-        for key, value in columnMapping.items():
-            info[value] = member_info.get(key)
-        formatted_teichmanngrp_members.append(info)
+    # columnMapping = {
+    #     "displayName": "display_name",
+    #     "mail": "email",
+    #     "accountEnabled": "account_enabled",
+    #     "id": "graph_id",
+    #     "userPrincipalName": "upn"
+    # }
+    # formatted_teichmanngrp_members = []
+    # for member_info in teichmanngrp_members:
+    #     info = {}
+    #     for key, value in columnMapping.items():
+    #         info[value] = member_info.get(key)
+    #     formatted_teichmanngrp_members.append(info)
     
 
-    db = get_db()
-    db = next(db)
+    # db = get_db()
+    # db = next(db)
 
-    for member_info in formatted_teichmanngrp_members:
-        add_tenant_user(db, CreateTenantUser(**member_info))
+    # for member_info in formatted_teichmanngrp_members:
+    #     add_tenant_user(db, CreateTenantUser(**member_info))
 
-    print(deltaLink)
-    # delta_link = get_delta_link(db)
-    # response = call_graph_api(delta_link)
-    # print(response.json())
+    # print(deltaLink)
+
+    print(ensure_user('PrettyPrinces.Gabriel@teichmanngrp.com'))

@@ -171,8 +171,7 @@ def sync_tenant_users(db: Session):
     for change in domain_changes:
         user = {}
         for key, value in columnMapping.items():
-            if change.get(key):
-                user[value] = change.get(key)
+            user[value] = change.get(key)
         user_changes.append(user)
 
     for user in user_changes:
