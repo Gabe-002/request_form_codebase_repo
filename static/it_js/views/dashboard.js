@@ -121,31 +121,59 @@ export const dashboardView = {
         function lastSyncTime(lastSync) {
             const past = new Date(lastSync)
 
-            const diffInSeconds = Math.floor((Date.now()-past.getTime())/1000)
-            console.log(diffInSeconds)
+            const diffMs = (Date.now()-past.getTime())
+            const diffSecs = Math.floor(diffMs/1000)
+            const diffMins = Math.floor(diffSecs/60)
+            const diffHours = Math.floor(diffMins/60)
+            const diffDays = Math.floor(diffHours/24)
+            
+            if (diffDays >= 1) {
+                return `${diffDays} day${diffDays !== 1 ? 's' : ''}`
+            } else if (diffHours >= 1) {
+                return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`
+            } else if (diffMins >= 1) {
+                return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`
+            } else {
+                return `seconds ago`
+            }
         }
 
-        ///////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Anything pertaining to the tenant sync
-        ///////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        let currentLastSync = lastSync
+        const syncTimeElement = document.getElementById('last-synced-time')
+
+        function updateSyncTime() {
+            syncTimeElement.textContent = lastSyncTime(currentLastSync)
+        }
+        updateSyncTime()
+        const timerHandle = setInterval(updateSyncTime, 60000)
+
+
         const syncBtn = document.getElementById('sync-tenants')
         syncBtn.addEventListener('click', async () => {
             document.documentElement.classList.add('is-loading')
             syncBtn.disabled = true
 
             try {
-                await fetch(`/it/api/sync/tenant/users`, {
+                const syncResponse = await fetch(`/it/api/sync/tenant/users`, {
                     headers: {"Content-Type": "application/json"},
                     method: "POST",
                     body: JSON.stringify({})
                 })
+                if (!syncResponse.ok){
+                    alert("There was a problem while syncing the tenant table")
+                    return
+                }
+                currentLastSync = await syncResponse.json()
+                document.getElementById('last-synced-time').textContent = lastSyncTime(currentLastSync)
             } finally {
                 document.documentElement.classList.remove('is-loading')
                 syncBtn.disabled = false
             }
         })
-        lastSyncTime(lastSync)
-        document.getElementById('last-synced-time').textContent = lastSync
 
 
 
