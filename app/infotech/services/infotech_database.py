@@ -114,9 +114,10 @@ def get_delta_link(db: Session):
 
 def add_sync_state(db: Session, delta_link: str, sync_status: str):
     payload = {"delta_link": delta_link, "sync_status": sync_status}
-    statement = insert(TenantSyncState).values(**payload)
-    db.execute(statement=statement)
+    statement = insert(TenantSyncState).values(**payload).returning(TenantSyncState.last_sync_at)
+    last_sync_at = db.execute(statement=statement).scalar_one_or_none()
     db.commit()
+    return last_sync_at
 
 
 from app.ms_api.authentication import call_graph_api
@@ -139,8 +140,8 @@ def sync_tenant_users(db: Session):
     print(changes)
     if not changes:
         print("Nothing to update. Updating link")
-        add_sync_state(db, new_delta_link, 'update link')
-        return None
+        return add_sync_state(db, new_delta_link, 'update link')
+        
 
     for change in changes:
         graph_id = change.get('id')
