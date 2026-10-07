@@ -2,10 +2,18 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.encoders import jsonable_encoder
 from app.database import get_db
 from sqlalchemy.orm import Session
-from app.infotech.services.infotech_database import assignment_requests, get_devices, add_device, get_device_by_query, sync_tenant_users, get_last_sync, get_tenant_user_by_query
+from app.infotech.services.infotech_database import (
+    assignment_requests, 
+    get_devices, 
+    add_device, 
+    get_device_by_query, 
+    sync_tenant_users, 
+    get_last_sync, 
+    get_tenant_user_by_query, 
+    create_assignment)
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
-from app.infotech.models import Devices, AddDevice, AddAssignment
+from app.infotech.models import Devices, AddDevice, CreateAssignment
 from app.config import settings
 from uuid import UUID
 import requests
@@ -91,10 +99,11 @@ def api_sync_tenant_users(db: Session = Depends(get_db)):
 def api_get_last_sync(db: Session = Depends(get_db)):
     return get_last_sync(db)
 
-# @router.post("/assign")
-# def assign_device(
-#     payload: AddAssignment,
-#     db:Session = Depends(get_db),
-#     ):
-#     create_assignment(
-#         db=db, **payload.model_dump())
+@router.post("/assign")
+def assign_device(
+    payload: CreateAssignment,
+    db:Session = Depends(get_db),
+    ):
+    create_assignment(db, payload)
+    if payload.request_id:
+        print(payload.request_id)

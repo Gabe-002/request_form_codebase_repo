@@ -271,7 +271,6 @@ export const dashboardView = {
         document.getElementById('confirm-issue').addEventListener('click', async () => {
             const assetNumber = document.getElementById('issue-asset-number').value
             const tenantUsername = document.getElementById('issue-tenant-username').value
-            const tenantEmail = document.getElementById('issue-tenant-email').value
             if (!assetNumber || !tenantUsername)
                 alert('Critical fields are missing. Please fill them in!')
             const userId = userResults.dataset.userId
