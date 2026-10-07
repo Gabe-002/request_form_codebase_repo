@@ -119,6 +119,15 @@ def add_sync_state(db: Session, delta_link: str, sync_status: str):
     db.commit()
     return last_sync_at
 
+def get_last_sync(db: Session):
+    statement = (
+        select(TenantSyncState.last_sync_at)
+        .order_by(TenantSyncState.last_sync_at.desc())
+        .limit(1)
+    )
+    last_sync = db.execute(statement=statement).scalar_one_or_none()
+    return last_sync
+
 
 from app.ms_api.authentication import call_graph_api
 

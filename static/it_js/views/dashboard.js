@@ -12,7 +12,7 @@ export const dashboardView = {
                 <div class="header-actions">
                     <div class="sync-block">
                         <button id="sync-tenants" type="button" class="secondary-button">⟳ Sync Users</button>
-                        <small id="last-synced">Last synced: —</small>
+                        <small id="last-synced">Last synced: <span id="last-synced-time">-</span></small>
                     </div>
                     <span class="header-divider"></span>
                     <div class="quick-buttons">
@@ -84,9 +84,10 @@ export const dashboardView = {
             </div>
         `
 
-        const [response, deviceResponse] = await Promise.all([
+        const [response, deviceResponse, lastSyncResponse] = await Promise.all([
             fetch(`/it/api/requests`),
-            fetch(`/it/api/devices`)
+            fetch(`/it/api/devices`),
+            fetch(`/it/api/last/sync`)
         ]);
         if (!response.ok){
             container.innerHTML = `<p>Could not fetch the pending requests</p>`;
@@ -97,8 +98,36 @@ export const dashboardView = {
             return;
         }
 
+        const [awaiting_assignments, devices, lastSync] = await Promise.all([
+            response.json(),
+            deviceResponse.json(),
+            lastSyncResponse.json()
+        ])
 
-        // This is for syncing the tenant users
+        const numberPending = awaiting_assignments.length;
+        body += renderQuickView(devices, numberPending)
+        body += `<div class="activity-and-assignments">`
+        body += renderPendingAssignments(awaiting_assignments);
+        body += renderRecentActivity()
+        body += `</div>`
+        container.innerHTML = body;
+
+        const addDeviceBtn = document.getElementById('add-device')
+        const modal = document.getElementById('device-modal')
+        addDeviceBtn.addEventListener('click', () => {
+            modal.classList.toggle('open')
+        })
+
+        function lastSyncTime(lastSync) {
+            const past = new Date(lastSync)
+
+            const diffInSeconds = Math.floor((Date.now()-past.getTime())/1000)
+            console.log(diffInSeconds)
+        }
+
+        ///////////////////////////////////////////////////////
+        // Anything pertaining to the tenant sync
+        ///////////////////////////////////////////////////////
         const syncBtn = document.getElementById('sync-tenants')
         syncBtn.addEventListener('click', async () => {
             document.documentElement.classList.add('is-loading')
@@ -115,23 +144,11 @@ export const dashboardView = {
                 syncBtn.disabled = false
             }
         })
+        lastSyncTime(lastSync)
+        document.getElementById('last-synced-time').textContent = lastSync
 
 
-        const awaiting_assignments = await response.json();
-        const devices = await deviceResponse.json();
-        const numberPending = awaiting_assignments.length;
-        body += renderQuickView(devices, numberPending)
-        body += `<div class="activity-and-assignments">`
-        body += renderPendingAssignments(awaiting_assignments);
-        body += renderRecentActivity()
-        body += `</div>`
-        container.innerHTML = body;
 
-        const addDeviceBtn = document.getElementById('add-device')
-        const modal = document.getElementById('device-modal')
-        addDeviceBtn.addEventListener('click', () => {
-            modal.classList.toggle('open')
-        })
 
         const cancelDeviceBtn = document.getElementById('cancel-device');
         const deviceForm = document.getElementById('new-device-form');
