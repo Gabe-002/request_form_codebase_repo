@@ -83,6 +83,9 @@ def call_graph_api(url, method="GET", json_body=None):
         print("Shit did not go as intended")
     return response
 
+
+
+
 if __name__ == "__main__":
     #Here are some usefull ursls
     deltaLink = None
