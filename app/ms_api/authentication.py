@@ -132,4 +132,4 @@ if __name__ == "__main__":
 
     # print(deltaLink)
 
-    print(ensure_user('PrettyPrinces.Gabriel@teichmanngrp.com'))
+    pass
