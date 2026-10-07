@@ -155,8 +155,7 @@ def sync_tenant_users(db: Session):
     ]
 
     if not domain_changes:
-        add_sync_state(db, new_delta_link, 'update link')
-        return None
+        return add_sync_state(db, new_delta_link, 'update link')
 
     user_changes = []
     for change in domain_changes:
@@ -178,7 +177,7 @@ def sync_tenant_users(db: Session):
             print("The new user has been added")
             add_tenant_user(db, CreateTenantUser(**user))
 
-    add_sync_state(db, new_delta_link, 'success')
+    return add_sync_state(db, new_delta_link, 'success')
 
 if __name__ == '__main__':
     db = get_db()

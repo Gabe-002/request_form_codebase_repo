@@ -86,7 +86,7 @@ def query_users(query: str, db: Session = Depends(get_db)):
 
 @router.post("/sync/tenant/users")
 def api_sync_tenant_users(db: Session = Depends(get_db)):
-    sync_tenant_users(db)
+    return sync_tenant_users(db)
 
 # @router.post("/assign")
 # def assign_device(
