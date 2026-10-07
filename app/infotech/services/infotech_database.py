@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, insert, update, and_, or_
 from app.models import Requests, People
-from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment, CreateTenantUser
+from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment, CreateTenantUser, TenantSyncState
 from uuid import UUID
 from datetime import datetime
 
@@ -77,10 +77,18 @@ def get_device_by_query(db: Session, query: str):
     ]
     return results
 
+def get_delta_link(db: Session):
+    statement = (
+        select(TenantSyncState.delta_link)
+        .order_by(TenantSyncState.last_sync_at.desc())
+        .limit(1)
+    )
+    delta_link = db.execute(statement=statement).scalar_one_or_none()
+    return delta_link
     
-
 
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
+    print(get_delta_link(db))

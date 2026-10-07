@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.encoders import jsonable_encoder
 from app.database import get_db
 from sqlalchemy.orm import Session
-from app.infotech.services.infotech_database import assignment_requests, get_devices, add_device, get_device_by_query, get_tenant_user_by_query, create_assignment
+from app.infotech.services.infotech_database import assignment_requests, get_devices, add_device, get_device_by_query
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
 from app.infotech.models import Devices, AddDevice, AddAssignment
@@ -80,13 +80,14 @@ def query_devices(query: str, db: Session = Depends(get_db)):
 
 @router.get("/query/users")
 def query_users(query: str, db: Session = Depends(get_db)):
-    users = get_tenant_user_by_query(db=db, query=query)
-    return users
+    # users = get_tenant_user_by_query(db=db, query=query)
+    # return users
+    pass
 
-@router.post("/assign")
-def assign_device(
-    payload: AddAssignment,
-    db:Session = Depends(get_db),
-    ):
-    create_assignment(
-        db=db, **payload.model_dump())
+# @router.post("/assign")
+# def assign_device(
+#     payload: AddAssignment,
+#     db:Session = Depends(get_db),
+#     ):
+#     create_assignment(
+#         db=db, **payload.model_dump())
