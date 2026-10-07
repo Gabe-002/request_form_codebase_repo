@@ -6,12 +6,19 @@ export const dashboardView = {
         let body = `
             <div class="dashboard-header">
                 <div class="site-heading">
-                <h2>Dashboard</h2>
-                <p>site overview</p>
+                    <h2>Dashboard</h2>
+                    <p>site overview</p>
                 </div>
-                <div class="quick-buttons">
-                    <button id="add-device" type="button">+ Add Device</button>
-                    <button id="new-assignment" type="button">+ New Assignment</button>
+                <div class="header-actions">
+                    <div class="sync-block">
+                        <button id="sync-tenants" type="button" class="secondary-button">⟳ Sync Users</button>
+                        <small id="last-synced">Last synced: —</small>
+                    </div>
+                    <span class="header-divider"></span>
+                    <div class="quick-buttons">
+                        <button id="add-device" type="button">+ Add Device</button>
+                        <button id="new-assignment" type="button">+ New Assignment</button>
+                    </div>
                 </div>
             </div>
 
