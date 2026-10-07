@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, insert, update, and_, or_
 from app.models import Requests, People
-from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment, CreateTenantUser, TenantSyncState
+from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment, CreateTenantUser, UpdateTenantUser, TenantSyncState
 from uuid import UUID
 from datetime import datetime
 
@@ -57,6 +57,31 @@ def add_tenant_user(
     db.execute(statement=statement)
     db.commit()    
 
+def update_tenant_user(
+    db: Session,
+    graph_id: str,
+    payload: UpdateTenantUser
+    ):
+    statement = update(TenantUsers).values(**payload.model_dump()).where(TenantUsers.graph_id == graph_id)
+    db.execute(statement=statement)
+    db.commit()
+
+def get_tenant_user(db: Session, graph_id: str):
+    statement = select(TenantUsers).where(TenantUsers.graph_id == graph_id)
+    user = db.execute(statement=statement).scalar_one_or_none()
+    if user is None: 
+        return None
+    return {
+        column.name: getattr(user, column.name)
+        for column in TenantUsers.__table__.columns
+    }
+
+def deactivate_tenant_user(db: Session, graph_id: str):
+    statement = update(TenantUsers).values(account_enabled=False).where(TenantUsers.graph_id == graph_id)
+    db.execute(statement=statement)
+    db.commit()
+
+
 def get_device_by_query(db: Session, query: str):
     statement = select(
         Devices.id,
@@ -87,15 +112,12 @@ def get_delta_link(db: Session):
     delta_link = db.execute(statement=statement).scalar_one_or_none()
     return delta_link
 
-def get_tenant_user(db: Session, graph_id: str):
-    statement = select(TenantUsers).where(TenantUsers.graph_id == graph_id)
-    user = db.execute(statement=statement).scalar_one_or_none()
-    if user is None: 
-        return None
-    return {
-        column.name: getattr(user, column.name)
-        for column in TenantUsers.__table__.columns
-    }
+def add_sync_state(db: Session, delta_link: str, sync_status: str):
+    payload = {"delta_link": delta_link, "sync_status": sync_status}
+    statement = insert(TenantSyncState).values(**payload)
+    db.execute(statement=statement)
+    db.commit()
+
 
 from app.ms_api.authentication import call_graph_api
 
@@ -112,11 +134,27 @@ def sync_tenant_users(db: Session):
     response = call_graph_api(delta_link)
 
     changes = response.json().get('value', '')
+
+    new_delta_link = response.json().get('@odata.deltaLink')
+    print(changes)
+    if not changes:
+        print("Nothing to update. Updating link")
+        add_sync_state(db, new_delta_link, 'update link')
+        return None
+
+    for change in changes:
+        graph_id = change.get('id')
+        if '@remove' in change:
+            deactivate_tenant_user(db, graph_id)
+            continue
+    
     domain_changes = [
         change for change in changes 
         if "teichmanngrp" in (change.get('mail') or '')
     ]
+
     if not domain_changes:
+        add_sync_state(db, new_delta_link, 'update link')
         return None
 
     user_changes = []
@@ -128,16 +166,18 @@ def sync_tenant_users(db: Session):
 
     for user in user_changes:
         if user.get('account_enabled') is False:
-            print("That shit is false")
+            print("The account has seemingly been deactivated")
             continue
         existing_user = get_tenant_user(db, user.get('graph_id'))
         if existing_user:
-            print("The user already exists within the database")
+            graph_id = user.pop('graph_id')
+            update_tenant_user(db, graph_id, UpdateTenantUser(**user))
+            print("The user info has been updated")
         else: 
-            print("We keep adding the users")
+            print("The new user has been added")
             add_tenant_user(db, CreateTenantUser(**user))
 
-
+    add_sync_state(db, new_delta_link, 'success')
 
 if __name__ == '__main__':
     db = get_db()

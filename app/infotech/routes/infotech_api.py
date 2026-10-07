@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.encoders import jsonable_encoder
 from app.database import get_db
 from sqlalchemy.orm import Session
-from app.infotech.services.infotech_database import assignment_requests, get_devices, add_device, get_device_by_query
+from app.infotech.services.infotech_database import assignment_requests, get_devices, add_device, get_device_by_query, sync_tenant_users
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
 from app.infotech.models import Devices, AddDevice, AddAssignment
@@ -84,6 +84,9 @@ def query_users(query: str, db: Session = Depends(get_db)):
     # return users
     pass
 
+@router.post("/sync/tenant/users")
+def api_sync_tenant_users(db: Session = Depends(get_db)):
+    sync_tenant_users(db)
 
 # @router.post("/assign")
 # def assign_device(

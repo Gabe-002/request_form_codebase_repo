@@ -50,6 +50,11 @@ class CreateTenantUser(BaseModel):
     email: str
     account_enabled: Optional[bool] = None
 
+class UpdateTenantUser(BaseModel):
+    display_name: str
+    email: str
+    account_enabled: Optional[bool] = None
+
 class SetSyncState(BaseModel):
     display_name: str
     sync_status: Optional[str] = None
