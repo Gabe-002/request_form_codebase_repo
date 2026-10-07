@@ -176,8 +176,6 @@ export const dashboardView = {
         })
 
 
-
-
         const cancelDeviceBtn = document.getElementById('cancel-device');
         const deviceForm = document.getElementById('new-device-form');
 

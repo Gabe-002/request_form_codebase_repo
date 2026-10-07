@@ -137,31 +137,32 @@ def sync_tenant_users(db: Session):
         "displayName": "display_name",
         "mail": "email",
         "accountEnabled": "account_enabled",
-        "id": "graph_id"
+        "id": "graph_id",
+        "userPrincipalName": "upn"
     }
 
     delta_link = get_delta_link(db)
     response = call_graph_api(delta_link)
 
     changes = response.json().get('value', '')
-
+    
     new_delta_link = response.json().get('@odata.deltaLink')
-    print(changes)
     if not changes:
         print("Nothing to update. Updating link")
         return add_sync_state(db, new_delta_link, 'update link')
         
-
+    changes = [{'displayName': 'Tenant Sync Test', 'userPrincipalName': 'Tenant.SyncTest@teichmanngrp.com', 'accountEnabled': True, 'id': '202e72e8-a4f8-46f2-b841-4fe83dfedb14'}]
     for change in changes:
         graph_id = change.get('id')
         if '@remove' in change:
             deactivate_tenant_user(db, graph_id)
             continue
-    
+
     domain_changes = [
         change for change in changes 
-        if "teichmanngrp" in (change.get('mail') or '')
+        if "@teichmanngrp.com" in (change.get('mail') or change.get('userPrincipalName') or '')
     ]
+    print(domain_changes)
 
     if not domain_changes:
         return add_sync_state(db, new_delta_link, 'update link')
@@ -170,7 +171,8 @@ def sync_tenant_users(db: Session):
     for change in domain_changes:
         user = {}
         for key, value in columnMapping.items():
-            user[value] = change.get(key)
+            if change.get(key):
+                user[value] = change.get(key)
         user_changes.append(user)
 
     for user in user_changes:
@@ -187,6 +189,8 @@ def sync_tenant_users(db: Session):
             add_tenant_user(db, CreateTenantUser(**user))
 
     return add_sync_state(db, new_delta_link, 'success')
+
+
 
 if __name__ == '__main__':
     db = get_db()

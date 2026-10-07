@@ -32,8 +32,9 @@ class TenantUsers(Base):
     id = Column(Integer, primary_key=True)
     graph_id = Column(UUID(as_uuid=True), nullable=False, unique=True)
     display_name = Column(Text, nullable=False)
-    email = Column(Text, nullable=False)
+    email = Column(Text, nullable=True)
     account_enabled = Column(Boolean, nullable=True)
+    upn = Column(Text, nullable=True)
 
 class TenantSyncState(Base):
     __tablename__ = 'tenant_sync_state'
@@ -47,8 +48,10 @@ class TenantSyncState(Base):
 class CreateTenantUser(BaseModel):
     graph_id: universal_unique_id
     display_name: str
-    email: str
+    email: Optional[str] = None
     account_enabled: Optional[bool] = None
+    upn: Optional[str] = None
+
 
 class UpdateTenantUser(BaseModel):
     display_name: str
