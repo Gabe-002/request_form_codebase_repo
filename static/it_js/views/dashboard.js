@@ -98,6 +98,25 @@ export const dashboardView = {
         }
 
 
+        // This is for syncing the tenant users
+        const syncBtn = document.getElementById('sync-tenants')
+        syncBtn.addEventListener('click', async () => {
+            document.documentElement.classList.add('is-loading')
+            syncBtn.disabled = true
+
+            try {
+                await fetch(`/it/api/sync/tenant/users`, {
+                    headers: {"Content-Type": "application/json"},
+                    method: "POST",
+                    body: JSON.stringify({})
+                })
+            } finally {
+                document.documentElement.classList.remove('is-loading')
+                syncBtn.disabled = false
+            }
+        })
+
+
         const awaiting_assignments = await response.json();
         const devices = await deviceResponse.json();
         const numberPending = awaiting_assignments.length;

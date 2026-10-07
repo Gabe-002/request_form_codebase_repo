@@ -199,6 +199,11 @@ header h2, p {
     background-color: var(--border-color);
 }
 
+html.is-loading,
+html.is-loading * {
+  cursor: wait !important;
+}
+
 /* ====================================== */
 /* Dashboard                              */
 /* ====================================== */
