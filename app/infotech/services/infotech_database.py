@@ -173,7 +173,6 @@ def sync_tenant_users(db: Session):
         print("Nothing to update. Updating link")
         return add_sync_state(db, new_delta_link, 'update link')
         
-    changes = [{'displayName': 'Tenant Sync Test', 'userPrincipalName': 'Tenant.SyncTest@teichmanngrp.com', 'accountEnabled': True, 'id': '202e72e8-a4f8-46f2-b841-4fe83dfedb14'}]
     for change in changes:
         graph_id = change.get('id')
         if '@remove' in change:
