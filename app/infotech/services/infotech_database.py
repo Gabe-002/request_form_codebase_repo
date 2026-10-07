@@ -112,6 +112,14 @@ def get_device_by_query(db: Session, query: str):
     ]
     return results
 
+def create_assignment(
+    db: Session,
+    payload: CreateAssignment
+    ):
+    statement = insert(Assignments).values(**payload.model_dump())
+    db.execute(statement=statement)
+    db.commit()
+
 def get_delta_link(db: Session):
     statement = (
         select(TenantSyncState.delta_link)
