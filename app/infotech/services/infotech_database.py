@@ -15,6 +15,7 @@ from app.infotech.models import (
 from uuid import UUID
 from datetime import datetime
 from app.ms_api.authentication import call_graph_api
+from fastapi import HTTPException
 
 
 def format_output(model, request):
@@ -92,6 +93,7 @@ def deactivate_tenant_user(db: Session, graph_id: str):
 
 
 def get_device_by_query(db: Session, query: str):
+    query_str = f"%{query}%"
     statement = select(
         Devices.id,
         Devices.asset_number,
@@ -99,26 +101,41 @@ def get_device_by_query(db: Session, query: str):
         Devices.manufacturer,
         Devices.serial_number).where(
         or_(
-            Devices.asset_number.ilike(f"%{query}%"),
-            Devices.model.ilike(f"%{query}%"),
-            Devices.manufacturer.ilike(f"%{query}%")
+            Devices.asset_number.ilike(query_str),
+            Devices.model.ilike(query_str),
+            Devices.manufacturer.ilike(query_str)
         ),
-        and_(Devices.status == 'available'),
-        and_(Devices.asset_type == 'Laptop')
+        and_(Devices.status == 'available')
     )
-    results = [
-        row
-        for row in db.execute(statement=statement).mappings().all()
-    ]
-    return results
+    return db.execute(statement=statement).mappings().all()
 
 def create_assignment(
     db: Session,
     payload: CreateAssignment
     ):
-    statement = insert(Assignments).values(**payload.model_dump())
-    db.execute(statement=statement)
+    device = db.get(Devices, payload.device_id, with_for_update=True)
+    if device is None:
+        raise HTTPException(404, "Device not found")
+    if device.status != "available":
+        raise HTTPException(409, "Device is not available")
+
+    request = None
+    if payload.request_id is not None:
+        request = db.get(Requests, payload.request_id)
+        if request is None: 
+            raise HTTPException(404, "Request not found")
+        
+    db.add(Assignments(**payload.model_dump()))
+    device.status = "assigned"
+    if request is not None:
+        request.it_review = "allocated"
+
     db.commit()
+    return {"status": "success"}
+
+    # statement = insert(Assignments).values(**payload.model_dump())
+    # db.execute(statement=statement)
+    # db.commit()
 
 def get_delta_link(db: Session):
     statement = (
