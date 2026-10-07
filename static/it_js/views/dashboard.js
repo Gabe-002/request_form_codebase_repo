@@ -283,9 +283,7 @@ export const dashboardView = {
                 body: JSON.stringify({
                     "request_id": Number(requestId),
                     "device_id": Number(deviceId),
-                    "tenant_id": userId,
-                    "assigned_to": tenantUsername,
-                    "assignee_email": tenantEmail
+                    "tenant_id": userId
                 })
             })
             if(!response.ok){
@@ -424,7 +422,7 @@ async function renderIssuePage(requestid) {
 // This is for the search bars
 async function searchResults(event, container, url, renderItem){
     const query = event.target.value
-    if (!query) {
+    if (query.length === 0) {
         container.innerHTML = ''
         container.style.display = 'none'
         return

@@ -1,11 +1,20 @@
 from app.database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, insert, update, and_, or_
+from sqlalchemy import select, insert, update, and_, or_, func
 from app.models import Requests, People
-from app.infotech.models import Devices, AddDevice, TenantUsers, Assignments, AddAssignment, CreateTenantUser, UpdateTenantUser, TenantSyncState
+from app.infotech.models import (
+    Devices, 
+    AddDevice, 
+    TenantUsers, 
+    Assignments, 
+    CreateAssignment,
+    CreateTenantUser, 
+    UpdateTenantUser, 
+    TenantSyncState)
 from uuid import UUID
 from datetime import datetime
+from app.ms_api.authentication import call_graph_api
 
 
 def format_output(model, request):
@@ -128,8 +137,21 @@ def get_last_sync(db: Session):
     last_sync = db.execute(statement=statement).scalar_one_or_none()
     return last_sync
 
-
-from app.ms_api.authentication import call_graph_api
+def get_tenant_user_by_query(db: Session, query: str):
+    statement = (
+        select(
+            TenantUsers.display_name,
+            TenantUsers.id,
+            func.coalesce(TenantUsers.email, TenantUsers.upn).label('email')
+        )
+        .where(
+            TenantUsers.display_name.ilike(f"%{query}%"),
+            TenantUsers.account_enabled.is_(True)
+        )
+        .limit(10)
+    )
+    users = db.execute(statement=statement).mappings().all()
+    return users
 
 def sync_tenant_users(db: Session):
 
@@ -190,9 +212,8 @@ def sync_tenant_users(db: Session):
     return add_sync_state(db, new_delta_link, 'success')
 
 
-
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    sync_tenant_users(db)
+    print(get_tenant_user_by_query(db, "gabr"))

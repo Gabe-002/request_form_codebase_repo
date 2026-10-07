@@ -66,16 +66,20 @@ class SetSyncState(BaseModel):
 class Assignments(Base):
     __tablename__ = 'assignments'
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    request_id = Column(Integer, ForeignKey('requests.id'))
-    device_id = Column(Integer, ForeignKey('devices.id'))
-    assigned_to = Column(Text, nullable=False)
-    assigned_at = Column(DateTime(timezone=True), server_default=func.now())
+    id = Column(Integer, primary_key=True)
+    device_id = Column(Integer, ForeignKey('devices.id'), nullable=False)
+    tenant_id = Column(Integer, ForeignKey('tenant_users.id'), nullable=False)
+    allocated_at = Column(DateTime(timezone=True), server_default=func.now())
     deallocated_at = Column(DateTime(timezone=True))
-    assignee_email = Column(Text)
-    transferred_from = Column(Text, nullable=True)
-    sharepoint_item_id = Column(Integer, nullable=True)
-    tenant_id = Column(UUID(as_uuid=True))
+    sharepoint_id = Column(Integer)
+    request_id = Column(Integer, ForeignKey('requests.id'))
+
+class CreateAssignment(BaseModel):
+    device_id: int
+    tenant_id: int
+    request_id: int | None = None
+    sharepoint_id: int | None = None
+
 
 # We'll create a decorator that acts constructor like
 def from_data(cls):
