@@ -698,3 +698,11 @@ textarea {
         transition: none !important;
     }
 }
+
+.assignment-name {
+    font-weight: 600;
+}
+.assignment-date {
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}

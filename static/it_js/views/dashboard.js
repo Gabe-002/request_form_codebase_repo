@@ -301,8 +301,9 @@ function renderQuickView(devices, numberPending) {
             acc.byStatus[device.status] = (acc.byStatus[device.status] || 0) + 1;
         return acc;
     }, {byType: {}, byStatus: {}})
-    const totalLaptops = stats.byType.Laptop
-    const availableLaptops = stats.byStatus.available
+    console.log(stats)
+    const totalLaptops = stats.byType.Laptop ? stats.byType.Laptop : 0
+    const availableLaptops = stats.byStatus.available ? stats.byStatus.available : 0
     const assignedLaptops = totalLaptops - availableLaptops
 
     return `

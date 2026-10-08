@@ -1,9 +1,11 @@
 import { dashboardView } from "./views/dashboard.js";
 import { devicesView } from "./views/devices.js";
+import { assignmentsView } from "./views/assignments.js";
 
 const routes = [
     {path: "/", view: dashboardView},
-    {path: "/devices", view: devicesView}
+    {path: "/devices", view: devicesView},
+    {path: "/assignments", view: assignmentsView}
 ];
 
 const app = document.getElementById("app")
