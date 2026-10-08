@@ -230,6 +230,11 @@ def sync_tenant_users(db: Session):
 
     return add_sync_state(db, new_delta_link, 'success')
 
+def get_device_assignments(
+    db: Session,
+    
+    ):
+    pass
 
 if __name__ == '__main__':
     db = get_db()
