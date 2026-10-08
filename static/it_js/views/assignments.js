@@ -89,8 +89,8 @@ function loadAssignments(template, assignments) {
         item.querySelector('.assignment-name').textContent = assignment.display_name
         item.querySelector('.asset_number').textContent = assignment.asset_number
 
-        if (assignment.site) {
-            item.querySelector('.site').textContent = assignment.site
+        if (assignment.location) {
+            item.querySelector('.site').textContent = assignment.location
         }
         if (assignment.allocated_at) {
             item.querySelector('.assignment-date').textContent = formatDate(assignment.allocated_at)

@@ -24,7 +24,7 @@ class Devices(Base):
     order_number = Column(Text, nullable=True)
     condition_notes = Column(Text, nullable=True)
     sharepoint_id = Column(Integer, nullable=True)
-    location = Column(Text, nullable=True)
+    location = Column(Text, nullable=True, server_default='IT Storage')
     
 
 class TenantUsers(Base):
