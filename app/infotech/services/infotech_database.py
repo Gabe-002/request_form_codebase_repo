@@ -286,6 +286,28 @@ def get_device_assignments(
     )
     return db.execute(statement=statement).mappings().all()
 
+def get_device_assignment(
+    db: Session,
+    assignment_id: int
+    ):
+    statement = (
+        select(
+            Assignments.allocated_at,
+            TenantUsers.display_name,
+            func.coalesce(TenantUsers.email, TenantUsers.upn).label('email'),
+            Devices.asset_number,
+            Devices.manufacturer,
+            Devices.model,
+            Devices.asset_type,
+            Devices.location
+       )
+       .join(TenantUsers, TenantUsers.id == Assignments.tenant_id)
+       .join(Devices, Devices.id == Assignments.device_id)
+       .where(Assignments.id == assignment_id)
+    )   
+    return db.execute(statement=statement).mappings().one()
+    pass
+
 if __name__ == '__main__':
     db = get_db()
     db = next(db)

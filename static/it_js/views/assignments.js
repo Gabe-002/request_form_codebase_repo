@@ -156,6 +156,12 @@ function assignmentModal() {
                 </div>
                 <div class="info-list">
                     <div class="info-field">
+                        <span class="info-label">Device Type</span>
+                        <span class="info-value" id="device-type">-</span>
+                    </div>
+                </div>
+                <div class="info-list">
+                    <div class="info-field">
                         <span class="info-label">Device Info</span>
                         <span class="info-value" id="asset-info">-</span>
                     </div>
