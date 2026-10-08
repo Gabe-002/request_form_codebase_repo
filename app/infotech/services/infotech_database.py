@@ -13,7 +13,7 @@ from app.infotech.models import (
     UpdateTenantUser, 
     TenantSyncState)
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.ms_api.authentication import (
     ensure_user,
@@ -306,6 +306,34 @@ def get_device_assignment(
        .where(Assignments.id == assignment_id)
     )   
     return db.execute(statement=statement).mappings().one()
+
+def device_deallocation(
+    db: Session,
+    assignment_id: int
+    ):
+
+    assignment = db.get(Assignments, assignment_id)
+    if assignment is None:
+        raise HTTPException(status_code=404, detail="Could not get the assignment")
+    
+    device = db.get(Devices, assignment.device_id)
+    if device is None:
+        raise HTTPException(status_code=404, detail="Could not get the device")
+
+    sharepoint_id = device.sharepoint_id
+    patch_url = f"{insert_url}/{sharepoint_id}/fields"
+
+    call_graph_api(
+        url=patch_url,
+        method="PATCH",
+        json_body={
+            columnMapping['status']: "available",
+            columnMapping['current']: None
+        }
+    )
+    assignment.deallocated_at = datetime.now(timezone.utc)
+    device.status = 'available'
+    db.commit()
 
 if __name__ == '__main__':
     db = get_db()

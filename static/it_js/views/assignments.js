@@ -124,11 +124,18 @@ function tableMonitor() {
         modal.classList.toggle('open')
 
         const deallocateBtn = document.getElementById('deallocate-assignment')
-         deallocateBtn.addEventListener('click', () => {
+         deallocateBtn.addEventListener('click', async () => {
             const confirmation = confirm("Do you want to deallocate this assignment?")
             if (!confirmation)
                 return
-            console.log("You wish to deallocate the device")
+            const response = await fetch(`/it/api/deallocate/${assignmentId}`, {
+                method: "POST"
+            })
+            if (!response.ok) {
+                alert("Could not deallocate the device correctly")
+                return
+            }
+            window.location.reload();
          })
 
         const cancelBtn = document.getElementById('cancel-assignment-view')

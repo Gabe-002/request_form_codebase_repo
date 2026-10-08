@@ -12,7 +12,8 @@ from app.infotech.services.infotech_database import (
     get_tenant_user_by_query, 
     create_assignment,
     get_device_assignments,
-    get_device_assignment)
+    get_device_assignment,
+    device_deallocation)
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
 from app.infotech.models import Devices, AddDevice, CreateAssignment
@@ -122,3 +123,10 @@ def api_get_device_assignment(
     db: Session = Depends(get_db)
     ):
     return get_device_assignment(db, int(query))
+
+@router.post('/deallocate/{assignment_id}')
+def api_device_deallocation(
+    assignment_id: int,
+    db: Session = Depends(get_db)
+    ):
+    return device_deallocation(db, assignment_id)
