@@ -40,7 +40,7 @@ export const assignmentsView = {
         // TODO: wire up your assignment modal here when it's ready
         // document.getElementById('new-assignment').addEventListener('click', openAssignModal)
 
-        // await refreshAssignments()
+        await refreshAssignments()
     }
 }
 
@@ -53,6 +53,7 @@ async function refreshAssignments() {
         return
     }
     allAssignments = await response.json()
+    console.log(allAssignments)
     renderAssignments(filterAssignments())
 }
 
@@ -85,14 +86,14 @@ function loadAssignments(template, assignments) {
     const rowContainer = document.getElementById('table-container')
     assignments.forEach(assignment => {
         const item = template.content.cloneNode(true)
-        item.querySelector('.assignment-name').textContent = assignment.name
+        item.querySelector('.assignment-name').textContent = assignment.display_name
         item.querySelector('.asset_number').textContent = assignment.asset_number
 
         if (assignment.site) {
             item.querySelector('.site').textContent = assignment.site
         }
-        if (assignment.assigned_at) {
-            item.querySelector('.assignment-date').textContent = formatDate(assignment.assigned_at)
+        if (assignment.allocated_at) {
+            item.querySelector('.assignment-date').textContent = formatDate(assignment.allocated_at)
         }
 
         rowContainer.appendChild(item)

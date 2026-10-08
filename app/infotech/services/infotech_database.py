@@ -233,10 +233,20 @@ def sync_tenant_users(db: Session):
 def get_device_assignments(
     db: Session
     ):
-    pass
+    statement = (
+        select(
+            Assignments.id,
+            Assignments.allocated_at,
+            TenantUsers.display_name,
+            Devices.asset_number,
+            Devices.location
+       )
+       .join(TenantUsers, TenantUsers.id == Assignments.tenant_id)
+       .join(Devices, Devices.id == Assignments.device_id)
+    )
+    return db.execute(statement=statement).mappings().all()
 
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
-
-    print(get_tenant_user_by_query(db, "gabr"))
+    print(get_device_assignments(db))

@@ -10,7 +10,8 @@ from app.infotech.services.infotech_database import (
     sync_tenant_users, 
     get_last_sync, 
     get_tenant_user_by_query, 
-    create_assignment)
+    create_assignment,
+    get_device_assignments)
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
 from app.infotech.models import Devices, AddDevice, CreateAssignment
@@ -107,3 +108,9 @@ def assign_device(
     create_assignment(db, payload)
     if payload.request_id:
         print(payload.request_id)
+
+@router.get('/assignments')
+def api_get_device_assignments(
+    db: Session = Depends(get_db)
+    ):
+    return get_device_assignments(db)
