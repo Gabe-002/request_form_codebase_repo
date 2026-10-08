@@ -10,7 +10,7 @@ export const assignmentsView = {
                     <button id="new-assignment" type="button">+ New Assignment</button>
                 </div>
             </div>
-
+            ${assignmentModal()}
             <div>
                 <div class="search-options" id="search-options">
                     <input id="assignment-search" placeholder="Search by name, device or site">
@@ -36,6 +36,7 @@ export const assignmentsView = {
         `;
 
         monitorSearch()
+        tableMonitor()
 
         // TODO: wire up your assignment modal here when it's ready
         // document.getElementById('new-assignment').addEventListener('click', openAssignModal)
@@ -95,6 +96,7 @@ function loadAssignments(template, assignments) {
         if (assignment.allocated_at) {
             item.querySelector('.assignment-date').textContent = formatDate(assignment.allocated_at)
         }
+        item.querySelector('.table-row').dataset.assignmentId = assignment.id
 
         rowContainer.appendChild(item)
     })
@@ -108,4 +110,69 @@ function formatDate(value) {
         month: 'short',
         year: 'numeric'
     })
+}
+
+function tableMonitor() {
+    document.getElementById('table-container').addEventListener('click', (event) => {
+        const row = event.target.closest('.table-row:not(.table-header)')
+        if (!row)
+            return
+
+        const modal = document.getElementById('assignment-modal')
+        modal.classList.toggle('open')
+
+        const cancelBtn = document.getElementById('cancel-assignment-view')
+        cancelBtn.addEventListener('click', () => {
+            modal.classList.remove('open')
+        })
+    })
+}
+
+function assignmentModal() {
+    return `
+        <div id="assignment-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Assignment Info</h3>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Name</span>
+                        <span class="info-value" id="name">-</span>
+                    </div>
+                </div>
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="email">-</span>
+                    </div>
+                </div>
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Device</span>
+                        <span class="info-value" id="asset-number">-</span>
+                    </div>
+                </div>
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Device Info</span>
+                        <span class="info-value" id="asset-info">-</span>
+                    </div>
+                </div>
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Location</span>
+                        <span class="info-value" id="location">-</span>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button id="deallocate-assignment" class="button-format" type="button">Deallocate</button>
+                    <button id="transfer" class="button-format" type="button">Transfer</button>
+                    <button id="cancel-assignment-view" type="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `
 }

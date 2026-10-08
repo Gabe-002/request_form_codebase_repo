@@ -322,10 +322,10 @@ html.is-loading * {
 /* ====================================== */
 /* Modals                                 */
 /* ====================================== */
-#device-modal, #review-modal, #issue-modal, #assign-modal {
+#device-modal, #review-modal, #issue-modal, #assign-modal, #assignment-modal {
     display: none;
 }
-#device-modal.open, #review-modal.open, #issue-modal.open, #assign-modal.open {
+#device-modal.open, #review-modal.open, #issue-modal.open, #assign-modal.open, #assignment-modal.open {
     display: flex;
     position: fixed;
     inset: 0;
@@ -400,7 +400,7 @@ textarea {
     justify-content: space-between;
     gap: 10px;
 }
-#submit-device, #cancel-device, .review-buttons button {
+#submit-device, #cancel-device, #cancel-assignment-view, .button-format, .review-buttons button {
     margin-top: 10px;
     font: inherit;
     font-size: 14px;
@@ -705,4 +705,34 @@ textarea {
 .assignment-date {
     color: var(--text-secondary);
     font-variant-numeric: tabular-nums;
+}
+
+/* ====================================== */
+/* For the assignment modal                       */
+/* ====================================== */
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 6px;
+}
+.info-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-block: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.info-field:last-child {
+    border-bottom: none;
+}
+.info-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.info-value {
+    font-size: 15px;
+    color: var(--text-color);
+    overflow-wrap: anywhere;
 }

@@ -168,10 +168,7 @@ def create_assignment(
             columnMapping['current']: str(sharepoint_user_id)
         }
     )
-
     db.commit()
-
-
     return {"status": "success"}
 
 def get_delta_link(db: Session):
@@ -285,6 +282,7 @@ def get_device_assignments(
        )
        .join(TenantUsers, TenantUsers.id == Assignments.tenant_id)
        .join(Devices, Devices.id == Assignments.device_id)
+       .where(Assignments.deallocated_at.is_(None))
     )
     return db.execute(statement=statement).mappings().all()
 
