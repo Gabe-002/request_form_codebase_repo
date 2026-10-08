@@ -51,6 +51,23 @@ def get_devices(db: Session):
     devices = db.execute(statement=statement).scalars().all()
     return simple_format(Devices, devices)
 
+def get_device_by_query(db: Session, query: str):
+    query_str = f"%{query}%"
+    statement = select(
+        Devices.id,
+        Devices.asset_number,
+        Devices.model,
+        Devices.manufacturer,
+        Devices.serial_number).where(
+        or_(
+            Devices.asset_number.ilike(query_str),
+            Devices.model.ilike(query_str),
+            Devices.manufacturer.ilike(query_str)
+        ),
+        and_(Devices.status == 'available')
+    )
+    return db.execute(statement=statement).mappings().all()
+
 def add_device(db: Session, device: AddDevice):
     statement = insert(Devices).values(**device.model_dump())
     try:   
@@ -91,24 +108,6 @@ def deactivate_tenant_user(db: Session, graph_id: str):
     db.execute(statement=statement)
     db.commit()
 
-
-def get_device_by_query(db: Session, query: str):
-    query_str = f"%{query}%"
-    statement = select(
-        Devices.id,
-        Devices.asset_number,
-        Devices.model,
-        Devices.manufacturer,
-        Devices.serial_number).where(
-        or_(
-            Devices.asset_number.ilike(query_str),
-            Devices.model.ilike(query_str),
-            Devices.manufacturer.ilike(query_str)
-        ),
-        and_(Devices.status == 'available')
-    )
-    return db.execute(statement=statement).mappings().all()
-
 def create_assignment(
     db: Session,
     payload: CreateAssignment
@@ -132,10 +131,6 @@ def create_assignment(
 
     db.commit()
     return {"status": "success"}
-
-    # statement = insert(Assignments).values(**payload.model_dump())
-    # db.execute(statement=statement)
-    # db.commit()
 
 def get_delta_link(db: Session):
     statement = (

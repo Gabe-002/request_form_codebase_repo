@@ -24,6 +24,7 @@ class Devices(Base):
     order_number = Column(Text, nullable=True)
     condition_notes = Column(Text, nullable=True)
     sharepoint_id = Column(Integer, nullable=True)
+    location = Column(Text, nullable=True)
     
 
 class TenantUsers(Base):
@@ -112,6 +113,7 @@ class AddDevice(BaseModel):
     order_number: Optional[str] = None
     condition_notes: Optional[str] = None
     sharepoint_id: Optional[int] = None
+    location: Optional[str] = None
 
 class AddAssignment(BaseModel):
     request_id: int
