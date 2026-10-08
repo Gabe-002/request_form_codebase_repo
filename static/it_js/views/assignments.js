@@ -113,10 +113,12 @@ function formatDate(value) {
 }
 
 function tableMonitor() {
-    document.getElementById('table-container').addEventListener('click', (event) => {
+    document.getElementById('table-container').addEventListener('click', async (event) => {
         const row = event.target.closest('.table-row:not(.table-header)')
         if (!row)
             return
+
+        const assignmentId = row.dataset.assignmentId
 
         const modal = document.getElementById('assignment-modal')
         modal.classList.toggle('open')
@@ -125,7 +127,25 @@ function tableMonitor() {
         cancelBtn.addEventListener('click', () => {
             modal.classList.remove('open')
         })
+
+        const response = await fetch(`/it/api/get/assignment?query=${encodeURIComponent(assignmentId)}`)
+        if (!response.ok) {
+            alert("Could not load the assignment info")
+            return
+        }
+        const assignmentInfo = await response.json()
+        assignmentModalInfo(assignmentInfo)
     })
+}
+
+function assignmentModalInfo(assignmentInfo) {
+    document.getElementById('modal-tenant-name').textContent = assignmentInfo.display_name ?? '-';
+    document.getElementById('modal-tenant-email').textContent = assignmentInfo.email ?? '-';
+    document.getElementById('modal-asset-number').textContent = assignmentInfo.asset_number ?? '-';
+    document.getElementById('modal-device-type').textContent = assignmentInfo.asset_type ?? '-';
+    document.getElementById('modal-asset-info').textContent = `${assignmentInfo.manufacturer} - ${assignmentInfo.model}`;
+    document.getElementById('modal-location').textContent = assignmentInfo.location ?? '-';
+    document.getElementById('modal-assignment-date').textContent = formatDate(assignmentInfo.allocated_at) ?? '-';
 }
 
 function assignmentModal() {
@@ -139,40 +159,45 @@ function assignmentModal() {
                 <div class="info-list">
                     <div class="info-field">
                         <span class="info-label">Name</span>
-                        <span class="info-value" id="name">-</span>
+                        <span class="info-value" id="modal-tenant-name">-</span>
                     </div>
                 </div>
                 <div class="info-list">
                     <div class="info-field">
                         <span class="info-label">Email</span>
-                        <span class="info-value" id="email">-</span>
+                        <span class="info-value" id="modal-tenant-email">-</span>
                     </div>
                 </div>
                 <div class="info-list">
                     <div class="info-field">
                         <span class="info-label">Device</span>
-                        <span class="info-value" id="asset-number">-</span>
+                        <span class="info-value" id="modal-asset-number">-</span>
                     </div>
                 </div>
                 <div class="info-list">
                     <div class="info-field">
                         <span class="info-label">Device Type</span>
-                        <span class="info-value" id="device-type">-</span>
+                        <span class="info-value" id="modal-device-type">-</span>
                     </div>
                 </div>
                 <div class="info-list">
                     <div class="info-field">
                         <span class="info-label">Device Info</span>
-                        <span class="info-value" id="asset-info">-</span>
+                        <span class="info-value" id="modal-asset-info">-</span>
                     </div>
                 </div>
                 <div class="info-list">
                     <div class="info-field">
                         <span class="info-label">Location</span>
-                        <span class="info-value" id="location">-</span>
+                        <span class="info-value" id="modal-location">-</span>
                     </div>
                 </div>
-
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Assignmnet Date</span>
+                        <span class="info-value" id="modal-assignment-date">-</span>
+                    </div>
+                </div>
                 <div class="form-buttons">
                     <button id="deallocate-assignment" class="button-format" type="button">Deallocate</button>
                     <button id="transfer" class="button-format" type="button">Transfer</button>

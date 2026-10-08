@@ -306,9 +306,8 @@ def get_device_assignment(
        .where(Assignments.id == assignment_id)
     )   
     return db.execute(statement=statement).mappings().one()
-    pass
 
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
-    print(get_device_assignments(db))
+    print(get_device_assignment(db, 8))
