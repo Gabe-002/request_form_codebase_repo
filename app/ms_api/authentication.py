@@ -80,13 +80,16 @@ def call_graph_api(url, method="GET", json_body=None):
 
     response = requests.request(url=url, method=method, headers=headers, json=json_body)
     if not response.ok:
-        print("Shit did not go as intended")
+        print(f"Graph error: {response.status_code} - {response.text}")
     return response
 
 
 
 
 if __name__ == "__main__":
+
+    user_id = ensure_user("Gabriel.Richard@teichmanngrp.com")
+    print(repr(user_id))
 
     # from app.database import get_db
     # from app.infotech.services.infotech_database import get_delta_link
@@ -132,4 +135,15 @@ if __name__ == "__main__":
 
     # print(deltaLink)
 
-    pass
+    lists_url = 'https://graph.microsoft.com/v1.0/sites/teichmanngrp.sharepoint.com,fe9f2f2b-d423-4037-943f-b10502afe398,52073d89-7ef3-490a-b6cc-9da368d1e25a/lists'
+    device_list = 'd5bdc95f-5596-4443-adff-255436bc08cc'
+
+    update_url = f"{lists_url}/{device_list}/items/{24}/fields"
+    fields = {
+        "CurrentOwnerLookupId": str(ensure_user("Gabriel.Richard@teichmanngrp.com")),
+        "Status": "assigned"
+    }
+
+    call_graph_api(update_url, "PATCH", fields)
+    # r = call_graph_api(f"{lists_url}/{device_list}/columns?$filter=name eq 'CurrentOwner'")
+    # print(r.json())

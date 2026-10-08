@@ -14,8 +14,30 @@ from app.infotech.models import (
     TenantSyncState)
 from uuid import UUID
 from datetime import datetime
-from app.ms_api.authentication import call_graph_api
 from fastapi import HTTPException
+from app.ms_api.authentication import (
+    ensure_user,
+    call_graph_api
+)
+from app.database import settings
+
+columnMapping = {
+    "asset_number": "Title",
+    "serial_number": "SerialNumber",
+    "manufacturer": "Manufacturer",
+    "model": "Model",
+    "asset_type": "AssetType",
+    "status": "Status",
+    "purchase_price": "PurchasePrice",
+    "asset_number": "Title",
+    "order_number": "OrderNumber",
+    "condition_notes": "ConditionNotes",
+    "current": "CurrentOwnerLookupId",
+    "previous": "PreviousOwnerLookupId"
+}
+list_url = settings.LIST_URL
+devices_id = settings.DEVICES_ID
+insert_url = f"{list_url}/{devices_id}/items"
 
 
 def format_output(model, request):
@@ -129,7 +151,27 @@ def create_assignment(
     if request is not None:
         request.it_review = "allocated"
 
+    # This is where we have to update the sharepoint shit
+    tenant_user = db.get(TenantUsers, payload.tenant_id, with_for_update=True)
+    if tenant_user is None:
+        raise HTTPException(status_code=404, detail="Could not find tenant user")
+    sharepoint_user_id = ensure_user(tenant_user.upn)
+
+    item_id = device.sharepoint_id
+    patch_url = f"{insert_url}/{item_id}/fields"
+
+    call_graph_api(
+        url=patch_url, 
+        method="PATCH", 
+        json_body= {
+            columnMapping['status']: "assigned",
+            columnMapping['current']: str(sharepoint_user_id)
+        }
+    )
+
     db.commit()
+
+
     return {"status": "success"}
 
 def get_delta_link(db: Session):
