@@ -237,16 +237,22 @@ export function initAssignModal() {
             tenant_id,
             location
         }
-        console.log(assignmentInfo)
-        const response = await fetch(`/it/api/assign`, {
-            headers: {"Content-Type": "application/json"},
-            method: "POST",
-            body: JSON.stringify(assignmentInfo)
-        })
-        if (!response.ok) {
-            alert("Could not correctly assign the device")
+        document.documentElement.classList.add('is-loading')
+        confirmAssignmentBtn.disabled = true
+        try {
+            const response = await fetch(`/it/api/assign`, {
+                headers: {"Content-Type": "application/json"},
+                method: "POST",
+                body: JSON.stringify(assignmentInfo)
+            })
+            if (!response.ok) {
+                alert("Could not correctly assign the device")
+                window.location.reload()
+            }
+        } finally {
+            document.documentElement.classList.remove('is-loading')
+            confirmAssignmentBtn.disabled = false
             window.location.reload()
         }
-        window.location.reload()
     })
 }

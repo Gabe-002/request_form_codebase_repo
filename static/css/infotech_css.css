@@ -306,7 +306,7 @@ html.is-loading * {
     background-color: var(--row-hover);
     border-color: var(--text-secondary);
 }
-#sync-tenants:disabled {
+#sync-tenants:disabled, #new-assign-confirm-assign:disabled {
     opacity: 0.6;
     cursor: wait;
 }
