@@ -57,8 +57,45 @@ export function deviceModalHTML() {
 export function assignDeviceModal() {
     return `
         <div id="assign-modal">
-            <div class="modal-content">
+            <div class="issue-page">
+                <h3>Assign a Device</h3>
+                <h4>Device Info</h4>
+                <div class="asset-search">
+                    <label>Asset Number
+                        <input type="text" id="issue-asset-number" name="asset_number" required">
+                        <div id="asset-results"></div>
+                    </label>
+                </div>
+                    <label>Asset Description
+                        <input type="text" id="issue-model" name="model" required>
+                    </label>
+                    <label>Serial Number
+                        <input type="text" id="issue-serial-number" name="serial_number" required>
+                    </label>
+                <h4>Transfer Info</h4>
+                    <label>Transfer To
+                        <input type="text" id="issue-name" name="issue-name" required>
+                    </label>
+                    <label>Company No.
+                        <input type="text" id="issue-company-no" name="company-no" required>
+                    </label>
+                    <label>Location
+                        <input type="text" id="" name="" required>
+                    </label>
+                    <div class="user-search">
+                        <label>Username
+                            <input type="text" id="issue-tenant-username" name="issue-tenant-username" required>
+                        </label>
+                        <div id="users-results"></div>
+                    </div>
+                    <label>Tenant Email
+                        <input type="text" id="issue-tenant-email" name="issue-tenant-email" required>
+                    </label>
 
+                <div class="review-buttons">
+                    <button id="confirm-issue" type="button">Confirm</button>
+                    <button id="cancel-issue" type="button">Cancel</button>
+                </div>
             </div>
         </div>
     `
@@ -102,4 +139,9 @@ export function initDeviceModal({ onAdded = () => window.location.reload() } = {
             alert("Could not connect to the database correctly")
         }
     })
+}
+
+export function initAssignModal() {
+    const modal = document.getElementById('assign-modal')
+    const newAssignmentButton = document.getElementById('new-assignment')
 }
