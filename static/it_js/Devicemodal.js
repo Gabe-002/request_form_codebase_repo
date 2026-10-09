@@ -73,12 +73,6 @@ export function assignDeviceModal() {
                         <input type="text" id="issue-serial-number" name="serial_number" required>
                     </label>
                 <h4>Transfer Info</h4>
-                    <label>Transfer To
-                        <input type="text" id="issue-name" name="issue-name" required>
-                    </label>
-                    <label>Company No.
-                        <input type="text" id="issue-company-no" name="company-no" required>
-                    </label>
                     <label>Location
                         <input type="text" id="" name="" required>
                     </label>
@@ -93,8 +87,8 @@ export function assignDeviceModal() {
                     </label>
 
                 <div class="review-buttons">
-                    <button id="confirm-issue" type="button">Confirm</button>
-                    <button id="cancel-issue" type="button">Cancel</button>
+                    <button id="confirm-assign" type="button">Confirm</button>
+                    <button id="cancel-assign" type="button">Cancel</button>
                 </div>
             </div>
         </div>
@@ -143,5 +137,15 @@ export function initDeviceModal({ onAdded = () => window.location.reload() } = {
 
 export function initAssignModal() {
     const modal = document.getElementById('assign-modal')
-    const newAssignmentButton = document.getElementById('new-assignment')
+    const newAssignmentBtn = document.getElementById('new-assignment')
+    const cancelAssignmentBtn = document.getElementById('cancel-assign')
+    newAssignmentBtn.addEventListener('click', () => {
+        modal.classList.toggle('open')
+    })
+    cancelAssignmentBtn.addEventListener('click', () => {
+        modal.classList.remove('open')
+        modal.querySelectorAll('input').forEach(input => {
+            input.value = ""
+        })
+    })
 }

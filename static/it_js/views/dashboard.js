@@ -1,4 +1,4 @@
-import { deviceModalHTML, initDeviceModal } from "../Devicemodal.js";
+import { deviceModalHTML, initDeviceModal, assignDeviceModal, initAssignModal } from "../Devicemodal.js";
 
 export const dashboardView = {
     async mount(container) {
@@ -23,6 +23,7 @@ export const dashboardView = {
             </div>
 
             ${deviceModalHTML()}
+            ${assignDeviceModal()}
 
             <div id="review-modal">
                 <div class="review-content">
@@ -111,6 +112,8 @@ export const dashboardView = {
         body += renderRecentActivity()
         body += `</div>`
         container.innerHTML = body;
+
+        initAssignModal()
 
         const addDeviceBtn = document.getElementById('add-device')
         const modal = document.getElementById('device-modal')
