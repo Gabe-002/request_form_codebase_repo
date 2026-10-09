@@ -165,10 +165,14 @@ export function initAssignModal() {
     const modal = document.getElementById('assign-modal')
     const newAssignmentBtn = document.getElementById('new-assignment')
     const cancelAssignmentBtn = document.getElementById('cancel-assign')
-    const deviceSearchBar = document.getElementById('new-assign-issue-asset-number')
 
+    const deviceSearchBar = document.getElementById('new-assign-issue-asset-number')
     const deviceResults = document.getElementById('new-assign-asset-results')
     deviceResults.style.display = 'none'
+
+    const userSearchBar = document.getElementById('new-assign-issue-tenant-username')
+    const userResults = document.getElementById('new-assign-users-results')
+    userResults.style.display = 'none'
 
     newAssignmentBtn.addEventListener('click', () => {
         modal.classList.toggle('open')
@@ -181,7 +185,38 @@ export function initAssignModal() {
     })
 
     deviceSearchBar.addEventListener('input', (event) => {
-        console.log(event.data)
         searchResults(event, deviceResults, `/it/api/query/devices`, (device)=> `${device.asset_number} - ${device.manufacturer} ${device.model}`)
+    })
+
+    userSearchBar.addEventListener('input', (event) => {
+        searchResults(event, userResults, `/it/api/query/users`, (user)=> `${user.display_name}`)
+    })
+
+    deviceResults.addEventListener('click', (event) => {
+        const item = event.target.closest('.device-item')
+
+        const assetNumber = document.getElementById('new-assign-issue-asset-number')
+        const modelNumber = document.getElementById('new-assign-issue-model')
+        const serialNumber = document.getElementById('new-assign-issue-serial-number')
+
+        assetNumber.value = item.dataset.assetNumber
+        modelNumber.value = `${item.dataset.manufacturer} ${item.dataset.model}`
+        serialNumber.value = item.dataset.serialNumber
+
+        deviceResults.dataset.deviceId = item.dataset.id
+        deviceResults.style.display = 'none'
+    })
+    
+    userResults.addEventListener('click', (event) => {
+        const item = event.target.closest('.device-item')
+
+        const username = document.getElementById("new-assign-issue-tenant-username")
+        const email = document.getElementById("new-assign-issue-tenant-email")
+
+        username.value = item.dataset.displayName
+        email.value = item.dataset.email
+
+        userResults.dataset.userId = item.dataset.id
+        userResults.style.display = 'none'
     })
 }

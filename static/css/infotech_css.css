@@ -457,7 +457,7 @@ textarea {
 .asset-search, .user-search {
     position: relative;
 }
-#asset-results, #users-results, #new-assign-asset-results {
+#asset-results, #users-results, #new-assign-asset-results, #new-assign-users-results {
     position: absolute;
     z-index: 200;
     font: inherit;
@@ -472,7 +472,7 @@ textarea {
     max-height: 250px;
     overflow-y: auto;
 }
-#asset-results, #new-assign-asset-results {
+#asset-results, #new-assign-asset-results, #new-assign-users-results {
     top: 100%;
 }
 #users-results {
