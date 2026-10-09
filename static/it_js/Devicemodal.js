@@ -57,42 +57,68 @@ export function deviceModalHTML() {
 export function assignDeviceModal() {
     return `
         <div id="assign-modal">
-            <div class="issue-page">
-                <h3>Assign a Device</h3>
-                <h4>Device Info</h4>
-                <div class="asset-search">
-                    <label>Asset Number
-                        <input type="text" id="issue-asset-number" name="asset_number" required">
-                        <div id="asset-results"></div>
-                    </label>
-                </div>
+            <form id="new-assign-form">
+                <div class="issue-page">
+                    <h3>Assign a Device</h3>
+                    <h4>Device Info</h4>
+                    <div class="asset-search">
+                        <label>Asset Number
+                            <input type="text" id="new-assign-issue-asset-number" name="asset_number" required>
+                            <div id="new-assign-asset-results"></div>
+                        </label>
+                    </div>
                     <label>Asset Description
-                        <input type="text" id="issue-model" name="model" required>
+                        <input type="text" id="new-assign-issue-model" name="model" required>
                     </label>
                     <label>Serial Number
-                        <input type="text" id="issue-serial-number" name="serial_number" required>
+                        <input type="text" id="new-assign-issue-serial-number" name="serial_number" required>
                     </label>
-                <h4>Transfer Info</h4>
+                    <h4>Transfer Info</h4>
                     <label>Location
-                        <input type="text" id="" name="" required>
+                        <input type="text" id="new-assign-location" name="location" required>
                     </label>
                     <div class="user-search">
                         <label>Username
-                            <input type="text" id="issue-tenant-username" name="issue-tenant-username" required>
+                            <input type="text" id="new-assign-issue-tenant-username" name="issue-tenant-username" required>
                         </label>
-                        <div id="users-results"></div>
+                        <div id="new-assign-users-results"></div>
                     </div>
                     <label>Tenant Email
-                        <input type="text" id="issue-tenant-email" name="issue-tenant-email" required>
+                        <input type="text" id="new-assign-issue-tenant-email" name="issue-tenant-email" required>
                     </label>
 
-                <div class="review-buttons">
-                    <button id="confirm-assign" type="button">Confirm</button>
-                    <button id="cancel-assign" type="button">Cancel</button>
+                    <div class="review-buttons">
+                        <button id="new-assign-confirm-assign" type="submit">Confirm</button>
+                        <button id="cancel-assign" type="button">Cancel</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     `
+}
+
+async function searchResults(event, container, url, renderItem){
+    const query = event.target.value
+    if (query.length === 0) {
+        container.innerHTML = ''
+        container.style.display = 'none'
+        return
+    }
+    const response = await fetch(`${url}?query=${query}`)
+    if (!response.ok) {
+        alert("An error has occured while fetching results")
+        return
+    }
+    container.style.display = 'flex'
+    const items = await response.json()
+    let body = ``
+    items.forEach((item) => {
+        const attrs = Object.entries(item)
+            .map(([key, value]) => `data-${key.replace(/_/g, '-')}="${value}"`)
+            .join(' ')
+        body += `<p class="device-item" ${attrs}>${renderItem(item)}</p>`
+    })
+    container.innerHTML = body
 }
 
 // Call this AFTER the view's HTML (including deviceModalHTML()) is in the DOM.
@@ -139,6 +165,11 @@ export function initAssignModal() {
     const modal = document.getElementById('assign-modal')
     const newAssignmentBtn = document.getElementById('new-assignment')
     const cancelAssignmentBtn = document.getElementById('cancel-assign')
+    const deviceSearchBar = document.getElementById('new-assign-issue-asset-number')
+
+    const deviceResults = document.getElementById('new-assign-asset-results')
+    deviceResults.style.display = 'none'
+
     newAssignmentBtn.addEventListener('click', () => {
         modal.classList.toggle('open')
     })
@@ -147,5 +178,10 @@ export function initAssignModal() {
         modal.querySelectorAll('input').forEach(input => {
             input.value = ""
         })
+    })
+
+    deviceSearchBar.addEventListener('input', (event) => {
+        console.log(event.data)
+        searchResults(event, deviceResults, `/it/api/query/devices`, (device)=> `${device.asset_number} - ${device.manufacturer} ${device.model}`)
     })
 }
