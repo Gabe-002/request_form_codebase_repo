@@ -146,8 +146,11 @@ def create_assignment(
         if request is None: 
             raise HTTPException(404, "Request not found")
         
-    db.add(Assignments(**payload.model_dump()))
+    db.add(Assignments(**payload.model_dump(exclude={"location"})))
+    
     device.status = "assigned"
+    if payload.location is not None:
+        device.location = payload.location
     if request is not None:
         request.it_review = "allocated"
 

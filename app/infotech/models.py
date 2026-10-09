@@ -79,6 +79,7 @@ class Assignments(Base):
 class CreateAssignment(BaseModel):
     device_id: int
     tenant_id: int
+    location: str | None = None
     request_id: int | None = None
     sharepoint_id: int | None = None
 

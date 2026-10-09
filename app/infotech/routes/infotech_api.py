@@ -108,8 +108,6 @@ def assign_device(
     db:Session = Depends(get_db),
     ):
     create_assignment(db, payload)
-    if payload.request_id:
-        print(payload.request_id)
 
 @router.get('/assignments')
 def api_get_device_assignments(

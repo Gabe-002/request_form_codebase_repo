@@ -164,7 +164,10 @@ export function initDeviceModal({ onAdded = () => window.location.reload() } = {
 export function initAssignModal() {
     const modal = document.getElementById('assign-modal')
     const newAssignmentBtn = document.getElementById('new-assignment')
+    const confirmAssignmentBtn = document.getElementById('new-assign-confirm-assign')
     const cancelAssignmentBtn = document.getElementById('cancel-assign')
+
+    const newAssignmentForm = document.getElementById('new-assign-form')
 
     const deviceSearchBar = document.getElementById('new-assign-issue-asset-number')
     const deviceResults = document.getElementById('new-assign-asset-results')
@@ -206,7 +209,7 @@ export function initAssignModal() {
         deviceResults.dataset.deviceId = item.dataset.id
         deviceResults.style.display = 'none'
     })
-    
+
     userResults.addEventListener('click', (event) => {
         const item = event.target.closest('.device-item')
 
@@ -218,5 +221,32 @@ export function initAssignModal() {
 
         userResults.dataset.userId = item.dataset.id
         userResults.style.display = 'none'
+    })
+
+    newAssignmentForm.addEventListener('submit', async (event) => {
+        event.preventDefault()
+        const formData = new FormData(newAssignmentForm)
+        const data = Object.fromEntries(formData)
+
+        const tenant_id = document.getElementById('new-assign-users-results').dataset.userId
+        const device_id = document.getElementById('new-assign-asset-results').dataset.deviceId
+        const location = data.location
+
+        const assignmentInfo = {
+            device_id,
+            tenant_id,
+            location
+        }
+        console.log(assignmentInfo)
+        const response = await fetch(`/it/api/assign`, {
+            headers: {"Content-Type": "application/json"},
+            method: "POST",
+            body: JSON.stringify(assignmentInfo)
+        })
+        if (!response.ok) {
+            alert("Could not correctly assign the device")
+            window.location.reload()
+        }
+        window.location.reload()
     })
 }
