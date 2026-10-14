@@ -352,7 +352,8 @@ def collect_devices(db: Session):
     )
     LatestAssignments = aliased(Assignments, latest_assignments)
     statement = (
-        select(    
+        select(
+            Devices.id,
             Devices.status,
             Devices.asset_number,
             Devices.asset_type,
@@ -386,15 +387,43 @@ def get_user_id_by_email(db: Session, email):
     )
     return db.execute(statement=statement).scalar_one_or_none()
 
+def update_sharepoint_id(db: Session, device_id: int, sharepoint_id: int):
+    statement = (
+        update(Devices)
+        .values(sharepoint_id=sharepoint_id)
+        .where(Devices.id == device_id)
+    )
+    db.execute(statement=statement)
+    db.commit()
 
 def device_sharepoint_sync(db: Session):
     with_sharepoint_id, without_sharepoint_id = collect_devices(db) 
-    for user in without_sharepoint_id["tenant_user"]:
-        print(user)
+
+    for assignment in without_sharepoint_id['tenant_user']:
+        tenant_site_id = ensure_user(assignment['tenant_email'])
+        if tenant_site_id:
+            assignment['current'] = str(tenant_site_id)
+        body = {
+            "fields": {
+                value: assignment[key]
+                for key, value in columnMapping.items()
+                if assignment.get(key)
+            }
+        }
+        response = call_graph_api(
+            insert_url,
+            "POST",
+            json_body=body
+        )
+        item_id = response.json().get('id')
+        if (item_id):
+            update_sharepoint_id(db, assignment.get('id'), item_id)
 
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
+
+
     
-    # device_sharepoint_sync(db)
+    device_sharepoint_sync(db)
