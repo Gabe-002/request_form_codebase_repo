@@ -87,10 +87,6 @@ def call_graph_api(url, method="GET", json_body=None):
 
 
 if __name__ == "__main__":
-
-    user_id = ensure_user("Gabriel.Richard@teichmanngrp.com")
-    print(repr(user_id))
-
     # from app.database import get_db
     # from app.infotech.services.infotech_database import get_delta_link
     # from app.infotech.services.infotech_database import add_tenant_user
@@ -138,12 +134,43 @@ if __name__ == "__main__":
     lists_url = 'https://graph.microsoft.com/v1.0/sites/teichmanngrp.sharepoint.com,fe9f2f2b-d423-4037-943f-b10502afe398,52073d89-7ef3-490a-b6cc-9da368d1e25a/lists'
     device_list = 'd5bdc95f-5596-4443-adff-255436bc08cc'
 
+    items_url = f"{lists_url}/{device_list}/items"
     update_url = f"{lists_url}/{device_list}/items/{27}/fields"
     fields = {
         "CurrentOwnerLookupId": None,
         "Status": "available"
     }
 
-    call_graph_api(update_url, "PATCH", fields)
+    columnMapping = {
+        "sharepoint_id": "id",
+        "asset_number": "Title",
+        "serial_number": "SerialNumber",
+        "manufacturer": "Manufacturer",
+        "model": "Model",
+        "asset_type": "AssetType",
+        "status": "Status",
+        "purchase_price": "PurchasePrice",
+        "asset_number": "Title",
+        "order_number": "OrderNumber",
+        "condition_notes": "ConditionNotes",
+        "current": "CurrentOwnerLookupId",
+        "previous": "PreviousOwnerLookupId",
+        "location": "location"
+    }
+
+    def format_column(field_items):
+        formatted_dict = {}
+        for key, value in columnMapping.items():
+            if (field_items.get(value)):
+                formatted_dict[key] = field_items.get(value)
+        return formatted_dict
+
+    #call_graph_api(update_url, "PATCH", fields)
+    items = call_graph_api(items_url)
+    for item in items.json()['value']:
+        # print(item.get('fields'))
+        print("Formatted for comparison")
+        print(format_column(item.get('fields')))
+        print()
     # r = call_graph_api(f"{lists_url}/{device_list}/columns?$filter=name eq 'CurrentOwner'")
     # print(r.json())

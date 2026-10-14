@@ -1,7 +1,7 @@
 from app.database import get_db
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, insert, update, and_, or_, func
+from sqlalchemy import select, insert, update, and_, or_, func, true
 from app.models import Requests, People
 from app.infotech.models import (
     Devices, 
@@ -29,12 +29,12 @@ columnMapping = {
     "asset_type": "AssetType",
     "status": "Status",
     "purchase_price": "PurchasePrice",
-    "asset_number": "Title",
     "order_number": "OrderNumber",
     "condition_notes": "ConditionNotes",
     "current": "CurrentOwnerLookupId",
     "previous": "PreviousOwnerLookupId"
 }
+
 list_url = settings.LIST_URL
 devices_id = settings.DEVICES_ID
 insert_url = f"{list_url}/{devices_id}/items"
@@ -338,7 +338,54 @@ def device_deallocation(
     device.status = 'available'
     db.commit()
 
+
+# These are all the function related to the device sync
+def collect_devices(db: Session):
+    latest_assignments = (
+        select(TenantUsers.email.label("tenant_email"))
+        .select_from(Assignments)
+        .join(TenantUsers, TenantUsers.id == Assignments.tenant_id)
+        .where(Assignments.device_id == Devices.id)
+        .order_by(Assignments.allocated_at.desc())
+        .limit(1)
+        .lateral("latest_assignments")
+    )
+    LatestAssignments = aliased(Assignments, latest_assignments)
+    statement = (
+        select(    
+            Devices.status,
+            Devices.asset_number,
+            Devices.asset_type,
+            Devices.manufacturer,
+            Devices.model,
+            Devices.serial_number,
+            Devices.order_number,
+            Devices.condition_notes,
+            Devices.sharepoint_id,
+            latest_assignments.c.tenant_email,
+            )
+        .outerjoin(LatestAssignments, true())
+    )
+    devices = db.execute(statement=statement).mappings().all()
+    with_sharepoint_id = [device for device in devices if device["sharepoint_id"] is not None]
+
+    without_sharepoint_id = {"tenant_user": [], "no_tenant_user": []}
+    for device in devices:
+        if device["sharepoint_id"] is not None:
+            continue
+        row = {key: value for key, value in device.items() if key != 'sharepoint_id'}
+        type = "tenant_user" if row["tenant_email"] is not None else "no_tenant_user"
+        without_sharepoint_id[type].append(row)
+
+    return with_sharepoint_id, without_sharepoint_id
+
+def device_sharepoint_sync(db: Session):
+    with_sharepoint_id, without_sharepoint_id = collect_devices(db) 
+    for user in without_sharepoint_id["tenant_user"]:
+        print(user)
+
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
-    print(get_device_assignment(db, 8))
+    
+    device_sharepoint_sync(db)
