@@ -379,6 +379,14 @@ def collect_devices(db: Session):
 
     return with_sharepoint_id, without_sharepoint_id
 
+def get_user_id_by_email(db: Session, email):
+    statement = (
+        select(TenantUsers.id)
+        .where(TenantUsers.email.ilike(f'%{email}%'))
+    )
+    return db.execute(statement=statement).scalar_one_or_none()
+
+
 def device_sharepoint_sync(db: Session):
     with_sharepoint_id, without_sharepoint_id = collect_devices(db) 
     for user in without_sharepoint_id["tenant_user"]:
@@ -387,5 +395,6 @@ def device_sharepoint_sync(db: Session):
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
+
     
-    device_sharepoint_sync(db)
+    # device_sharepoint_sync(db)
