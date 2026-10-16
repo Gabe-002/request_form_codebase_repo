@@ -1,41 +1,68 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Holder</title>
-        <link rel="stylesheet" href="/static/css/base.css">
-        <link rel="stylesheet" href="/static/css/pending_page.css">
-        <script src="/static/js/back_to_portal.js" defer></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pending Requests | T3 Projects</title>
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/pending_page.css">
+    <script src="/static/js/back_to_portal.js" defer></script>
+</head>
 
-    <body>
-        <header>
-            <div class="header-content">
-                <div class="left-header-side">
-                    <img src="/static/images/getsitelogo.jpeg" alt="TEICHMANN PROJECTS" class="responsive-img">
-                    <h1>Pending requests for {{user[0].get("user_first_name")}}</h1>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="left-header-side">
+                <img src="/static/images/getsitelogo.jpeg" alt="TEICHMANN PROJECTS" class="responsive-img">
+                <div class="greeting">
+                    <span>Request Portal</span>
+                    <h1>Pending Requests</h1>
                 </div>
-                <button id="return-to-portal-button" type="button">Back to Portal</button>
             </div>
-        </header>
+            <button id="return-to-portal-button" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                Back to Portal
+            </button>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="page-heading">
+            <div>
+                <h2>Waiting on you, {{user[0].get("user_first_name")}}</h2>
+                <p>Requests that still need a review or decision.</p>
+            </div>
+            <span class="count-pill">{{ pending_requests|length if pending_requests else 0 }} pending</span>
+        </div>
 
         <div class="pending-requests">
-        {% if pending_requests %}
-            {% for request in pending_requests %}
-            <a href="/requests/pending/{{request.request_id}}" class="request-item">
-                <p>PENDING</p>
-                {% set fullname = request.first_name + ' ' + request.surname%}
-                <p>{{fullname}}</p>
-                <p>Project Code: {{request.project_code}}</p>
-            </a>
-            {% endfor %}
-        {% else %}
-        <div class="pending-empty">
-            <p>There are no pending requests. All clear!</p>
+            {% if pending_requests %}
+                {% for request in pending_requests %}
+                    {% set fullname = request.first_name + ' ' + request.surname %}
+                    <a href="/requests/pending/{{request.request_id}}" class="request-item">
+                        <span class="avatar">{{ (request.first_name or '')[:1] }}{{ (request.surname or '')[:1] }}</span>
+                        <span class="request-text">
+                            <strong>{{fullname}}</strong>
+                            <span>Project Code: {{request.project_code}}</span>
+                        </span>
+                        <span class="status-pill">Pending</span>
+                        <span class="item-arrow">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </span>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="pending-empty">
+                    <span class="empty-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+                    </span>
+                    <h3>All clear!</h3>
+                    <p>There are no pending requests right now.</p>
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
-        </div>
-    </body>
-    <div id="not-raise-alert"></div>
+    </main>
 
+    <div id="not-raise-alert"></div>
+</body>
 </html>

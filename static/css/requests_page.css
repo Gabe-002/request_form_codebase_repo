@@ -1,219 +1,476 @@
-html {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* old Edge/IE */
+/* ============ Tokens (same as request_portal.css) ============ */
+:root {
+    --brand: var(--base-yellow);
+    --brand-light: color-mix(in srgb, var(--base-yellow) 78%, white);
+    --brand-soft: color-mix(in srgb, var(--base-yellow) 14%, white);
+    --ink: var(--base-black);
+
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --surface-muted: #faf9f6;
+    --border: #e6e3dc;
+    --border-strong: #d3cfc6;
+    --text: #1d1c1a;
+    --muted: #6f6b63;
+    --placeholder: #a29d93;
+
+    --radius-sm: 10px;
+    --radius: 16px;
+    --shadow-sm: 0 1px 2px rgba(20, 19, 17, 0.05), 0 2px 8px rgba(20, 19, 17, 0.05);
+    --shadow-md: 0 2px 4px rgba(20, 19, 17, 0.06), 0 12px 28px rgba(20, 19, 17, 0.12);
+    --shadow-card:
+        0 1px 2px rgba(20, 19, 17, 0.05),
+        0 10px 30px rgba(20, 19, 17, 0.07),
+        0 30px 60px -20px rgba(20, 19, 17, 0.15);
+    --focus-ring: 0 0 0 3px color-mix(in srgb, var(--base-yellow) 35%, transparent);
+
+    --success: #2e9d4f;
+    --warning: #f08c00;
+    --danger: #e03131;
 }
 
-html::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, new Edge */
+/* ============ Page ============ */
+html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
+html::-webkit-scrollbar {
+    display: none;
+}
+
 body {
     font-family: "Segoe UI", "Segoe UI Web", "Helvetica Neue", Arial, sans-serif;
-    background-color: var(--base-yellow);
+    color: var(--text);
     margin: 0;
+    min-height: 100vh;
+    background-color: var(--bg);
+    background-image: radial-gradient(1200px 420px at 8% -10%, var(--brand-soft), transparent 60%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
 }
+
+/* ============ Header (matches portal) ============ */
 header {
-    border: 1px solid black;
-    padding-inline: 20px;
-    background-color:var(--base-black);
-    color: white;
-    margin-bottom: 10px;
-    top: 0px;
     position: sticky;
+    top: 0;
     z-index: 1000;
+    padding: 12px 28px;
+    background-color: var(--ink);
+    color: #fff;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.22);
 }
 .header-content {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
 }
-#return-to-portal-button {
-    font:inherit;
-    font-weight: 500;
-    border: none;
-    border-radius: 6px;
-    background-color: var(--base-yellow);
-    color: black;
-    width: 110px;
-    height: 50px;
-
-    font-size: 14px;
-
-    transition: transform 0.35s ease;
-}
-
-form {
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 24px 3px rgba(0, 0, 0, 0.15);
-    border-left: 5px solid var(--base-black);
-    border-top: 5px solid var(--base-black);
-}
-.standard-form-field {
-    display: flex;
-    flex-direction: column;
-    margin-top: 18px;
-}
-.standard-form-field input {
-    padding: 8px 10px;
-    box-sizing: border-box;
-    border: 1px solid #000000;
-    background-color: #F3F4F6;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    margin-top: 3px;
-
-    max-width: 1000px;
-}
-.standard-form-field input:focus {
-    outline: none;
-    border-color: #4F46E5;
-    box-shadow: 1px 2px 1px 1px #4e46e572;
-    transform: translateY(-1px);
-}
-label, summary{
-    font-weight: bold;
-}
-.contact-details {
-    min-width: 0;
-    width: 100%;
-    margin-top: 18px;
-    border: 1px solid #000000;
-    box-sizing: border-box;
-    border-radius: 5px;
-}
-.contact-numbers {
+.left-header-side {
     display: flex;
     align-items: center;
-    gap: 5px;
-    width: 100%;
+    gap: 16px;
 }
-.contact-numbers > .standard-form-field {
-    flex: 1;
-}
-select {
-    font-size: 16px;
-}
-.select-form-field {
-    display: flex;
-    flex-direction: column;
-    max-width: 600px;
-    margin-top: 18px;
-}
-.select-form-field select {
-    background-color: #F3F4F6;
-    margin-top: 3px;
-    padding: 8px 10px;
+.left-header-side img {
+    height: 40px;
+    width: auto;
     border-radius: 6px;
 }
-
-.software-drop-down {
-    margin-top: 25px;
-    margin-bottom: 25px;
+.greeting span {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brand-light);
+}
+.greeting h1 {
+    margin: 2px 0 0;
+    font-size: 1.15rem;
+    font-weight: 600;
 }
 
-.checkbox-group {
-    margin-top: 5px;
-}
-
-.checkbox-item input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    cursor: pointer;
-    accent-color: #00ff3c; 
-    margin-left: 15px;
-    margin-top: 3px;
-}
-/* 1. Target the checkboxes inside your dropdown macro */
-.checkbox-item input[type="checkbox"] {
-    /* Tell the browser to strip away the default ugly OS styling */
-    appearance: none;
-    -webkit-appearance: none;
-    
-    /* Create your custom charcoal box dimensions */
-    width: 20px;
-    height: 20px;
-    background-color: #F3F4F6; /* Default unchecked light grey background */
-    border: 1px solid var(--base-black);   /* Default border matching your company slate */
-    border-radius: 4px;
-    cursor: pointer;
-    
-    /* Layout properties so we can center the tick mark perfectly inside */
+#return-to-portal-button {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    position: relative;
-    vertical-align: middle;
-    
-    transition: all 0.2s ease;
+    gap: 8px;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 9px 18px;
+    color: #fff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
-/* 2. Style what happens when the box is checked */
-.checkbox-item input[type="checkbox"]:checked {
-    background-color: var(--base-black); /* Company Charcoal */
-    border-color: var(--base-black);
+#return-to-portal-button svg {
+    transition: transform 0.2s ease;
 }
-.checkbox-item input[type="checkbox"]::before {
-    content: "T3"; 
-    font-weight: normal;
-    font-size: 14px;
-    color: var(--base-yellow); 
-    transform: scale(0);
+#return-to-portal-button:hover {
+    color: var(--brand-light);
+    border-color: var(--brand-light);
+    background-color: rgba(255, 255, 255, 0.04);
 }
-.checkbox-item input[type="checkbox"]:checked::before {
-    transform: scale(0.8);
+#return-to-portal-button:hover svg {
+    transform: translateX(-3px);
 }
 
+/* ============ Form card ============ */
+form {
+    max-width: 880px;
+    margin: 36px auto 64px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+/* Dark intro band, echoes the portal's hero card */
+.form-intro {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 30px 40px;
+    background: var(--ink);
+    color: #fff;
+}
+.form-intro::after {
+    content: "";
+    position: absolute;
+    right: -70px;
+    top: -110px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--base-yellow) 45%, transparent), transparent 70%);
+    pointer-events: none;
+}
+.intro-icon {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--brand-light);
+    color: var(--ink);
+}
+.form-intro > div {
+    position: relative;
+    z-index: 1;
+}
+.form-intro h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+.form-intro p {
+    margin: 4px 0 0;
+    font-size: 0.925rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* ============ Sections ============ */
+.form-section {
+    padding: 30px 40px 34px;
+    border-bottom: 1px solid var(--border);
+}
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+}
+.section-badge {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--brand-soft);
+    border: 1px solid color-mix(in srgb, var(--base-yellow) 35%, white);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 1rem;
+}
+.section-heading h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 650;
+}
+.section-heading p {
+    margin: 2px 0 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+
+.field-row,
+.contact-numbers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+    align-items: end;
+}
+
+/* ============ Fields ============ */
+.standard-form-field,
+.select-form-field,
 .noteblock-field {
     display: flex;
     flex-direction: column;
+    gap: 6px;
     margin-top: 18px;
-}
-.noteblock-field textarea {
-    margin-top: 3px;
-    padding: 8px 10px;
-    border: 1px solid black;
-    box-sizing: border-box;
-    border-radius: 3px;
-    background-color: #f4f2f7;
-    resize: vertical;
-    min-height: 80px;
-    max-height: 200px;
-    font-size: 16px;
-}
-.noteblock-field textarea:focus {
-    outline: none;
-    border-color: #4F46E5;
-    box-shadow: 1px 2px 1px 1px #4e46e572;
-    transform: translateY(-1px);
-}
-.address-block {
-    width: 100%;
-    margin-top: 18px;
-    border: 1px solid #000000;
-    box-sizing: border-box;
-    border-radius: 10px;
+    min-width: 0;
 }
 
-button[type="submit"] {
-    margin-top: 30px;
-    padding: 12px 28px;
-    color: #ffffff;
-    background-color: #2563EB;
+label {
+    font-size: 0.85rem;
     font-weight: 600;
-    font-size: 1rem;
-    border: none;
-    border-radius: 8px;
+    color: var(--text);
+}
+
+.standard-form-field input,
+.select-form-field select,
+.noteblock-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--text);
+    padding: 11px 14px;
+    background-color: var(--surface-muted);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.standard-form-field input::placeholder,
+.noteblock-field textarea::placeholder {
+    color: var(--placeholder);
+}
+.standard-form-field input:hover,
+.select-form-field select:hover,
+.noteblock-field textarea:hover {
+    border-color: #b8b3a8;
+}
+.standard-form-field input:focus,
+.select-form-field select:focus,
+.noteblock-field textarea:focus {
+    outline: none;
+    background-color: var(--surface);
+    border-color: var(--ink);
+    box-shadow: var(--focus-ring);
+}
+
+.select-form-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 40px;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 1s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%236f6b63' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
 }
-button[type="submit"]:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(157, 0, 255, 0.3);
+
+.noteblock-field textarea {
+    resize: vertical;
+    min-height: 96px;
+    max-height: 240px;
+    line-height: 1.5;
 }
+
+/* ============ Grouped fieldsets ============ */
+.contact-details,
+.address-block {
+    min-width: 0;
+    margin: 22px 0 0;
+    padding: 6px 20px 20px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface-muted);
+    box-sizing: border-box;
+}
+.contact-details legend,
+.address-block legend {
+    padding: 0 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.contact-details input,
+.address-block input {
+    background-color: var(--surface);
+}
+
+/* ============ Software dropdown ============ */
+.software-drop-down {
+    margin-top: 22px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+.software-drop-down summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+.software-drop-down summary::-webkit-details-marker {
+    display: none;
+}
+.software-drop-down summary::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    margin-right: 4px;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg) translateY(-2px);
+    transition: transform 0.2s ease;
+}
+.software-drop-down[open] summary::after {
+    transform: rotate(-135deg) translateY(-2px);
+}
+.software-drop-down summary:hover {
+    background: var(--brand-soft);
+}
+.software-drop-down[open] summary {
+    border-bottom: 1px solid var(--border);
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    padding: 14px 18px 18px;
+}
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.checkbox-item:hover {
+    background: var(--surface-muted);
+    border-color: var(--border);
+}
+.checkbox-item:has(input:checked) {
+    background: var(--brand-soft);
+    border-color: color-mix(in srgb, var(--base-yellow) 45%, white);
+}
+
+.checkbox-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.checkbox-item input[type="checkbox"]:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+.checkbox-item input[type="checkbox"]:checked {
+    background-color: var(--ink);
+    border-color: var(--ink);
+}
+.checkbox-item input[type="checkbox"]::before {
+    content: "T3";
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--brand-light);
+    transform: scale(0);
+    transition: transform 0.15s ease;
+}
+.checkbox-item input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+/* ============ Submit ============ */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 40px;
+    background: var(--surface-muted);
+}
+.form-actions p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+/* :where() keeps specificity at 0 so classes like .commit-color still win */
+:where(button[type="submit"]) {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    font: inherit;
+    font-size: 0.975rem;
+    font-weight: 600;
+    padding: 13px 26px;
+    color: #fff;
+    background-color: var(--ink);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+:where(button[type="submit"]) svg {
+    color: var(--brand-light);
+    transition: transform 0.2s ease;
+}
+:where(button[type="submit"]):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--base-yellow) 35%, transparent), var(--shadow-md);
+}
+:where(button[type="submit"]):hover svg {
+    transform: translateX(3px);
+}
+:where(button[type="submit"]):active {
+    transform: translateY(0);
+}
+:where(button[type="submit"]):focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* ============ Review page (shared stylesheet) ============ */
 #review-area {
     display: flex;
     flex-direction: column;
@@ -221,98 +478,114 @@ button[type="submit"]:hover {
 }
 #buttons {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
+    gap: 12px;
     margin-bottom: 30px;
 }
-.review-button {
+
+.review-button,
+.button-item {
     font: inherit;
     font-weight: 600;
+    color: #fff;
     text-decoration: none;
-    color: white;
     border: none;
-    box-sizing: border-box;
-    padding-inline: 10px;
-    padding-block: 10px;
-    border-radius: 6px;
-    margin: 0;
-    transition: transform ease 0.3s;
+    border-radius: var(--radius-sm);
+    padding: 10px 18px;
+    margin-top: 30px;
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.review-button:hover,
+.button-item:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.review-button--pending,
+.cancel-color  { background-color: var(--warning); }
+.review-button--approve,
+.commit-color  { background-color: var(--success); }
+.review-button--reject { background-color: var(--danger); }
+
+.pending-color { color: var(--warning); }
+.approve-color { color: var(--success); }
+.reject-color  { color: var(--danger); }
+
+#edit-buttons {
+    display: flex;
+    gap: 12px;
     margin-top: 30px;
 }
-.review-button--pending {
-    background-color: rgb(255, 152, 0);
+#edit-buttons .button-item {
+    margin-top: 0;
 }
-.review-button--approve {
-    background-color: rgb(76, 175, 80);
-}
-.review-button--reject {
-    background-color: rgb(244, 67, 54);
-}
-.review-button--pending:hover {
-    transform: scale(1.03);
-}
-.review-button--approve:hover {
-    transform: scale(1.03);
-}
-.review-button--reject:hover {
-    transform: scale(1.03);
-}
-.pending-color{
-    color: rgb(255, 152, 0);
-}
-.approve-color{
-    color: rgb(76, 175, 80);
-}
-.reject-color{
-    color: rgb(244, 67, 54);
-}
-p {
-    margin: 5;
-}
+
 table {
     width: 100%;
-    border-collapse: collapse;
-    background-color: transparent; 
-    border: 1px solid #333333;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 th, td {
-    padding: 10px 14px;
+    padding: 11px 14px;
     text-align: left;
-    background-color: transparent; /* Ensures rows stay clear */
-    border: 1px solid #333333;  
+    border-bottom: 1px solid var(--border);
+}
+th {
+    background: var(--surface-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
 }
 td {
     font-weight: normal;
 }
-th {
-    font-weight: bold;
-    border-bottom: 1px solid #333333;
+tbody tr:nth-child(even) td {
+    background: #fcfbf9;
+}
+tr:last-child td {
+    border-bottom: none;
 }
 
-#edit-buttons {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    margin-inline: 700px;
-    margin-left: 0;
-}
-.button-item {
-    font: inherit;
-    font-weight: 600;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    justify-items: flex-end;
-}
-.cancel-color {
-    height: 40px;
-    background-color: rgb(255, 152, 0);
-    transition: transform ease 0.3s;
-}
-.cancel-color:hover {
-    transform: scale(1.03);
-}
-.commit-color {
-    background-color: rgb(76, 175, 80);
+/* ============ Mobile ============ */
+@media (max-width: 700px) {
+    header {
+        padding: 10px 16px;
+    }
+    .left-header-side img {
+        height: 32px;
+    }
+    .greeting h1 {
+        font-size: 1rem;
+    }
+    form {
+        margin: 16px;
+    }
+    .form-intro,
+    .form-section,
+    .form-actions {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .field-row,
+    .contact-numbers {
+        grid-template-columns: 1fr;
+    }
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    :where(button[type="submit"]) {
+        justify-content: center;
+    }
 }

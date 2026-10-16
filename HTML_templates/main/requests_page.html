@@ -4,7 +4,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Holder</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>New Request | T3 Projects</title>
         <link rel="stylesheet" href="/static/css/base.css">
         <link rel="stylesheet" href="/static/css/requests_page.css">
         <script src="/static/js/back_to_portal.js" defer></script>
@@ -15,79 +16,139 @@
             <div class="header-content">
                 <div class="left-header-side">
                     <img src="/static/images/getsitelogo.jpeg" alt="TEICHMANN PROJECTS" class="responsive-img">
-                    <h1>New Request Form</h1>
+                    <div class="greeting">
+                        <span>Request Portal</span>
+                        <h1>New Request Form</h1>
+                    </div>
                 </div>
-                <button id="return-to-portal-button" type="button">Back to Portal</button>
+                <button id="return-to-portal-button" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                    Back to Portal
+                </button>
             </div>
         </header>
 
-        <form method="POST" action="/requests/new">
-            <h3>Section A (Personal Info)</h3>
-            <input name="requestor_user_id" type="hidden" value="{{user.id}}">
-            {{ standard_field("first_name", "First Name", placeholder="John") }}
-            {{ standard_field("surname", "Surname", placeholder="Doe") }}
-            {{ standard_field("national_id_number", "National ID Number") }}
+        {% set ns = namespace(project_codes=[], software=[], project_managers=[]) %}
+        {% for project_code in project_codes %}
+            {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
+        {% endfor %}
+        {% for software_item in software %}
+            {% set ns.software = ns.software + [(software_item.get("software"), software_item.get("display_name"))] %}
+        {% endfor %}
+        {% for manager in project_managers %}
+            {% set ns.project_managers = ns.project_managers + [(manager.get("id"), manager.get("user_first_name") + " " + manager.get("user_surname"))] %}
+        {% endfor %}
 
-            <fieldset class="contact-details">
-                <legend>Contact Details</legend>
+        <form method="POST" action="/requests/new" class="request-form">
+            <input name="requestor_user_id" type="hidden" value="{{user.id}}">
+
+            <div class="form-intro">
+                <span class="intro-icon">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                </span>
+                <div>
+                    <h2>New take-on request</h2>
+                    <p>Fill in the new user's details and IT needs. Optional fields can be left blank.</p>
+                </div>
+            </div>
+
+            <!-- SECTION A -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">A</span>
+                    <div>
+                        <h3>Personal Info</h3>
+                        <p>Who is joining, and where they fit in.</p>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    {{ standard_field("first_name", "First Name", placeholder="John") }}
+                    {{ standard_field("surname", "Surname", placeholder="Doe") }}
+                </div>
+                {{ standard_field("national_id_number", "National ID Number") }}
+
+                <fieldset class="contact-details">
+                    <legend>Contact Details</legend>
                     <div class="contact-numbers">
-                        {{ standard_field("work_number", "Work Number", required=false) }}
+                        {{ standard_field("work_number", "Work Number (optional)", required=false) }}
                         {{ standard_field("mobile_number", "Mobile Number", placeholder="+27 12 345 6789") }}
                     </div>
                     {{ standard_field("contact_email", "Contact Email", placeholder="johndoe@t3projects.com") }}
-            </fieldset>
+                </fieldset>
 
-            {{ standard_field("employee_type", "Employee Type", placeholder="i.e. Employee or External...") }}
-            {{ standard_field("direct_line_manager", "Direct Line Manager") }}
-            {{ standard_field("professional_title", "Professional Title", placeholder="i.e. Manager, Financial Director...") }}
-
-            {{ standard_field("starting_date", "Starting Date", type="date") }}
-            {{ standard_field("expiry_date", "Expiry Date", type="date", required=false) }}
-
-            {% set ns = namespace(project_codes=[], software=[], project_managers=[]) %}
-            {% for project_code in project_codes %}
-                {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
-            {% endfor %}
-            {% for software_item in software %}
-                {% set ns.software = ns.software + [(software_item.get("software"), software_item.get("display_name"))] %}
-            {% endfor %}
-            {% for manager in project_managers %}
-                {% set ns.project_managers = ns.project_managers + [(manager.get("id"), manager.get("user_first_name") + " " + manager.get("user_surname"))]%}
-            {% endfor %}
-             
-            {{ select_field("project_code", "Project Code", ns.project_codes) }}
-
-            {{ standard_field("employee_number", "Employee Number", required=false, placeholder="Required only for an existing employee...") }}
-            {{ select_field("employee_division", "Employee Division", [("finance", "Finance"), ("estimating", "Estimating"), ("e&i", "E&I"), ("smp", "SMP"), ("hr", "HR"), ("other", "Other")]) }}
-            
-            {{ select_field("base_country_computer", "Country (where computer is based)", [("south_africa", "South Africa"), ("namibia", "Namibia"), ("zambia", "Zambia"), ("drc", "DRC")]) }}
-            
-
-            <h3>Section B (IT Requirements)</h3>
-
-            {{ select_field("computer_required", "Does the User Require a Computer?", [("yes", "Yes"), ("no", "No")]) }}
-            {{ select_field("desk_phone_required", "Does the User Require a Desk Phone?", [("yes", "Yes"), ("no", "No")]) }}
-
-            {{ drop_down_checkbox("Please Select Required Software", ns.software) }}
-
-            {{ noteblock_form_field("other_it_requirements", "Are there any other IT requirements?","This my be left blank is nothing else is required...") }}
-            {{ noteblock_form_field("sharepoint_file_rights", "Any SharePoint files that need view rights?", "This my be left blank is nothing else is required...") }}
-
-            <h3>Section C (Authorization)</h3>
-            
-            <fieldset class="address-block">
-                <legend>Request By</legend>
-                <div class="standard-address-line">
-                    {{ standard_field("requested_by_name", "Name", required=true, value=user.user_first_name) }}
+                <div class="field-row">
+                    {{ standard_field("employee_type", "Employee Type", placeholder="e.g. Employee or External") }}
+                    {{ standard_field("direct_line_manager", "Direct Line Manager") }}
                 </div>
-                <div class="standard-address-line">
-                    {{ standard_field("requested_by_surname", "Surname", required=true, value=user.user_surname) }}
-                </div>         
-            </fieldset>
+                <div class="field-row">
+                    {{ standard_field("professional_title", "Professional Title", placeholder="e.g. Manager, Financial Director") }}
+                    {{ select_field("project_code", "Project Code", ns.project_codes) }}
+                </div>
+                <div class="field-row">
+                    {{ standard_field("starting_date", "Starting Date", type="date") }}
+                    {{ standard_field("expiry_date", "Expiry Date (optional)", type="date", required=false) }}
+                </div>
+                <div class="field-row">
+                    {{ standard_field("employee_number", "Employee Number (optional)", required=false, placeholder="Only for existing employees") }}
+                    {{ select_field("employee_division", "Employee Division", [("finance", "Finance"), ("estimating", "Estimating"), ("e&i", "E&I"), ("smp", "SMP"), ("hr", "HR"), ("other", "Other")]) }}
+                </div>
+                {{ select_field("base_country_computer", "Country (where computer is based)", [("south_africa", "South Africa"), ("namibia", "Namibia"), ("zambia", "Zambia"), ("drc", "DRC")]) }}
+            </section>
 
-            {{ select_field("project_manager_id", "Project Manager", ns.project_managers) }}
+            <!-- SECTION B -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">B</span>
+                    <div>
+                        <h3>IT Requirements</h3>
+                        <p>Hardware, software and access the user will need.</p>
+                    </div>
+                </div>
 
-            <button type="submit">Submit Request</button>
+                <div class="field-row">
+                    {{ select_field("computer_required", "Does the user require a computer?", [("yes", "Yes"), ("no", "No")]) }}
+                    {{ select_field("desk_phone_required", "Does the user require a desk phone?", [("yes", "Yes"), ("no", "No")]) }}
+                </div>
+
+                {{ drop_down_checkbox("Please Select Required Software", ns.software) }}
+
+                {{ noteblock_form_field("other_it_requirements", "Any other IT requirements?", "This may be left blank if nothing else is required...") }}
+                {{ noteblock_form_field("sharepoint_file_rights", "Any SharePoint files that need view rights?", "This may be left blank if nothing else is required...") }}
+            </section>
+
+            <!-- SECTION C -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">C</span>
+                    <div>
+                        <h3>Authorization</h3>
+                        <p>Who is requesting this, and who approves it.</p>
+                    </div>
+                </div>
+
+                <fieldset class="address-block">
+                    <legend>Requested By</legend>
+                    <div class="field-row">
+                        <div class="standard-address-line">
+                            {{ standard_field("requested_by_name", "Name", required=true, value=user.user_first_name) }}
+                        </div>
+                        <div class="standard-address-line">
+                            {{ standard_field("requested_by_surname", "Surname", required=true, value=user.user_surname) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                {{ select_field("project_manager_id", "Project Manager", ns.project_managers) }}
+            </section>
+
+            <div class="form-actions">
+                <p>Your request will be sent to the selected project manager for approval.</p>
+                <button type="submit">
+                    Submit Request
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+            </div>
         </form>
     </body>
 </html>
