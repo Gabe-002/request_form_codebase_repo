@@ -1,31 +1,60 @@
-{% macro input(name, description, type="text", placeholder="") %}
+{% macro input(name, description, type="text", placeholder="", autocomplete="") %}
 <div class="input-fields">
     <label for="{{name}}">{{description}}</label>
-    <input name="{{name}}" id="{{name}}" type="{{type}}" placeholder="{{placeholder}}">
+    <input name="{{name}}" id="{{name}}" type="{{type}}" placeholder="{{placeholder}}"{% if autocomplete %} autocomplete="{{autocomplete}}"{% endif %}>
 </div>
 {% endmacro %}
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Holder</title>
-        <link rel="stylesheet" href="/static/css/base.css">
-        <link rel="stylesheet" href="/static/css/login.css">
-        <script src="/static/js/login.js" defer></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign In | T3 Projects</title>
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+    <script src="/static/js/login.js" defer></script>
+</head>
 
-    <body>
-        <div class="login-block">
-            <h1>Request Application</h1>
-            <div class="format-input">
-                {{ input("username", "Username", placeholder="jerrySien") }}
-                {{ input("password", "Password", type="password", placeholder="t3.projects.123") }}
+<body>
+    <main class="login-shell">
+
+        <section class="brand-panel">
+            <img src="/static/images/option_one.jpg" alt="" class="brand-bg">
+            <div class="brand-content">
+                <img src="/static/images/getsitelogo.jpeg" alt="TEICHMANN PROJECTS" class="brand-logo">
+                <div class="brand-copy">
+                    <span>Request Portal</span>
+                    <h2>Take-on requests, approvals and IT setup in one place.</h2>
+                </div>
             </div>
-            <div id="incorrect-credentials" style="display:none">
-                
+        </section>
+
+        <section class="login-side">
+            <div class="login-block">
+                <div class="login-heading">
+                    <h1>Welcome back</h1>
+                    <p>Sign in to the Request Application.</p>
+                </div>
+
+                <div class="format-input">
+                    {{ input("username", "Username", placeholder="e.g. jerrySien", autocomplete="username") }}
+                    {{ input("password", "Password", type="password", placeholder="Enter your password", autocomplete="current-password") }}
+                </div>
+
+                <div id="incorrect-credentials" style="display:none"></div>
+
+                <button type="button" id="login-button">
+                    Sign In
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+
+                <p class="login-footer">Having trouble signing in? Contact
+                    <a href="mailto:gabriel.richard@teichmanngrp.com">gabriel.richard@teichmanngrp.com</a>
+                </p>
             </div>
-            <button type="button" id="login-button">Login</button>
-        </div>
-    </body>
+        </section>
+
+    </main>
+</body>
 </html>

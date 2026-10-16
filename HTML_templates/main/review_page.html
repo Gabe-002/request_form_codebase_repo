@@ -4,7 +4,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Holder</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Review Request | T3 Projects</title>
         <link rel="stylesheet" href="/static/css/base.css">
         <link rel="stylesheet" href="/static/css/requests_page.css">
         <script src="/static/js/back_to_portal.js" defer></script>
@@ -16,87 +17,171 @@
             <div class="header-content">
                 <div class="left-header-side">
                     <img src="/static/images/getsitelogo.jpeg" alt="TEICHMANN PROJECTS" class="responsive-img">
-                    <h1>Review Request</h1>
+                    <div class="greeting">
+                        <span>Request Portal</span>
+                        <h1>Review Request</h1>
+                    </div>
                 </div>
-                <button id="return-to-portal-button" type="button">Back to Portal</button>
+                <button id="return-to-portal-button" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                    Back to Portal
+                </button>
             </div>
         </header>
 
-        <form method="POST" action="/requests/new">
-            <h3>Section A (Personal Info)</h3>
+        {% set pm_status = (request_info.pm_review_status or 'pending')|lower %}
+        {% set fd_status = (request_info.fd_review_status or 'pending')|lower %}
 
-            {{ standard_field("first_name", "First Name", value=person_info.first_name, readonly=true, required=false) }}
-            {{ standard_field("surname", "Surname", value=person_info.surname, readonly=true, required=false) }}
-            {{ standard_field("national_id_number", "National ID Number", value=person_info.national_id_number, readonly=true, required=false) }}
+        <form method="POST" action="/requests/new" class="request-form review-form">
 
-            <fieldset class="contact-details">
-                <legend>Contact Details</legend>
+            <div class="form-intro">
+                <span class="intro-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+                </span>
+                <div class="intro-text">
+                    <h2>{{ person_info.first_name }} {{ person_info.surname }}</h2>
+                    <p>Request #{{ request_info.id }} · Project {{ request_info.project_code }}</p>
+                </div>
+                <div class="intro-statuses">
+                    <span class="status-pill status-{{ pm_status }}">PM · {{ pm_status|title }}</span>
+                    <span class="status-pill status-{{ fd_status }}">FD · {{ fd_status|title }}</span>
+                </div>
+            </div>
+
+            <!-- SECTION A -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">A</span>
+                    <div>
+                        <h3>Personal Info</h3>
+                        <p>Who is joining, and where they fit in.</p>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    {{ standard_field("first_name", "First Name", value=person_info.first_name, readonly=true, required=false) }}
+                    {{ standard_field("surname", "Surname", value=person_info.surname, readonly=true, required=false) }}
+                </div>
+                {{ standard_field("national_id_number", "National ID Number", value=person_info.national_id_number, readonly=true, required=false) }}
+
+                <fieldset class="contact-details">
+                    <legend>Contact Details</legend>
                     <div class="contact-numbers">
                         {{ standard_field("work_number", "Work Number", value=person_info.work_number, readonly=true, required=false) }}
                         {{ standard_field("mobile_number", "Mobile Number", value=person_info.mobile_number, readonly=true, required=false) }}
                     </div>
                     {{ standard_field("contact_email", "Contact Email", value=person_info.contact_email, readonly=true, required=false) }}
-            </fieldset>
+                </fieldset>
 
-            {{ standard_field("employee_type", "Employee Type", value=request_info.employee_type, readonly=true, required=false) }}
-            {{ standard_field("direct_line_manager", "Direct Line Manager", value=request_info.direct_line_manager, readonly=true, required=false) }}
-            {{ standard_field("professional_title", "Professional Title", value=request_info.professional_title, readonly=true, required=false) }}
-
-            {{ standard_field("starting_date", "Starting Date", type="date", value=request_info.starting_date, readonly=true, required=false) }}
-            {{ standard_field("expiry_date", "Expiry Date", type="date", value=request_info.expiry_date, readonly=true, required=false) }}
-            {{ standard_field("project_code", "Project Code", value=request_info.project_code, readonly=true, required=false) }}
-            {{ standard_field("employee_number", "Employee Number", value=request_info.employee_number, readonly=true, required=false) }}
-
-            {{ select_field_display("employee_division", "Employee Division", value=request_info.employee_division.title() )}}
-            {{ select_field_display("base_country_computer", "Country (where computer is based)", value=request_info.base_country_computer.title())}}
-
-            <h3>Section B (IT Requirements)</h3>
-
-            {{ select_field_display("computer_required", "Does the User Require a Computer?", value=request_info.computer_required.title() )}}
-            {{ select_field_display("desk_phone_required", "Does the User Require a Desk Phone?", value=request_info.desk_phone_required.title() )}}
-
-            {% if request_info.required_software %}
-            <div style="margin-top: 20px; margin-bottom: 20px;">
-                <p style="margin-bottom: 0px; font-weight: bold; color: #2d3543">Required Software</p>
-                <ul style="margin-top: 5px;">
-                    {% for software in request_info['required_software'] %}
-                    <li>{{software.replace("_", " ").title()}}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
-            {{ noteblock_form_field(name="other_it_requirements", field_description="Are there any other IT requirements?", value=request_info.other_it_requirements, readonly=true) }}
-            {{ noteblock_form_field(name="sharepoint_file_rights", field_description="Any SharePoint files that need view rights?",value=request_info.sharepoint_file_rights, readonly=true) }}
-
-            
-            <h3>Section C (Authorization)</h3>
-            <fieldset class="address-block">
-                <legend>Request By</legend>
-                <div class="standard-address-line">
-                    {{ standard_field("requested_by_name", "Name", value=requestor_info.user_first_name, readonly=true, required=false) }}
+                <div class="field-row">
+                    {{ standard_field("employee_type", "Employee Type", value=request_info.employee_type, readonly=true, required=false) }}
+                    {{ standard_field("direct_line_manager", "Direct Line Manager", value=request_info.direct_line_manager, readonly=true, required=false) }}
                 </div>
-                <div class="standard-address-line">
-                    {{ standard_field("requested_by_surname", "Surname", value=requestor_info.user_surname, readonly=true, required=false) }}
-                </div>         
-            </fieldset>
+                <div class="field-row">
+                    {{ standard_field("professional_title", "Professional Title", value=request_info.professional_title, readonly=true, required=false) }}
+                    {{ standard_field("project_code", "Project Code", value=request_info.project_code, readonly=true, required=false) }}
+                </div>
+                <div class="field-row">
+                    {{ standard_field("starting_date", "Starting Date", type="date", value=request_info.starting_date, readonly=true, required=false) }}
+                    {{ standard_field("expiry_date", "Expiry Date", type="date", value=request_info.expiry_date, readonly=true, required=false) }}
+                </div>
+                <div class="field-row">
+                    {{ standard_field("employee_number", "Employee Number", value=request_info.employee_number, readonly=true, required=false) }}
+                    {{ select_field_display("employee_division", "Employee Division", value=request_info.employee_division.title()) }}
+                </div>
+                {{ select_field_display("base_country_computer", "Country (where computer is based)", value=request_info.base_country_computer.title()) }}
+            </section>
 
-            {% set pm_name = pm_info.user_first_name.replace("_", " ").title() + " " + pm_info.user_surname.replace("_", " ").title()%}
-            {{ select_field_display("project_manager", "Project Manager", value=pm_name)}}
-            <div id="review-area">
-                <div id="buttons"></div>
-            </div>
+            <!-- SECTION B -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">B</span>
+                    <div>
+                        <h3>IT Requirements</h3>
+                        <p>Hardware, software and access the user will need.</p>
+                    </div>
+                </div>
 
-            <table id="form-info">
-                <thead>
-                    <th>Role</th>
-                    <th>Action</th>
-                    <th>Time</th>
-                </thead>
-                <tbody id="table-body">
+                <div class="field-row">
+                    {{ select_field_display("computer_required", "Does the user require a computer?", value=request_info.computer_required.title()) }}
+                    {{ select_field_display("desk_phone_required", "Does the user require a desk phone?", value=request_info.desk_phone_required.title()) }}
+                </div>
 
-                </tbody>
-            </table>
+                <div class="software-display">
+                    <p class="display-label">Required Software</p>
+                    {% if request_info.required_software %}
+                        <ul class="chip-list">
+                            {% for software in request_info['required_software'] %}
+                                <li>{{ software.replace("_", " ").title() }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="display-empty">No software requested.</p>
+                    {% endif %}
+                </div>
+
+                {{ noteblock_form_field(name="other_it_requirements", field_description="Any other IT requirements?", value=request_info.other_it_requirements, readonly=true) }}
+                {{ noteblock_form_field(name="sharepoint_file_rights", field_description="Any SharePoint files that need view rights?", value=request_info.sharepoint_file_rights, readonly=true) }}
+            </section>
+
+            <!-- SECTION C -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">C</span>
+                    <div>
+                        <h3>Authorization</h3>
+                        <p>Who requested this, and who approves it.</p>
+                    </div>
+                </div>
+
+                <fieldset class="address-block">
+                    <legend>Requested By</legend>
+                    <div class="field-row">
+                        <div class="standard-address-line">
+                            {{ standard_field("requested_by_name", "Name", value=requestor_info.user_first_name, readonly=true, required=false) }}
+                        </div>
+                        <div class="standard-address-line">
+                            {{ standard_field("requested_by_surname", "Surname", value=requestor_info.user_surname, readonly=true, required=false) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                {% set pm_name = pm_info.user_first_name.replace("_", " ").title() + " " + pm_info.user_surname.replace("_", " ").title() %}
+                {{ select_field_display("project_manager", "Project Manager", value=pm_name) }}
+            </section>
+
+            <!-- SECTION D: REVIEW -->
+            <section class="form-section review-section">
+                <div class="section-heading">
+                    <span class="section-badge section-badge--dark">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </span>
+                    <div>
+                        <h3>Review &amp; Approval</h3>
+                        <p>Record a decision and see the request's history.</p>
+                    </div>
+                </div>
+
+                <div id="review-area">
+                    <div id="buttons"></div>
+                </div>
+
+                <div class="history">
+                    <p class="display-label">Approval History</p>
+                    <div class="table-wrap">
+                        <table id="form-info">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </form>
 
         <script id="page-data" type="application/json">
@@ -114,4 +199,4 @@
         </script>
         <div id="not-raise-alert"></div>
     </body>
-</html> 
+</html>
