@@ -39,6 +39,12 @@ def get_project_managers(db: Session = Depends(get_db)):
     project_manager = member_services.get_users_by_role(db, "pm")
     return project_manager
 
+def get_countries(db: Session = Depends(get_db)):
+    return member_services.get_countries(db)
+
+def get_divisions(db: Session = Depends(get_db)):
+    return member_services.get_employee_divisions(db)
+
 
 if __name__ == "__main__":
     db = get_db()

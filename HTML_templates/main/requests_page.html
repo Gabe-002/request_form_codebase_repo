@@ -28,7 +28,7 @@
             </div>
         </header>
 
-        {% set ns = namespace(project_codes=[], software=[], project_managers=[]) %}
+        {% set ns = namespace(project_codes=[], software=[], project_managers=[], countries=[], divisions=[]) %}
         {% for project_code in project_codes %}
             {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
         {% endfor %}
@@ -37,6 +37,12 @@
         {% endfor %}
         {% for manager in project_managers %}
             {% set ns.project_managers = ns.project_managers + [(manager.get("id"), manager.get("user_first_name") + " " + manager.get("user_surname"))] %}
+        {% endfor %}
+        {% for country in countries %}
+            {% set ns.countries = ns.countries + [(country.get("country_name"), country.get("country_name"))]%}
+        {% endfor %}
+        {% for division in divisions%}
+            {% set ns.divisions = ns.divisions + [(division.get("division_name"), division.get("division_name"))]%}
         {% endfor %}
 
         <form method="POST" action="/requests/new" class="request-form">
@@ -91,9 +97,9 @@
                 </div>
                 <div class="field-row">
                     {{ standard_field("employee_number", "Employee Number (optional)", required=false, placeholder="Only for existing employees") }}
-                    {{ select_field("employee_division", "Employee Division", [("finance", "Finance"), ("estimating", "Estimating"), ("e&i", "E&I"), ("smp", "SMP"), ("hr", "HR"), ("other", "Other")]) }}
+                    {{ select_field("employee_division", "Employee Division", ns.divisions) }}
                 </div>
-                {{ select_field("base_country_computer", "Country (where computer is based)", [("south_africa", "South Africa"), ("namibia", "Namibia"), ("zambia", "Zambia"), ("drc", "DRC")]) }}
+                {{ select_field("base_country_computer", "Country (where computer is based)", ns.countries) }}
             </section>
 
             <!-- SECTION B -->

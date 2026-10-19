@@ -176,4 +176,5 @@ if __name__ == "__main__":
     db_gen = get_db()
     db = next(db_gen)
 
-    remove_country(db, 1)
+    print(get_employee_divisions(db))
+    print(get_countries(db))

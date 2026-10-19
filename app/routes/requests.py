@@ -5,7 +5,9 @@ from fastapi import status, Form
 from app.services.get_user import (
     get_current_user, 
     get_project_codes, 
-    get_software, 
+    get_software,
+    get_countries,
+    get_divisions,
     get_project_managers)
 from app.models import RequestForm, RequestPersonInfo, People, Requests
 from app.services.request_forms import (
@@ -47,13 +49,17 @@ def new_request(request: Request,
     user = Depends(get_current_user), 
     project_codes = Depends(get_project_codes), 
     software = Depends(get_software), 
-    project_managers = Depends(get_project_managers)
+    project_managers = Depends(get_project_managers),
+    countries = Depends(get_countries),
+    divisions = Depends(get_divisions)
     ):
     return templates.TemplateResponse(request, "requests_page.html", {
         "user": user[0], 
         "project_codes": project_codes, 
         "software": software,
-        "project_managers": project_managers})
+        "project_managers": project_managers,
+        "countries": countries,
+        "divisions": divisions})
 
 @router.post("/new")
 def submit_form(request: Request,
