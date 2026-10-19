@@ -1,9 +1,14 @@
-from app.admin.models import Users, ProjectCodes, Software, BaseCountry, EmployeeDivisions
 from sqlalchemy import select, insert, delete, update, case
 from sqlalchemy.orm import Session # This is for the type hints (db: Sessions)
 from pwdlib import PasswordHash # This is for hashing the passwords
 from app.models import SessionsTable
 from app.ms_api.authentication import ensure_user
+from app.admin.models import (
+    Users, 
+    ProjectCodes, 
+    Software, 
+    BaseCountry, 
+    EmployeeDivisions)
 
 password_hash = PasswordHash.recommended()
 

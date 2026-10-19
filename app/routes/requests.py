@@ -2,9 +2,23 @@ from fastapi import Request, APIRouter, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from fastapi import status, Form
-from app.services.get_user import get_current_user, get_project_codes, get_software, get_project_managers
+from app.services.get_user import (
+    get_current_user, 
+    get_project_codes, 
+    get_software, 
+    get_project_managers)
 from app.models import RequestForm, RequestPersonInfo, People, Requests
-from app.services.request_forms import get_user_by_id, append_request, append_person, get_request, update_review, get_pending_requests, update_person, update_request, append_sharepoint_info, get_sharepoint_item_id
+from app.services.request_forms import (
+    get_user_by_id, 
+    append_request, 
+    append_person, 
+    get_request, 
+    update_review, 
+    get_pending_requests, 
+    update_person, 
+    update_request, 
+    append_sharepoint_info, 
+    get_sharepoint_item_id)
 from sqlalchemy.orm import Session
 from sqlalchemy import func, select, and_ 
 from app.database import get_db
