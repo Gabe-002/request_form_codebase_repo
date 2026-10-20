@@ -64,6 +64,13 @@
     --allocated-text: #FF8F86;
 }
 
+html {
+  scrollbar-width: none;            /* Firefox + modern Chrome/Edge/Safari */
+}
+html::-webkit-scrollbar {
+  display: none;                    /* older Chrome/Safari/Edge */
+}
+
 /* ====================================== */
 /* Base                                   */
 /* ====================================== */

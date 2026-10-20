@@ -23,16 +23,26 @@ export const assignmentsView = {
                     <div>Site</div>
                     <div>Assignment Date</div>
                 </div>
-
-                <template id="row-template">
-                    <div class="table-row">
-                        <div class="assignment-name"></div>
-                        <div class="asset_number"></div>
-                        <div class="site">-</div>
-                        <div class="assignment-date">-</div>
-                    </div>
-                </template>
             </div>
+            
+            <div id="tables-section">
+            </div>
+
+            <template id="row-template">
+                <div class="table-row">
+                    <div class="assignment-name"></div>
+                    <div class="asset_number"></div>
+                    <div class="site">-</div>
+                    <div class="assignment-date">-</div>
+                </div>
+            </template>
+            
+            <template id="table-section">
+                <h3 class="table-section-heading"></h3>
+                <div class="table-container">
+
+                </div> 
+            </template>
         `;
 
         monitorSearch()
@@ -54,7 +64,6 @@ async function refreshAssignments() {
         return
     }
     allAssignments = await response.json()
-    console.log(allAssignments)
     renderAssignments(filterAssignments())
 }
 
@@ -69,37 +78,78 @@ function filterAssignments() {
     const query = document.getElementById('assignment-search').value.trim().toLowerCase()
     if (!query) return allAssignments
 
-    return allAssignments.filter(a =>
-        [a.name, a.asset_number, a.site]
-            .some(value => value && String(value).toLowerCase().includes(query))
+    const results = allAssignments.filter(assignment =>
+        [assignment.display_name, assignment.asset_number]
+        .some(value => String(value).toLowerCase().includes(query))
     )
+    return results
 }
 
+// !!!!!! You have to come back and fix this piece of shit function
 function renderAssignments(assignments) {
-    // Clear existing rows (keeps the header and the <template>)
+    const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: "case"})
+    const alphabeticalLetters = new Set()
+
+    const surname = (name) => name.split(/\s+/).pop()
+    const surnameLetter = (name) => surname(name).charAt(0)
+
+    if (assignments.length === 1) {
+        alphabeticalLetters.add(surnameLetter(assignments[0].display_name))
+    } else {
+        assignments.sort((a, b) => {
+            alphabeticalLetters.add(surnameLetter(a.display_name))
+            return collator.compare(surname(a.display_name), surname(b.display_name));
+        })
+    }
+
+    const alphabeticalOrder = new Set([...alphabeticalLetters].sort((a, b) => collator.compare(a, b)))
+    const orderedAssignments = {}
+    alphabeticalOrder.forEach(letter => {
+        orderedAssignments[letter] = assignments.filter((assignment) => 
+            surnameLetter(assignment.display_name) === letter
+        )
+    })
+
+    document.getElementById('tables-section').replaceChildren()
     document.querySelectorAll('#table-container .table-row:not(.table-header)')
         .forEach(row => row.remove())
 
-    loadAssignments(document.getElementById('row-template'), assignments)
+    loadAssignments(document.getElementById('row-template'), orderedAssignments)
 }
 
 function loadAssignments(template, assignments) {
-    const rowContainer = document.getElementById('table-container')
-    assignments.forEach(assignment => {
-        const item = template.content.cloneNode(true)
-        item.querySelector('.assignment-name').textContent = assignment.display_name
-        item.querySelector('.asset_number').textContent = assignment.asset_number
 
-        if (assignment.location) {
-            item.querySelector('.site').textContent = assignment.location
-        }
-        if (assignment.allocated_at) {
-            item.querySelector('.assignment-date').textContent = formatDate(assignment.allocated_at)
-        }
-        item.querySelector('.table-row').dataset.assignmentId = assignment.id
+    const tablesSection = document.getElementById('tables-section')
 
-        rowContainer.appendChild(item)
-    })
+    for (const [key, value] of Object.entries(assignments)) {
+
+        const tableTemplate = document.getElementById('table-section')
+        const tableItem = tableTemplate.content.cloneNode(true)
+
+
+        const heading = document.createElement('h3');
+        heading.textContent = key;
+        tableItem.querySelector('.table-section-heading').appendChild(heading)
+
+
+        value.forEach(assignment => {
+            const item = template.content.cloneNode(true)
+            item.querySelector('.assignment-name').textContent = assignment.display_name
+            item.querySelector('.asset_number').textContent = assignment.asset_number
+
+            if (assignment.location) {
+                item.querySelector('.site').textContent = assignment.location
+            }
+            if (assignment.allocated_at) {
+                item.querySelector('.assignment-date').textContent = formatDate(assignment.allocated_at)
+            }
+            item.querySelector('.table-row').dataset.assignmentId = assignment.id
+
+            tableItem.querySelector('.table-container').appendChild(item)
+        })
+
+        tablesSection.appendChild(tableItem)
+    }
 }
 
 function formatDate(value) {
@@ -113,7 +163,7 @@ function formatDate(value) {
 }
 
 function tableMonitor() {
-    document.getElementById('table-container').addEventListener('click', async (event) => {
+    document.getElementById('tables-section').addEventListener('click', async (event) => {
         const row = event.target.closest('.table-row:not(.table-header)')
         if (!row)
             return
