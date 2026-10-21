@@ -105,25 +105,32 @@ function loadDevices(template, devices) {
 }
 
 async function openDeviceModal() {
-    document.getElementById('table-container').addEventListener('click', (event) => {
+    document.getElementById('table-container').addEventListener('click', async (event) => {
         if (!event.target.closest('.table-row')) return
         const deviceRow = event.target.closest('.table-row')
         if (!deviceRow.dataset.deviceId) return
 
+        const response = await fetch(`/it/api/get/device?query=${encodeURIComponent(deviceRow.dataset.deviceId)}`)
+        if (!response.ok) {
+            alert("Could not load the device information")
+            return
+        }
+        const deviceInfo = await response.json()
+        deviceModalFillInfo(deviceInfo)
         const modal = document.getElementById('device-info-modal')
         modal.classList.toggle('open')
     })
 }
 
 function deviceModalFillInfo(deviceInfo) {
-    document.getElementById('modal-device-asset-number').textContent = '';
-    document.getElementById('modal-device-asset-type').textContent = '';
-    document.getElementById('modal-device-manufacturer').textContent = '';
-    document.getElementById('modal-device-model').textContent = '';
-    document.getElementById('modal-device-serial-number').textContent = '';
-    document.getElementById('modal-device-purchase-price').textContent = '';
-    document.getElementById('modal-device-location').textContent = '';
-    document.getElementById('modal-device-condition-notes').textContent = '';
+    document.getElementById('modal-device-asset-number').textContent = deviceInfo.asset_number ?? '-';
+    document.getElementById('modal-device-asset-type').textContent = deviceInfo.asset_type ?? '-';
+    document.getElementById('modal-device-manufacturer').textContent = deviceInfo.manufacturer ?? '-';
+    document.getElementById('modal-device-model').textContent = deviceInfo.model ?? '-';
+    document.getElementById('modal-device-serial-number').textContent = deviceInfo.serial_number ?? '-';
+    document.getElementById('modal-device-purchase-price').textContent = deviceInfo.purchase_price ?? '-';
+    document.getElementById('modal-device-location').textContent = deviceInfo.location ?? '-';
+    document.getElementById('modal-device-condition-notes').textContent = deviceInfo.condition_notes !== '' ? deviceInfo.condition_notes : '-';
 }
     
 function deviceModalInfo() {
