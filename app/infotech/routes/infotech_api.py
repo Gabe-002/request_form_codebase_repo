@@ -4,7 +4,8 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 from app.infotech.services.infotech_database import (
     assignment_requests, 
-    get_devices, 
+    get_devices,
+    get_device,
     add_device, 
     get_device_by_query, 
     sync_tenant_users, 
@@ -49,6 +50,13 @@ def get_assignment_requests(db: Session = Depends(get_db)):
 @router.get("/devices")
 def get_devices_api(db: Session = Depends(get_db)):
     return get_devices(db=db)
+
+@router.get("/get/device")
+def api_get_device(
+    query: int,
+    db: Session = Depends(get_db)
+):
+    return get_device(db, int(query))
 
 @router.post("/devices")
 async def add_device_post(

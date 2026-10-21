@@ -14,6 +14,7 @@ export const devicesView = {
             </div>
 
             ${deviceModalHTML()}
+            ${deviceModalInfo()}
 
             <div>
                 <div class="search-options" id="search-options">
@@ -49,7 +50,9 @@ export const devicesView = {
         // After a successful add we re-fetch the rows instead of reloading the page.
         initDeviceModal({ onAdded: refreshDevices })
 
+
         await refreshDevices()
+        await openDeviceModal()
     }
 }
 
@@ -82,6 +85,7 @@ function loadDevices(template, devices) {
     const rowContainer = document.getElementById('table-container')
     devices.forEach(device => {
         const item = template.content.cloneNode(true)
+        item.querySelector('.table-row').dataset.deviceId = device.id
         item.querySelector('.asset_number').textContent = device.asset_number
         item.querySelector('.status').textContent = device.status
         if (device.asset_type) {
@@ -98,4 +102,105 @@ function loadDevices(template, devices) {
         }
         rowContainer.appendChild(item)
     })
+}
+
+async function openDeviceModal() {
+    document.getElementById('table-container').addEventListener('click', (event) => {
+        if (!event.target.closest('.table-row')) return
+        const deviceRow = event.target.closest('.table-row')
+        if (!deviceRow.dataset.deviceId) return
+
+        const modal = document.getElementById('device-info-modal')
+        modal.classList.toggle('open')
+    })
+}
+
+function deviceModalFillInfo(deviceInfo) {
+    document.getElementById('modal-device-asset-number').textContent = '';
+    document.getElementById('modal-device-asset-type').textContent = '';
+    document.getElementById('modal-device-manufacturer').textContent = '';
+    document.getElementById('modal-device-model').textContent = '';
+    document.getElementById('modal-device-serial-number').textContent = '';
+    document.getElementById('modal-device-purchase-price').textContent = '';
+    document.getElementById('modal-device-location').textContent = '';
+    document.getElementById('modal-device-condition-notes').textContent = '';
+}
+    
+function deviceModalInfo() {
+    return `
+        <div id="device-info-modal">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3>Device Info</h3>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Asset Number</span>
+                        <span class="info-value" id="modal-device-asset-number">-</span>
+                    </div>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Asset Type</span>
+                        <span class="info-value" id="modal-device-asset-type">-</span>
+                    </div>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Manufacturer</span>
+                        <span class="info-value" id="modal-device-manufacturer">-</span>
+                    </div>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Model</span>
+                        <span class="info-value" id="modal-device-model">-</span>
+                    </div>
+                </div>
+
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Serial Number</span>
+                        <span class="info-value" id="modal-device-serial-number">-</span>
+                    </div>
+                </div>
+
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Purchase Price</span>
+                        <span class="info-value" id="modal-device-purchase-price">-</span>
+                    </div>
+                </div>
+
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Location</span>
+                        <span class="info-value" id="modal-device-location">-</span>
+                    </div>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-field">
+                        <span class="info-label">Condition Notes</span>
+                        <span class="info-value" id="modal-device-condition-notes">-</span>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button id="update-status" class="button-format" type="button">Update Status</button>
+                    <button id="device-history" class="button-format" type="button">Device History</button>
+                    <button id="cancel-device-info-view" class="button-format" type="button">Cancel</button>
+                </div> 
+
+            </div>
+        </div>
+    `
 }

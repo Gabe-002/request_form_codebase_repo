@@ -73,6 +73,14 @@ def get_devices(db: Session):
     devices = db.execute(statement=statement).scalars().all()
     return simple_format(Devices, devices)
 
+def get_device(db: Session, device_id: int):
+    statement = select(Devices).where(Devices.id == device_id)
+    result = db.execute(statement=statement).scalar_one_or_none()
+    return {
+        column.name: getattr(result, column.name)
+        for column in Devices.__table__.columns
+    }
+
 def get_device_by_query(db: Session, query: str):
     query_str = f"%{query}%"
     statement = select(
@@ -423,7 +431,4 @@ if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-
-
-    
-    device_sharepoint_sync(db)
+    print(get_device(db, 40))

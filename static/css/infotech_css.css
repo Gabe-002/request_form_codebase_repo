@@ -329,10 +329,10 @@ html.is-loading * {
 /* ====================================== */
 /* Modals                                 */
 /* ====================================== */
-#device-modal, #review-modal, #issue-modal, #assign-modal, #assignment-modal {
+#device-modal, #review-modal, #issue-modal, #assign-modal, #assignment-modal, #device-info-modal {
     display: none;
 }
-#device-modal.open, #review-modal.open, #issue-modal.open, #assign-modal.open, #assignment-modal.open {
+#device-modal.open, #review-modal.open, #issue-modal.open, #assign-modal.open, #assignment-modal.open, #device-info-modal.open {
     display: flex;
     position: fixed;
     inset: 0;
