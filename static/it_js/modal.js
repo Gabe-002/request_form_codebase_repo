@@ -25,15 +25,21 @@ export class Modal {
         this.cancelButton.addEventListener("click", () => this.close());
     }
 
-    addButton(label, onClick) {
+    addButton(label, onClick, type="button") {
         const button = document.createElement("button");
-        button.type = "button";
+        button.type = type;
         button.textContent = label;
         button.className = 'button-format';
 
         button.addEventListener('click', onClick);
         this.buttons.insertBefore(button, this.cancelButton);
         return button;
+    }
+
+    buildButtons(buttons) {
+        buttons.forEach(button => {
+            this.addButton(button.label, button.onClick, button.type);
+        })
     }
 
     open() {
@@ -51,7 +57,7 @@ export class InfoModal extends Modal {
     constructor(title, options = {}) {
         super(title);
         this.#buildModal(options.fields);
-        this.#buildButtons(options.buttons);
+        this.buildButtons(options.buttons);
     }
 
     #field(label, key) {
@@ -78,12 +84,6 @@ export class InfoModal extends Modal {
         });
     }
 
-    #buildButtons(buttons) {
-        buttons.forEach(button => {
-            this.addButton(button.label, button.onClick);
-        })
-    }
-
     appendInfo(modalInfo) {
         console.log(modalInfo)
         const valueItems = this.body.querySelectorAll("[data-key]");
@@ -99,10 +99,12 @@ export class FormModal extends Modal {
         super(title);
 
         this.form = document.createElement('form');
+        this.form.id = "new-device-form";
         this.body.before(this.form);
         this.form.append(this.body, this.buttons);
 
         this.#buildFields(formOptions.inputs)
+        this.buildButtons(formOptions.buttons)
     }
 
     #field({label, name, type, required=false, options=[], placeholder=''}) {
@@ -118,10 +120,12 @@ export class FormModal extends Modal {
                 optionItem.textContent = option.label;
                 input.append(optionItem);
             }
+        } else if (type === "textarea") {
+            input = document.createElement("textarea")
         }
         else {
-            input = document.createElement(type);
-            
+            input = document.createElement("input");
+            input.type = type
         }
         input.name = name;
         input.required = required;

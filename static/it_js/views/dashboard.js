@@ -124,12 +124,12 @@ export const dashboardView = {
                 "Add a New Devive",
                 {
                     inputs: [
-                        {label: "Asset Number", name: "asset_number", type: "input"},
-                        {label: "Serial Number", name: "serial_number", type: "input"},
-                        {label: "Manufacturer", name: "manufacturer", type: "input"},
-                        {label: "Model", name: "model", type: "input"},
-                        {label: "Purchase Price", name: "purchase_price", type: "value"},
-                        {label: "Order Number", name: "order_number", type: "input"},
+                        {label: "Asset Number", name: "asset_number", type: "input", required: true},
+                        {label: "Serial Number", name: "serial_number", type: "input", required: true},
+                        {label: "Manufacturer", name: "manufacturer", type: "input", required: true},
+                        {label: "Model", name: "model", type: "input", required: true},
+                        {label: "Purchase Price", name: "purchase_price", type: "number", required: true},
+                        {label: "Order Number", name: "order_number", type: "input", required: true},
                         {
                             label: "Asset Type", 
                             name: "asset_type", 
@@ -150,7 +150,10 @@ export const dashboardView = {
                                 {value: "retired", label: "Retired"},
                             ]
                         },
-                        {label: "Condition Notes", name: "condition_notes", type: "textarea"}
+                        {label: "Condition Notes", name: "condition_notes", type: "textarea", required: true}
+                    ],
+                    buttons: [
+                        {label: "Test", onClick: () => {}, type: "submit"}
                     ]
                 }
             );
