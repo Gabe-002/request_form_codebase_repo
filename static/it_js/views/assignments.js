@@ -219,8 +219,6 @@ function tableMonitor() {
                 ]
             }
         )
-        // newModal.addButton('Deallocate', () => onClickDeallocate(assignmentId, row, newModal));
-        // newModal.addButton('Transfer', () => {console.log('Transfer')});
         newModal.appendInfo(assignmentInfo);
         newModal.open();
     })
