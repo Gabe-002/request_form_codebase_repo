@@ -51,6 +51,7 @@ export class InfoModal extends Modal {
     constructor(title, options = {}) {
         super(title);
         this.#buildModal(options.fields);
+        this.#buildButtons(options.buttons);
     }
 
     #field(label, key) {
@@ -63,11 +64,11 @@ export class InfoModal extends Modal {
 
         const infoValue = document.createElement("div");
         infoValue.className = "info-value";
-        infoValue.dataset.key = key
-        infoValue.textContent = '-'
+        infoValue.dataset.key = key;
+        infoValue.textContent = '-';
 
-        infoList.append(infoLabel, infoValue)
-        this.body.append(infoList)
+        infoList.append(infoLabel, infoValue);
+        this.body.append(infoList);
     }
 
     #buildModal(fields) {
@@ -75,6 +76,12 @@ export class InfoModal extends Modal {
             console.log(field)
             this.#field(field.label, field.key);
         });
+    }
+
+    #buildButtons(buttons) {
+        buttons.forEach(button => {
+            this.addButton(button.label, button.onClick);
+        })
     }
 
     appendInfo(modalInfo) {

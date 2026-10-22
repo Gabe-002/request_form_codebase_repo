@@ -184,6 +184,7 @@ async function onClickDeallocate(assignmentId, row, modal) {
     row.remove();
     modal.close();
 
+    document.getElementById('assignment-search').value = '';
     refreshExistingAssignments();
 }
 
@@ -212,10 +213,14 @@ function tableMonitor() {
                     {label: "Location", key: "location"},
                     {label: "Assignmnet Date", key: "allocated_at"}
                 ],
+                buttons: [
+                    {label: 'Deallocate', onClick: () => onClickDeallocate(assignmentId, row, newModal)},
+                    {label: 'Transfer', onClick: () => {console.log('Transfer')}}
+                ]
             }
         )
-        newModal.addButton('Deallocate', () => onClickDeallocate(assignmentId, row, newModal));
-        newModal.addButton('Transfer', () => {console.log('Transfer')});
+        // newModal.addButton('Deallocate', () => onClickDeallocate(assignmentId, row, newModal));
+        // newModal.addButton('Transfer', () => {console.log('Transfer')});
         newModal.appendInfo(assignmentInfo);
         newModal.open();
     })
