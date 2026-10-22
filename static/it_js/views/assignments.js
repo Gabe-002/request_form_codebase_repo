@@ -172,8 +172,8 @@ function tableMonitor() {
 
         const assignmentId = row.dataset.assignmentId
 
-        const modal = document.getElementById('assignment-modal')
-        modal.classList.toggle('open')
+        // const modal = document.getElementById('assignment-modal')
+        // modal.classList.toggle('open')
 
         const deallocateBtn = document.getElementById('deallocate-assignment')
          deallocateBtn.addEventListener('click', async () => {
@@ -220,7 +220,7 @@ function tableMonitor() {
         newModal.open()
         newModal.appendInfo(assignmentInfo)
 
-        assignmentModalInfo(assignmentInfo)
+        // assignmentModalInfo(assignmentInfo)
     })
 }
 

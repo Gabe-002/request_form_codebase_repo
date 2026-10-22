@@ -5,13 +5,15 @@ export class Modal {
         this.modalEl.className = "modal";
 
         this.modalEl.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>${this.title}</h3>
-                </div>
-                <div class="modal-body"></div>
-                <div class="form-buttons">
-                    <button type="button" class="cancel-button button-format">Cancel</button>
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>${this.title}</h3>
+                    </div>
+                    <div class="modal-body"></div>
+                    <div class="form-buttons">
+                        <button type="button" class="cancel-button button-format">Cancel</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -36,10 +38,12 @@ export class Modal {
 
     open() {
         document.body.append(this.modalEl)
+        document.body.classList.add("modal-open")
     }
 
     close() {
         this.modalEl.remove()
+        document.body.classList.remove("modal-open")
     }
 }
 
