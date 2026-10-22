@@ -93,3 +93,46 @@ export class InfoModal extends Modal {
         }
     }
 }
+
+export class FormModal extends Modal {
+    constructor(title, formOptions = {}) {
+        super(title);
+
+        this.form = document.createElement('form');
+        this.body.before(this.form);
+        this.form.append(this.body, this.buttons);
+
+        this.#buildFields(formOptions.inputs)
+    }
+
+    #field({label, name, type, required=false, options=[], placeholder=''}) {
+        const inputSection = document.createElement('label');
+        inputSection.textContent = label;
+
+        let input;
+        if (type === "select") {
+            input = document.createElement("select");
+            for (const option of options) {
+                const optionItem = document.createElement('option');
+                optionItem.value = option.value;
+                optionItem.textContent = option.label;
+                input.append(optionItem);
+            }
+        }
+        else {
+            input = document.createElement(type);
+            
+        }
+        input.name = name;
+        input.required = required;
+
+        inputSection.append(input)
+        return inputSection
+    }
+
+    #buildFields(inputs) {
+        inputs.forEach(input => {
+            this.buttons.before(this.#field(input))
+        })
+    }
+}

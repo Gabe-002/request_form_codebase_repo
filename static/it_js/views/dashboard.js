@@ -1,4 +1,5 @@
 import { deviceModalHTML, initDeviceModal, assignDeviceModal, initAssignModal } from "../Devicemodal.js";
+import { FormModal } from "../modal.js";
 
 export const dashboardView = {
     async mount(container) {
@@ -118,7 +119,42 @@ export const dashboardView = {
         const addDeviceBtn = document.getElementById('add-device')
         const modal = document.getElementById('device-modal')
         addDeviceBtn.addEventListener('click', () => {
-            modal.classList.toggle('open')
+            // modal.classList.toggle('open')
+            const newDeviceModal = new FormModal(
+                "Add a New Devive",
+                {
+                    inputs: [
+                        {label: "Asset Number", name: "asset_number", type: "input"},
+                        {label: "Serial Number", name: "serial_number", type: "input"},
+                        {label: "Manufacturer", name: "manufacturer", type: "input"},
+                        {label: "Model", name: "model", type: "input"},
+                        {label: "Purchase Price", name: "purchase_price", type: "value"},
+                        {label: "Order Number", name: "order_number", type: "input"},
+                        {
+                            label: "Asset Type", 
+                            name: "asset_type", 
+                            type: "select", 
+                            options: [
+                                {value: "Laptop", label: "Laptop"},
+                                {value: "Monitor", label: "Monitor"}
+                            ]
+                        },
+                        {
+                            label: "Status",
+                            name: "status",
+                            type: "select",
+                            options: [
+                                {value: "available", label: "Available"},
+                                {value: "assigned", label: "Assigned"},
+                                {value: "repair", label: "Repair"},
+                                {value: "retired", label: "Retired"},
+                            ]
+                        },
+                        {label: "Condition Notes", name: "condition_notes", type: "textarea"}
+                    ]
+                }
+            );
+            newDeviceModal.open();
         })
 
         function lastSyncTime(lastSync) {
