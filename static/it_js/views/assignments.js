@@ -52,6 +52,9 @@ export const assignmentsView = {
         // document.getElementById('new-assignment').addEventListener('click', openAssignModal)
 
         await refreshAssignments()
+
+        const t = new Toast("New Modal")
+        t.open()
     }
 }
 
@@ -271,4 +274,39 @@ function assignmentModal() {
             </div>
         </div>
     `
+}
+
+class Toast {
+    constructor(title) {
+        this.title = title;
+
+        this.el = document.createElement("div");
+        this.el.className = "modal";
+
+        this.el.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>${title}</h3>
+                </div>
+                <div class="modal-body"></div>
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button">Cancel</button>
+                </div>
+            </div>
+        `;
+
+        this.body = this.el.querySelector(".modal-body");
+        this.buttons = this.el.querySelector(".form-buttons");
+
+        const cancel = this.el.querySelector('.cancel-button');
+        cancel.addEventListener('click', () => this.close());
+    }
+
+    open() {
+        document.body.append(this.el);
+    }
+
+    close() {
+        this.el.remove();
+    }
 }
