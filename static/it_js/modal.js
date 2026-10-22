@@ -78,6 +78,7 @@ export class InfoModal extends Modal {
     }
 
     appendInfo(modalInfo) {
+        console.log(modalInfo)
         const valueItems = this.body.querySelectorAll("[data-key]");
         for (const valueItem of valueItems) {
             const key = valueItem.dataset.key;

@@ -12,7 +12,6 @@ export const assignmentsView = {
                     <button id="new-assignment" type="button">+ New Assignment</button>
                 </div>
             </div>
-            ${assignmentModal()}
             <div>
                 <div class="search-options" id="search-options">
                     <input id="assignment-search" placeholder="Search by name, device or site">
@@ -46,13 +45,8 @@ export const assignmentsView = {
                 </div> 
             </template>
         `;
-
         monitorSearch()
         tableMonitor()
-
-        // TODO: wire up your assignment modal here when it's ready
-        // document.getElementById('new-assignment').addEventListener('click', openAssignModal)
-
         await refreshAssignments()
     }
 }
@@ -66,6 +60,11 @@ async function refreshAssignments() {
         return
     }
     allAssignments = await response.json()
+    console.log(allAssignments)
+    renderAssignments(filterAssignments())
+}
+
+function refreshExistingAssignments() {
     renderAssignments(filterAssignments())
 }
 
@@ -164,43 +163,43 @@ function formatDate(value) {
     })
 }
 
+async function onClickDeallocate(assignmentId, row, modal) {
+    const confirmation = confirm("Do you want to deallocate this assignment?")
+    if (!confirmation)
+        return
+    const response = await fetch(`/it/api/deallocate/${assignmentId}`, {
+        method: "POST"
+    })
+    if (!response.ok) {
+        alert("Could not deallocate the device correctly")
+        return
+    }
+    
+    const assignmentIndex = allAssignments.findIndex(assignmnet => assignmnet.id === Number(assignmentId))
+    if (assignmentIndex !== -1) {
+        allAssignments.splice(Number(assignmentIndex), 1)
+        console.log("We cut that shit")
+    }
+
+    row.remove();
+    modal.close();
+
+    refreshExistingAssignments();
+}
+
 function tableMonitor() {
     document.getElementById('tables-section').addEventListener('click', async (event) => {
-        const row = event.target.closest('.table-row:not(.table-header)')
-        if (!row)
-            return
+        const row = event.target.closest('.table-row:not(.table-header)');
+        if (!row) return;
 
-        const assignmentId = row.dataset.assignmentId
+        const assignmentId = row.dataset.assignmentId;
 
-        // const modal = document.getElementById('assignment-modal')
-        // modal.classList.toggle('open')
-
-        const deallocateBtn = document.getElementById('deallocate-assignment')
-         deallocateBtn.addEventListener('click', async () => {
-            const confirmation = confirm("Do you want to deallocate this assignment?")
-            if (!confirmation)
-                return
-            const response = await fetch(`/it/api/deallocate/${assignmentId}`, {
-                method: "POST"
-            })
-            if (!response.ok) {
-                alert("Could not deallocate the device correctly")
-                return
-            }
-            window.location.reload();
-         })
-
-        const cancelBtn = document.getElementById('cancel-assignment-view')
-        cancelBtn.addEventListener('click', () => {
-            modal.classList.remove('open')
-        })
-
-        const response = await fetch(`/it/api/get/assignment?query=${encodeURIComponent(assignmentId)}`)
+        const response = await fetch(`/it/api/get/assignment?query=${encodeURIComponent(assignmentId)}`);
         if (!response.ok) {
-            alert("Could not load the assignment info")
-            return
+            alert("Could not load the assignment info");
+            return;
         }
-        const assignmentInfo = await response.json()
+        const assignmentInfo = await response.json();
 
         const newModal = new InfoModal(
             'Assignment Info',
@@ -215,81 +214,9 @@ function tableMonitor() {
                 ],
             }
         )
-        newModal.addButton('Deallocate', () => {console.log('Deallocate')});
-        newModal.addButton('Transfer', () => {console.log('Transfer')})
-        newModal.open()
-        newModal.appendInfo(assignmentInfo)
-
-        // assignmentModalInfo(assignmentInfo)
+        newModal.addButton('Deallocate', () => onClickDeallocate(assignmentId, row, newModal));
+        newModal.addButton('Transfer', () => {console.log('Transfer')});
+        newModal.appendInfo(assignmentInfo);
+        newModal.open();
     })
-}
-
-function assignmentModalInfo(assignmentInfo) {
-    document.getElementById('modal-tenant-name').textContent = assignmentInfo.display_name ?? '-';
-    document.getElementById('modal-tenant-email').textContent = assignmentInfo.email ?? '-';
-    document.getElementById('modal-asset-number').textContent = assignmentInfo.asset_number ?? '-';
-    document.getElementById('modal-device-type').textContent = assignmentInfo.asset_type ?? '-';
-    document.getElementById('modal-asset-info').textContent = `${assignmentInfo.manufacturer} - ${assignmentInfo.model}`;
-    document.getElementById('modal-location').textContent = assignmentInfo.location ?? '-';
-    document.getElementById('modal-assignment-date').textContent = formatDate(assignmentInfo.allocated_at) ?? '-';
-}
-
-function assignmentModal() {
-    return `
-        <div id="assignment-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Assignment Info</h3>
-                </div>
-
-                <div class="info-list">
-                    <div class="info-field">
-                        <span class="info-label">Name</span>
-                        <span class="info-value" id="modal-tenant-name">-</span>
-                    </div>
-                </div>
-                <div class="info-list">
-                    <div class="info-field">
-                        <span class="info-label">Email</span>
-                        <span class="info-value" id="modal-tenant-email">-</span>
-                    </div>
-                </div>
-                <div class="info-list">
-                    <div class="info-field">
-                        <span class="info-label">Device</span>
-                        <span class="info-value" id="modal-asset-number">-</span>
-                    </div>
-                </div>
-                <div class="info-list">
-                    <div class="info-field">
-                        <span class="info-label">Device Type</span>
-                        <span class="info-value" id="modal-device-type">-</span>
-                    </div>
-                </div>
-                <div class="info-list">
-                    <div class="info-field">
-                        <span class="info-label">Device Info</span>
-                        <span class="info-value" id="modal-asset-info">-</span>
-                    </div>
-                </div>
-                <div class="info-list">
-                    <div class="info-field">
-                        <span class="info-label">Location</span>
-                        <span class="info-value" id="modal-location">-</span>
-                    </div>
-                </div>
-                <div class="info-list">
-                    <div class="info-field">
-                        <span class="info-label">Assignmnet Date</span>
-                        <span class="info-value" id="modal-assignment-date">-</span>
-                    </div>
-                </div>
-                <div class="form-buttons">
-                    <button id="deallocate-assignment" class="button-format" type="button">Deallocate</button>
-                    <button id="transfer" class="button-format" type="button">Transfer</button>
-                    <button id="cancel-assignment-view" type="button">Cancel</button>
-                </div>
-            </div>
-        </div>
-    `
 }
