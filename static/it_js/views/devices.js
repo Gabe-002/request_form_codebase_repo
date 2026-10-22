@@ -50,7 +50,6 @@ export const devicesView = {
         // After a successful add we re-fetch the rows instead of reloading the page.
         initDeviceModal({ onAdded: refreshDevices })
 
-        // deviceModalButton()
         await refreshDevices()
         await openDeviceModal()
     }
