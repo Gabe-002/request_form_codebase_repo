@@ -50,7 +50,7 @@ export const devicesView = {
         // After a successful add we re-fetch the rows instead of reloading the page.
         initDeviceModal({ onAdded: refreshDevices })
 
-
+        deviceModalButton()
         await refreshDevices()
         await openDeviceModal()
     }
@@ -122,6 +122,31 @@ async function openDeviceModal() {
     })
 }
 
+
+// !!!!I need to come back and clean this up
+function deviceModalButton() {
+    document.getElementById('update-status').addEventListener('click', () => {
+        document.getElementById('modal-device-status').hidden = true;
+        document.getElementById('status-change').hidden = false;
+        document.getElementById('update-status').hidden = true;
+        document.getElementById('commit-status').hidden = false;
+    })
+    document.getElementById('commit-status').addEventListener('click', () => {
+        document.getElementById('modal-device-status').textContent = document.getElementById('status-change').value
+        document.getElementById('modal-device-status').hidden = false;
+        document.getElementById('status-change').hidden = true;
+        document.getElementById('update-status').hidden = false;
+        document.getElementById('commit-status').hidden = true;
+    })
+
+    document.getElementById('device-history').addEventListener('click', () => {
+        console.log("Hello")
+    })
+    document.getElementById('cancel-device-info-view').addEventListener('click', () => {
+        document.getElementById('device-info-modal').classList.remove('open')
+    })
+}
+
 function deviceModalFillInfo(deviceInfo) {
     document.getElementById('modal-device-asset-number').textContent = deviceInfo.asset_number ?? '-';
     document.getElementById('modal-device-asset-type').textContent = deviceInfo.asset_type ?? '-';
@@ -129,7 +154,9 @@ function deviceModalFillInfo(deviceInfo) {
     document.getElementById('modal-device-model').textContent = deviceInfo.model ?? '-';
     document.getElementById('modal-device-serial-number').textContent = deviceInfo.serial_number ?? '-';
     document.getElementById('modal-device-purchase-price').textContent = deviceInfo.purchase_price ?? '-';
-    document.getElementById('modal-device-location').textContent = deviceInfo.location ?? '-';
+    document.getElementById('modal-device-location').textContent = deviceInfo.location ?? '-'; 
+    document.getElementById('modal-device-status').textContent = deviceInfo.status ?? '-';
+    document.getElementById('status-change').value = deviceInfo.status ?? 'assigned';
     document.getElementById('modal-device-condition-notes').textContent = deviceInfo.condition_notes !== '' ? deviceInfo.condition_notes : '-';
 }
     
@@ -196,6 +223,19 @@ function deviceModalInfo() {
 
                 <div class="info-list">
                     <div class="info-field">
+                        <span class="info-label">Status</span>
+                        <span class="info-value" id="modal-device-status">-</span>
+                        <select id="status-change" hidden>
+                            <option value="assigned">assigned</option>
+                            <option value="available">available</option>
+                            <option value="repair">repair</option>
+                            <option value="retired">retired</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-field">
                         <span class="info-label">Condition Notes</span>
                         <span class="info-value" id="modal-device-condition-notes">-</span>
                     </div>
@@ -203,6 +243,7 @@ function deviceModalInfo() {
 
                 <div class="form-buttons">
                     <button id="update-status" class="button-format" type="button">Update Status</button>
+                    <button id="commit-status" class="button-format" type="button" hidden>Commit Status</button>
                     <button id="device-history" class="button-format" type="button">Device History</button>
                     <button id="cancel-device-info-view" class="button-format" type="button">Cancel</button>
                 </div> 
