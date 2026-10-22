@@ -721,7 +721,7 @@ textarea {
 .info-list {
     display: flex;
     flex-direction: column;
-    margin-bottom: 6px;
+    margin-bottom: 30px;
 }
 .info-field {
     display: flex;

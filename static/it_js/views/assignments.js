@@ -1,3 +1,5 @@
+import { Modal, InfoModal } from "../modal.js";
+
 export const assignmentsView = {
     async mount(container) {
         container.innerHTML = `
@@ -52,10 +54,6 @@ export const assignmentsView = {
         // document.getElementById('new-assignment').addEventListener('click', openAssignModal)
 
         await refreshAssignments()
-
-        const t = new Toast("New Modal")
-        t.addButtons("test", () => {console.log("Test")})
-        t.open()
     }
 }
 
@@ -203,6 +201,25 @@ function tableMonitor() {
             return
         }
         const assignmentInfo = await response.json()
+
+        const newModal = new InfoModal(
+            'Assignment Info',
+            {
+                fields: [
+                    {label: "Name", key: "display_name"},
+                    {label: "Email", key: "email"},
+                    {label: "Device", key: "asset_number"},
+                    {label: "Asset Type", key: "asset_type"},
+                    {label: "Location", key: "location"},
+                    {label: "Assignmnet Date", key: "allocated_at"}
+                ],
+            }
+        )
+        newModal.addButton('Deallocate', () => {console.log('Deallocate')});
+        newModal.addButton('Transfer', () => {console.log('Transfer')})
+        newModal.open()
+        newModal.appendInfo(assignmentInfo)
+
         assignmentModalInfo(assignmentInfo)
     })
 }
@@ -275,51 +292,4 @@ function assignmentModal() {
             </div>
         </div>
     `
-}
-
-class Toast {
-    constructor(title) {
-        this.title = title;
-
-        this.el = document.createElement("div");
-        this.el.className = "modal";
-
-        this.el.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>${title}</h3>
-                </div>
-                <div class="modal-body"></div>
-                <div class="form-buttons">
-                    <button type="button" class="cancel-button">Cancel</button>
-                </div>
-            </div>
-        `;
-
-        this.body = this.el.querySelector(".modal-body");
-        this.buttons = this.el.querySelector(".form-buttons");
-        this.cancelButton = this.el.querySelector(".cancel-button")
-
-        this.cancelButton.addEventListener('click', () => this.close());
-    }
-
-    addButtons(label, onClick) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "button-format";
-        button.textContent = label
-
-        button.addEventListener("click", onClick);
-
-        this.buttons.insertBefore(button, this.cancelButton);
-        return button;
-    }
-
-    open() {
-        document.body.append(this.el);
-    }
-
-    close() {
-        this.el.remove();
-    }
 }
