@@ -54,6 +54,7 @@ export const assignmentsView = {
         await refreshAssignments()
 
         const t = new Toast("New Modal")
+        t.addButtons("test", () => {console.log("Test")})
         t.open()
     }
 }
@@ -297,9 +298,21 @@ class Toast {
 
         this.body = this.el.querySelector(".modal-body");
         this.buttons = this.el.querySelector(".form-buttons");
+        this.cancelButton = this.el.querySelector(".cancel-button")
 
-        const cancel = this.el.querySelector('.cancel-button');
-        cancel.addEventListener('click', () => this.close());
+        this.cancelButton.addEventListener('click', () => this.close());
+    }
+
+    addButtons(label, onClick) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "button-format";
+        button.textContent = label
+
+        button.addEventListener("click", onClick);
+
+        this.buttons.insertBefore(button, this.cancelButton);
+        return button;
     }
 
     open() {

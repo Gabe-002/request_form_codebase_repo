@@ -12,4 +12,3 @@ function disableDarkmode() {
 }
 
 if (darkmode === "active") enableDarkmode();
-
