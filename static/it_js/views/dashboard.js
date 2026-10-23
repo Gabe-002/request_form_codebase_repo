@@ -116,6 +116,11 @@ export const dashboardView = {
 
         initAssignModal()
 
+        function submitDevice(event) {
+            event.preventDefault()
+            console.log("This seems to have worked")
+        }
+
         const addDeviceBtn = document.getElementById('add-device')
         const modal = document.getElementById('device-modal')
         addDeviceBtn.addEventListener('click', () => {
@@ -153,10 +158,11 @@ export const dashboardView = {
                         {label: "Condition Notes", name: "condition_notes", type: "textarea", required: true}
                     ],
                     buttons: [
-                        {label: "Test", onClick: () => {}, type: "submit"}
+                        {label: "Test", onClick: () => {}, type: "submit", event: "submit"}
                     ]
                 }
             );
+            newDeviceModal.submitBehaviour(submitDevice)
             newDeviceModal.open();
         })
 

@@ -25,13 +25,13 @@ export class Modal {
         this.cancelButton.addEventListener("click", () => this.close());
     }
 
-    addButton(label, onClick, type="button") {
+    addButton(label, onClick, type="button", event="click") {
         const button = document.createElement("button");
         button.type = type;
         button.textContent = label;
         button.className = 'button-format';
 
-        button.addEventListener('click', onClick);
+        button.addEventListener(event, onClick);
         this.buttons.insertBefore(button, this.cancelButton);
         return button;
     }
@@ -138,5 +138,9 @@ export class FormModal extends Modal {
         inputs.forEach(input => {
             this.buttons.before(this.#field(input))
         })
+    }
+
+    submitBehaviour(onSubmit) {
+        this.form.addEventListener('submit', onSubmit)
     }
 }
