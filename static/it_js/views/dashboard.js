@@ -23,8 +23,6 @@ export const dashboardView = {
                 </div>
             </div>
 
-            ${deviceModalHTML()}
-            ${assignDeviceModal()}
 
             <div id="review-modal">
                 <div class="review-content">
@@ -46,12 +44,7 @@ export const dashboardView = {
                 <div class="issue-page">
                     <h3>Issue a device</h3>
                     <h4>Device Info</h4>
-                    <div class="asset-search">
-                        <label>Asset Number
-                            <input type="text" id="issue-asset-number" name="asset_number" required">
-                            <div id="asset-results"></div>
-                        </label>
-                    </div>
+
                         <label>Asset Description
                             <input type="text" id="issue-model" name="model" required>
                         </label>
@@ -85,6 +78,13 @@ export const dashboardView = {
                 </div>
             </div>
         `
+
+                    // <div class="asset-search">
+                    //     <label>Asset Number
+                    //         <input type="text" id="issue-asset-number" name="asset_number" required">
+                    //         <div id="asset-results"></div>
+                    //     </label>
+                    // </div>
 
         const [response, deviceResponse, lastSyncResponse] = await Promise.all([
             fetch(`/it/api/requests`),
@@ -161,7 +161,7 @@ export const dashboardView = {
         // initAssignModal()
 
         const newAssignmentBtn = document.getElementById('new-assignment')
-        newAssignmentBtn.addEventListener('click', () => {
+        newAssignmentBtn.addEventListener('click', async () => {
             const newAssignmentModal = new FormModal(
                 "Assign a Device",
                 {
@@ -180,7 +180,19 @@ export const dashboardView = {
                     ]
                 }
             );
+
+            // !!!!! We must add error handling to our fetches (making own fetch funciton)
+            const [devices] = await Promise.all([
+                fetch('/it/api/devices').then(response => response.json())
+            ])
+            
+            newAssignmentModal.addDatabaseInfo("devices", devices);
+
+            console.log(newAssignmentModal.getDatabaseInfo("devices"));
+            
             newAssignmentModal.open();
+
+            newAssignmentModal.searchBar('asset_number', 'devices');
         })
 
         const addDeviceBtn = document.getElementById('add-device')

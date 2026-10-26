@@ -159,4 +159,17 @@ export class FormModal extends Modal {
     submitBehaviour(onSubmit) {
         this.form.addEventListener('submit',(event) => onSubmit(event, this))
     }
+
+    searchBar(inputName, infoName, onSearch) {
+        const inputBar = document.querySelector(`input[name="${inputName}"]`);
+        if (!inputBar) {
+            alert("Could not find the search bar of reference");
+            return
+        }
+        inputBar.addEventListener('input', (event) => {
+            const query = event.target.value;
+            const info = this.getDatabaseInfo(infoName);
+            onSearch(query, info, this);
+        })
+    }
 }
