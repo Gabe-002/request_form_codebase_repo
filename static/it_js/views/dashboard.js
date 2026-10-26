@@ -185,14 +185,22 @@ export const dashboardView = {
             const [devices] = await Promise.all([
                 fetch('/it/api/devices').then(response => response.json())
             ])
+
+            function onSearch(query, info, modal) {
+                console.log(query)
+                const results = info.filter((item) => {
+                    return item.asset_number.toLowerCase().includes(query.toLowerCase()) || item.model.toLowerCase().includes(query.toLowerCase())
+                })
+                console.log(results)
+            }
             
             newAssignmentModal.addDatabaseInfo("devices", devices);
 
             console.log(newAssignmentModal.getDatabaseInfo("devices"));
-            
+
             newAssignmentModal.open();
 
-            newAssignmentModal.searchBar('asset_number', 'devices');
+            newAssignmentModal.searchBar('asset_number', 'devices', onSearch);
         })
 
         const addDeviceBtn = document.getElementById('add-device')

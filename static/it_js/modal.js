@@ -109,7 +109,11 @@ export class FormModal extends Modal {
         this.buildButtons(formOptions.buttons)
     }
 
-    #field({label, name, type, required=false, options=[], placeholder=''}) {
+
+
+
+
+    #field({label, name, type, required=false, options=[], placeholder='', search=false}) {
         if (type==="heading") {
             const headingElement = document.createElement("h4");
             headingElement.textContent = label;
@@ -139,8 +143,20 @@ export class FormModal extends Modal {
         input.required = required;
 
         inputSection.append(input)
+
+        if (search === true) {
+            inputSection.classList.add('search-field');
+            const searchResults = document.createElement("div");
+            searchResults.className = 'search-results';
+            inputSection.append(searchResults);
+        }
         return inputSection
     }
+
+
+
+
+
 
     #buildFields(inputs) {
         inputs.forEach(input => {

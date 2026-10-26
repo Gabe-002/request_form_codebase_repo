@@ -747,3 +747,40 @@ textarea {
     color: var(--text-color);
     overflow-wrap: anywhere;
 }
+
+/* This is a device section */
+.search-field {
+    position: relative;
+}
+
+.search-results {
+    position: absolute;
+    z-index: 200px;
+    font: inherit;
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--base-varient);
+    box-shadow: 0 10px 24px -8px var(--shadow);
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;    
+
+    top: 100%;
+}
+
+    /* position: absolute;
+    z-index: 200;
+    font: inherit;
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--base-varient);
+    box-shadow: 0 10px 24px -8px var(--shadow);
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto; */
