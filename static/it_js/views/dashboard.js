@@ -113,13 +113,75 @@ export const dashboardView = {
         body += renderRecentActivity()
         body += `</div>`
         container.innerHTML = body;
-
-        initAssignModal()
-
-        function submitDevice(event) {
+        
+        // !!!! Another piece of shit function I have to redo
+        // !!!! Ok, maybe's its not that bad, but we should generalize form submissions
+        async function submitDevice(event, modal) {
             event.preventDefault()
-            console.log("This seems to have worked")
+            
+            const formData = new FormData(event.target);
+            const deviceData = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch('/it/api/devices', {
+                    method: 'POST',
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(deviceData)
+                });
+                if(!response.ok) {
+                    throw new Error("Failed to add the new device");
+                }
+                modal.close();
+            } catch (err) {
+                alert("Could not connect to the database correctly")
+            }
         }
+
+        async function submitFormInfo(event, modal, url) {
+            event.preventDefault();
+            const formObject = new FormData(event.target);
+            const formData = Object.fromEntries(formObject.entries());
+            try {
+                const reponse = await fetch(
+                    url,
+                    {
+                        headers: {"Content-Type": "application/json"},
+                        method: "POST",
+                        body: JSON.stringify(formData)
+                    }
+                );
+                if (!response.ok) {
+                    throw new Error("Failed to add a new device");
+                }
+                modal.close();
+            } catch (err) {
+                alert("Could not connect to the database correctly")
+            }
+        }
+
+        // initAssignModal()
+
+        const newAssignmentBtn = document.getElementById('new-assignment')
+        newAssignmentBtn.addEventListener('click', () => {
+            const newAssignmentModal = new FormModal(
+                "Assign a Device",
+                {
+                    inputs: [
+                        {label: "Device Info", name: "", type: "heading"},
+                        {label: "Asset Number", name: "asset_number", type: "input", required: true},
+                        {label: "Asset Description", name: "", type: "input"},
+                        {label: "Serial Number", name: "", type: "input"},
+                        {label: "Transfer Info", name: "", type: "heading"},
+                        {label: "Location", name: "location", type: "input", required: true},
+                        {label: "Username", name: "tenant_username", type: "input", required: true},
+                        {label: "Email", name: "tenant_email", type: "input", required: true}
+                    ],
+                    buttons: [
+                        {label: "Confirm", onClick: () => {}, type: "submit", event: "submit"}
+                    ]
+                }
+            );
+            newAssignmentModal.open();
+        })
 
         const addDeviceBtn = document.getElementById('add-device')
         const modal = document.getElementById('device-modal')

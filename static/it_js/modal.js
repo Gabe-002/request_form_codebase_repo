@@ -98,6 +98,8 @@ export class FormModal extends Modal {
     constructor(title, formOptions = {}) {
         super(title);
 
+        this.databaseCalls = {};
+
         this.form = document.createElement('form');
         this.form.id = "new-device-form";
         this.body.before(this.form);
@@ -108,10 +110,17 @@ export class FormModal extends Modal {
     }
 
     #field({label, name, type, required=false, options=[], placeholder=''}) {
+        if (type==="heading") {
+            const headingElement = document.createElement("h4");
+            headingElement.textContent = label;
+            return headingElement;
+        }
+
         const inputSection = document.createElement('label');
         inputSection.textContent = label;
 
         let input;
+
         if (type === "select") {
             input = document.createElement("select");
             for (const option of options) {
@@ -122,8 +131,7 @@ export class FormModal extends Modal {
             }
         } else if (type === "textarea") {
             input = document.createElement("textarea")
-        }
-        else {
+        } else {
             input = document.createElement("input");
             input.type = type
         }
@@ -140,7 +148,15 @@ export class FormModal extends Modal {
         })
     }
 
+    addDatabaseInfo(infoName, databaseInfo) {
+        this.databaseCalls[infoName] = databaseInfo
+    }
+
+    getDatabaseInfo(infoName) {
+        return this.databaseCalls[infoName]
+    }
+
     submitBehaviour(onSubmit) {
-        this.form.addEventListener('submit', onSubmit)
+        this.form.addEventListener('submit',(event) => onSubmit(event, this))
     }
 }
