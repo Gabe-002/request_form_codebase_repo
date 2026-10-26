@@ -167,7 +167,7 @@ export const dashboardView = {
                 {
                     inputs: [
                         {label: "Device Info", name: "", type: "heading"},
-                        {label: "Asset Number", name: "asset_number", type: "input", required: true},
+                        {label: "Asset Number", name: "asset_number", type: "input", required: true, search: true},
                         {label: "Asset Description", name: "", type: "input"},
                         {label: "Serial Number", name: "", type: "input"},
                         {label: "Transfer Info", name: "", type: "heading"},
@@ -189,9 +189,17 @@ export const dashboardView = {
             function onSearch(query, info, modal) {
                 console.log(query)
                 const results = info.filter((item) => {
-                    return item.asset_number.toLowerCase().includes(query.toLowerCase()) || item.model.toLowerCase().includes(query.toLowerCase())
+                    return (
+                        (item.asset_number.toLowerCase().includes(query.toLowerCase()) 
+                        || item.model.toLowerCase().includes(query.toLowerCase()))
+                        && item.status === 'available')
                 })
-                console.log(results)
+
+                // !!!!! Might just remove this
+                const searchBar = modal.form.elements['asset_number'];
+                const searchResults = searchBar.closest('.search-field').querySelector('.search-results');
+
+                return results
             }
             
             newAssignmentModal.addDatabaseInfo("devices", devices);
