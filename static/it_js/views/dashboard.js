@@ -120,11 +120,13 @@ export const dashboardView = {
                     body: JSON.stringify(deviceData)
                 });
                 if(!response.ok) {
-                    throw new Error("Failed to add the new device");
+                    throw new Error(`HTTP Error. Status: ${response.status}`);
                 }
                 modal.close();
+                window.location.reload();
             } catch (err) {
-                alert("Could not connect to the database correctly")
+                alert(`Fetch Error - ${err}`)
+                window.location.reload();
             }
         }
 
@@ -159,11 +161,13 @@ export const dashboardView = {
                     inputs: [
                         {label: "Device Info", name: "", type: "heading"},
                         {label: "Asset Number", name: "asset_number", type: "input", required: true, search: true},
+                        {label: "", name: "device_id", type: "hidden", required: false},
                         {label: "Asset Description", name: "asset_description", type: "input"},
                         {label: "Serial Number", name: "serial_number", type: "input"},
                         {label: "Transfer Info", name: "", type: "heading"},
                         {label: "Location", name: "location", type: "input", required: true},
-                        {label: "Username", name: "tenant_username", type: "input", required: true},
+                        {label: "Username", name: "tenant_username", type: "input", required: true, search: true},
+                        {label: "", name: "tenant_id", type: "hidden", required: false},
                         {label: "Email", name: "tenant_email", type: "input", required: true}
                     ],
                     buttons: [
@@ -178,17 +182,16 @@ export const dashboardView = {
                 fetch(`/it/api/users`).then(response => response.json())
             ])
 
-            console.log(users)
-
             newAssignmentModal.addDatabaseInfo("devices", devices);
+            newAssignmentModal.addDatabaseInfo("users", users);
             newAssignmentModal.open();
             newAssignmentModal.searchBar('asset_number', 'devices', {onSearch: onSearchDevice, onRender: onRenderDevice, onClick: onClickDevice});
             newAssignmentModal.searchBar('tenant_username', 'users', {onSearch: onSearchUsers, onRender: onRenderUsers, onClick: onClickUsers});
+            newAssignmentModal.submitBehaviour(onSubmitAssign);
         })
 
         const addDeviceBtn = document.getElementById('add-device')
         addDeviceBtn.addEventListener('click', () => {
-            // modal.classList.toggle('open')
             const newDeviceModal = new FormModal(
                 "Add a New Devive",
                 {
@@ -226,8 +229,8 @@ export const dashboardView = {
                     ]
                 }
             );
-            newDeviceModal.submitBehaviour(submitDevice)
             newDeviceModal.open();
+            newDeviceModal.submitBehaviour(submitDevice);
         })
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,18 +329,35 @@ export const dashboardView = {
 // Device modal related code
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function onSearchUsers() {}
-function onRenderUsers() {}
-function onClickUsers() {}
+function onSearchUsers(query, info) {
+    const results = info.filter((item) => {
+        return (
+            item.display_name.toLowerCase().includes(query.toLowerCase()) 
+            || item.email.toLowerCase().includes(query.toLowerCase()))
+    });
+    return results;
+}
+function onRenderUsers(result, element) {
+    element.dataset.userId = result.id;
+    element.textContent = `${result.display_name} - ${result.email}`;
+}
+function onClickUsers(result, modal) {
+    const form = modal.form;
 
+    const tenantUsername = form.elements.tenant_username;
+    const tenantEmail = form.elements.tenant_email;
+    const tenantId = form.elements.tenant_id;
 
+    tenantUsername.value = result.display_name;
+    tenantEmail.value = result.email;
+    tenantId.value = result.id;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Assignment modal related code
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function onSearchDevice(query, info) {
-    console.log(query)
     const results = info.filter((item) => {
         return (
             (item.asset_number.toLowerCase().includes(query.toLowerCase()) 
@@ -356,13 +376,36 @@ function onClickDevice(result, modal) {
     const assetNumber = form.elements.asset_number;
     const assetDescription = form.elements.asset_description;
     const serialNumber = form.elements.serial_number;
+    const deviceId = form.elements.device_id;
+
     
     assetNumber.value = result.asset_number;
-    assetNumber.dataset.deviceId = result.id;
+    deviceId.value = result.id;
     assetDescription.value = `${result.manufacturer} - ${result.model}`;
     serialNumber.value = result.serial_number;
 }
 
+async function onSubmitAssign(event, modal) {
+    event.preventDefault();
+    const form = modal.form;
+    const formObject = new FormData(form);
+    const formData = Object.fromEntries(formObject); // We need the location
+
+    const assignmentInfo = {
+        device_id: Number(formData.device_id),
+        tenant_id: Number(formData.tenant_id),
+        location: formData.location
+    }
+    const response = await fetch(`/it/api/assign`, {
+        headers: {"Content-Type": "application/json"},
+        method: "POST",
+        body: JSON.stringify(assignmentInfo)
+    })
+    if (!response.ok) {
+        alert("Could not correctly assign the device")
+    }
+    window.location.reload()
+}
 
 ///////////////////////////////////////////////////
 // Functions related to the sync

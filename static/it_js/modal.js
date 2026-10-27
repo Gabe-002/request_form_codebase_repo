@@ -79,13 +79,11 @@ export class InfoModal extends Modal {
 
     #buildModal(fields) {
         fields.forEach(field => {
-            console.log(field)
             this.#field(field.label, field.key);
         });
     }
 
     appendInfo(modalInfo) {
-        console.log(modalInfo)
         const valueItems = this.body.querySelectorAll("[data-key]");
         for (const valueItem of valueItems) {
             const key = valueItem.dataset.key;
