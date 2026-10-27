@@ -168,12 +168,14 @@ export class FormModal extends Modal {
         this.form.addEventListener('submit',(event) => onSubmit(event, this))
     }
 
-    searchBar(inputName, infoName, {onSearch, onRender}) {
+    searchBar(inputName, infoName, {onSearch, onRender, onClick}) {
         const inputBar = document.querySelector(`input[name="${inputName}"]`);
+
         if (!inputBar) {
             alert("Could not find the search bar of reference");
             return
         }
+
         inputBar.addEventListener('input', (event) => {
             const query = event.target.value;
             const searchBar = this.form.elements[inputName];
@@ -195,7 +197,12 @@ export class FormModal extends Modal {
             searchResults.forEach(result => {
                 const resultItem = document.createElement("div");
                 resultItem.className = 'result-item';
-                resultItem.textContent = result.asset_number ?? '-';
+                onRender(result, resultItem);
+
+                resultItem.addEventListener('click', () => {
+                    onClick(resultItem);
+                })
+
                 resultsDiv.append(resultItem);
             })
         })

@@ -168,8 +168,8 @@ export const dashboardView = {
                     inputs: [
                         {label: "Device Info", name: "", type: "heading"},
                         {label: "Asset Number", name: "asset_number", type: "input", required: true, search: true},
-                        {label: "Asset Description", name: "", type: "input"},
-                        {label: "Serial Number", name: "", type: "input"},
+                        {label: "Asset Description", name: "asset_description", type: "input"},
+                        {label: "Serial Number", name: "serial_number", type: "input"},
                         {label: "Transfer Info", name: "", type: "heading"},
                         {label: "Location", name: "location", type: "input", required: true},
                         {label: "Username", name: "tenant_username", type: "input", required: true},
@@ -186,7 +186,7 @@ export const dashboardView = {
                 fetch('/it/api/devices').then(response => response.json())
             ])
 
-            function onSearch(query, info, modal) {
+            function onSearch(query, info) {
                 console.log(query)
                 const results = info.filter((item) => {
                     return (
@@ -194,21 +194,19 @@ export const dashboardView = {
                         || item.model.toLowerCase().includes(query.toLowerCase()))
                         && item.status === 'available')
                 })
-
-                // !!!!! Might just remove this
-                const searchBar = modal.form.elements['asset_number'];
-                const searchResults = searchBar.closest('.search-field').querySelector('.search-results');
-
                 return results
+            }
+            function onRender(result, element) {
+                element.dataset.deviceId = result.id;
+                element.textContent = result.asset_number ?? '-';
+            }
+            function onClick(element) {
+                console.log(element?.dataset.deviceId);
             }
             
             newAssignmentModal.addDatabaseInfo("devices", devices);
-
-            console.log(newAssignmentModal.getDatabaseInfo("devices"));
-
             newAssignmentModal.open();
-
-            newAssignmentModal.searchBar('asset_number', 'devices', {onSearch});
+            newAssignmentModal.searchBar('asset_number', 'devices', {onSearch, onRender, onClick});
         })
 
         const addDeviceBtn = document.getElementById('add-device')
@@ -314,35 +312,35 @@ export const dashboardView = {
         })
 
 
-        const cancelDeviceBtn = document.getElementById('cancel-device');
-        const deviceForm = document.getElementById('new-device-form');
+        // const cancelDeviceBtn = document.getElementById('cancel-device');
+        // const deviceForm = document.getElementById('new-device-form');
 
-        cancelDeviceBtn.addEventListener("click", () => {
-            modal.classList.remove('open');
-            deviceForm.reset();
-        })
+        // cancelDeviceBtn.addEventListener("click", () => {
+        //     modal.classList.remove('open');
+        //     deviceForm.reset();
+        // })
 
-        deviceForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
+        // deviceForm.addEventListener("submit", async (event) => {
+        //     event.preventDefault();
 
-            const formData = new FormData(deviceForm);
-            const payload = Object.fromEntries(formData.entries())
-            try {
-                const response = await fetch('/it/api/devices', {
-                    method: 'POST',
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(payload)
-                })
-                if (!response.ok) {
-                    throw new Error("Failed to add new device")
-                }
-                modal.classList.remove('open')
-                deviceForm.reset();
-                window.location.reload();
-            } catch (err) {
-                alert("Could not connect to the database correctly")
-            }
-        })
+        //     const formData = new FormData(deviceForm);
+        //     const payload = Object.fromEntries(formData.entries())
+        //     try {
+        //         const response = await fetch('/it/api/devices', {
+        //             method: 'POST',
+        //             headers: {"Content-Type": "application/json"},
+        //             body: JSON.stringify(payload)
+        //         })
+        //         if (!response.ok) {
+        //             throw new Error("Failed to add new device")
+        //         }
+        //         modal.classList.remove('open')
+        //         deviceForm.reset();
+        //         window.location.reload();
+        //     } catch (err) {
+        //         alert("Could not connect to the database correctly")
+        //     }
+        // })
         const reviewModel = document.getElementById("review-modal")
         document.getElementById("pending-assignments-block")?.addEventListener('click', (event)=> {
             if (event.target.classList.contains('review-button')) {

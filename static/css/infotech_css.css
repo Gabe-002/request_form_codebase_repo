@@ -771,6 +771,16 @@ textarea {
     top: 100%;
 }
 
+.result-item {
+    font: inherit;
+    padding: 10px 12px;
+    cursor: pointer;
+}
+
+.result-item:hover {
+    background-color: var(--hover);
+}
+
     /* position: absolute;
     z-index: 200;
     font: inherit;
