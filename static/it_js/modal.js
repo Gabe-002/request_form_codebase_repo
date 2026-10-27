@@ -109,10 +109,6 @@ export class FormModal extends Modal {
         this.buildButtons(formOptions.buttons)
     }
 
-
-
-
-
     #field({label, name, type, required=false, options=[], placeholder='', search=false}) {
         if (type==="heading") {
             const headingElement = document.createElement("h4");
@@ -148,15 +144,11 @@ export class FormModal extends Modal {
             inputSection.classList.add('search-field');
             const searchResults = document.createElement("div");
             searchResults.className = 'search-results';
+            searchResults.style.display = 'none';
             inputSection.append(searchResults);
         }
         return inputSection
     }
-
-
-
-
-
 
     #buildFields(inputs) {
         inputs.forEach(input => {
@@ -176,7 +168,7 @@ export class FormModal extends Modal {
         this.form.addEventListener('submit',(event) => onSubmit(event, this))
     }
 
-    searchBar(inputName, infoName, {onSearch}) {
+    searchBar(inputName, infoName, {onSearch, onRender}) {
         const inputBar = document.querySelector(`input[name="${inputName}"]`);
         if (!inputBar) {
             alert("Could not find the search bar of reference");
@@ -184,8 +176,28 @@ export class FormModal extends Modal {
         }
         inputBar.addEventListener('input', (event) => {
             const query = event.target.value;
+            const searchBar = this.form.elements[inputName];
+            const resultsDiv = searchBar.closest('.search-field').querySelector('.search-results');
+            
+            if (query.length === 0) {
+                resultsDiv.style.display = 'none';
+                resultsDiv.replaceChildren();
+                return;
+            }
+
+            resultsDiv.style.display = 'flex';
+
             const info = this.getDatabaseInfo(infoName);
+
             const searchResults = onSearch(query, info, this);
+            resultsDiv.replaceChildren();
+
+            searchResults.forEach(result => {
+                const resultItem = document.createElement("div");
+                resultItem.className = 'result-item';
+                resultItem.textContent = result.asset_number ?? '-';
+                resultsDiv.append(resultItem);
+            })
         })
     }
 }

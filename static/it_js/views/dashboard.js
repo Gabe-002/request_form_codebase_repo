@@ -208,7 +208,7 @@ export const dashboardView = {
 
             newAssignmentModal.open();
 
-            newAssignmentModal.searchBar('asset_number', 'devices', onSearch);
+            newAssignmentModal.searchBar('asset_number', 'devices', {onSearch});
         })
 
         const addDeviceBtn = document.getElementById('add-device')
