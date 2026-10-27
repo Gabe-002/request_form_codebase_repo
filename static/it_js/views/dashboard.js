@@ -22,23 +22,6 @@ export const dashboardView = {
                     </div>
                 </div>
             </div>
-
-
-            <div id="review-modal">
-                <div class="review-content">
-                    <h3>Review Request</h3>
-
-                    <div id="review-details">
-
-                    </div>
-
-                    <div class="review-buttons">
-                        <button id="issue-button" type="button">Issue</button>
-                        <button id="transfer-button" type="button">Transfer</button>
-                        <button id="cancel-review" type="button">Cancel</button>
-                    </div>
-                </div>
-            </div>
         `
         const [response, deviceResponse, lastSyncResponse] = await Promise.all([
             fetch(`/it/api/requests`),
@@ -232,11 +215,8 @@ export const dashboardView = {
             }
         })
 
-
-        const reviewModel = document.getElementById("review-modal")
         document.getElementById("pending-assignments-block")?.addEventListener('click', async (event)=> {
             if (event.target.classList.contains('review-button')) {
-                reviewModel.dataset.requestid = event.target.dataset.requestid;
                 const requestId = event.target.dataset.requestid;
 
                 const [requestInfo] = await Promise.all([
@@ -299,55 +279,8 @@ export const dashboardView = {
                     issueModal.searchBar('tenant_username', 'users', {onSearch: onSearchUsers, onRender: onRenderUsers, onClick: onClickUsers});
                     issueModal.submitBehaviour(onSubmitIssue);
                 }
-
-                renderReviewPage(event.target.dataset.requestid);
             }
         }) 
-
-        document.getElementById('cancel-review').addEventListener('click', () => {
-            reviewModel.classList.toggle('open');
-        })
-        document.getElementById('issue-button').addEventListener('click', () => {
-            const reviewModel = document.getElementById("review-modal")
-            reviewModel.classList.toggle('open');
-            renderIssuePage(reviewModel.dataset.requestid);
-        })
-
-        document.getElementById('cancel-issue').addEventListener('click', () => {
-            const confirmation = confirm("Are you sure you would like to cancel this issue?")
-            if (!confirmation) return;
-            document.getElementById('issue-modal').classList.toggle('open')
-            document.getElementById('issue-modal').querySelectorAll('input').forEach(
-                (input) => {
-                    input.value =''
-                }
-            )
-        })
-
-        // This if for the issue
-        document.getElementById('confirm-issue').addEventListener('click', async () => {
-            const assetNumber = document.getElementById('issue-asset-number').value
-            const tenantUsername = document.getElementById('issue-tenant-username').value
-            if (!assetNumber || !tenantUsername)
-                alert('Critical fields are missing. Please fill them in!')
-            const userId = userResults.dataset.userId
-            const deviceId = deviceResults.dataset.deviceId
-            const requestId = reviewModel.dataset.requestid
-            const response = await fetch(`/it/api/assign`, {
-                headers: {"Content-Type": "application/json"},
-                method: "POST",
-                body: JSON.stringify({
-                    "request_id": Number(requestId),
-                    "device_id": Number(deviceId),
-                    "tenant_id": userId
-                })
-            })
-            if(!response.ok){
-                alert("Could not assign device!")
-            } else {
-                window.location.reload()
-            }
-        })
     }
 }
 
@@ -551,117 +484,3 @@ function renderRecentActivity(){
         </div>
     `
 }
-
-async function renderReviewPage(request_id) {
-    const response = await fetch(`/it/api/request?request_id=${request_id}`)
-    if (!response.ok) {
-        alert("Failed to get the request!")
-        return;
-    }
-    const request = await response.json();
-    const reviewModel = document.getElementById("review-modal")
-    reviewModel.classList.toggle('open');
-
-    const reviewDetails = document.getElementById("review-details")
-    let details = `
-        <div class='detail-item'>
-            <p>Full Name:</p> <p>${request.first_name} ${request.surname}</p>
-        </div>
-        <div class='detail-item'>
-            <p>Project Code:</p> <p>${request.project_code}</p>
-        </div>
-        <div class='detail-item'>
-            <p>Employee Division:</p> <p>${request.employee_division}</p>
-        </div>
-        <div class='detail-item'>
-            <p>Country:</p> <p>${request.base_country_computer.replace("_", " ")}</p>
-        </div>
-        <div class='detail-item'>
-            <p>Computer Required:</p> <p>${request.computer_required}</p>
-        </div>
-        <div class='detail-item'>
-            <p>Desk Phone Required:</p> <p>${request.desk_phone_required}</p>
-        </div>
-        <div class='detail-item'>
-            <p>Required Software:</p>
-        </div>
-        <ul class="software-list">`
-    request.required_software.forEach((item) => {
-        details += `<li>${item
-            .split('_')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ')}</li>`
-    })
-    details += `</ul>`
-    reviewDetails.innerHTML = details
-}
-
-async function renderIssuePage(requestid) {
-    const issueModal = document.getElementById('issue-modal')
-    issueModal.classList.toggle('open')
-
-    const response = await fetch(`/it/api/request?request_id=${requestid}`)
-    if (!response.ok) {
-        alert("Failed to get the request!")
-        return;
-    }
-    const request = await response.json();
-    const name = document.getElementById('issue-name')
-    name.value = `${request.first_name} ${request.surname}`
-
-}
-
-// This is for the search bars
-// async function searchResults(event, container, url, renderItem){
-//     const query = event.target.value
-//     if (query.length === 0) {
-//         container.innerHTML = ''
-//         container.style.display = 'none'
-//         return
-//     }
-//     const response = await fetch(`${url}?query=${query}`)
-//     if (!response.ok) {
-//         alert("An error has occured while fetching results")
-//         return
-//     }
-//     container.style.display = 'flex'
-//     const items = await response.json()
-//     let body = ``
-//     items.forEach((item) => {
-//         const attrs = Object.entries(item)
-//             .map(([key, value]) => `data-${key.replace(/_/g, '-')}="${value}"`)
-//             .join(' ')
-//         body += `<p class="device-item" ${attrs}>${renderItem(item)}</p>`
-//     })
-//     container.innerHTML = body
-// }
-
-        // const cancelDeviceBtn = document.getElementById('cancel-device');
-        // const deviceForm = document.getElementById('new-device-form');
-
-        // cancelDeviceBtn.addEventListener("click", () => {
-        //     modal.classList.remove('open');
-        //     deviceForm.reset();
-        // })
-
-        // deviceForm.addEventListener("submit", async (event) => {
-        //     event.preventDefault();
-
-        //     const formData = new FormData(deviceForm);
-        //     const payload = Object.fromEntries(formData.entries())
-        //     try {
-        //         const response = await fetch('/it/api/devices', {
-        //             method: 'POST',
-        //             headers: {"Content-Type": "application/json"},
-        //             body: JSON.stringify(payload)
-        //         })
-        //         if (!response.ok) {
-        //             throw new Error("Failed to add new device")
-        //         }
-        //         modal.classList.remove('open')
-        //         deviceForm.reset();
-        //         window.location.reload();
-        //     } catch (err) {
-        //         alert("Could not connect to the database correctly")
-        //     }
-        // })
