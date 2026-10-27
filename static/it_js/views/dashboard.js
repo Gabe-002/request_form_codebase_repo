@@ -175,13 +175,15 @@ export const dashboardView = {
             // !!!!! We must add error handling to our fetches (making own fetch funciton)
             const [devices, users] = await Promise.all([
                 fetch('/it/api/devices').then(response => response.json()),
-                fetch(`/it/api/`)
+                fetch(`/it/api/users`).then(response => response.json())
             ])
+
+            console.log(users)
 
             newAssignmentModal.addDatabaseInfo("devices", devices);
             newAssignmentModal.open();
             newAssignmentModal.searchBar('asset_number', 'devices', {onSearch: onSearchDevice, onRender: onRenderDevice, onClick: onClickDevice});
-            newAssignmentModal.searchBar('tenant_username', 'users', {});
+            newAssignmentModal.searchBar('tenant_username', 'users', {onSearch: onSearchUsers, onRender: onRenderUsers, onClick: onClickUsers});
         })
 
         const addDeviceBtn = document.getElementById('add-device')
@@ -324,7 +326,9 @@ export const dashboardView = {
 // Device modal related code
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+function onSearchUsers() {}
+function onRenderUsers() {}
+function onClickUsers() {}
 
 
 
