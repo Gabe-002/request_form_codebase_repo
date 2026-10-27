@@ -1,5 +1,5 @@
 import { deviceModalHTML, initDeviceModal, assignDeviceModal, initAssignModal } from "../Devicemodal.js";
-import { FormModal } from "../modal.js";
+import { FormModal, InfoModal } from "../modal.js";
 
 export const dashboardView = {
     async mount(container) {
@@ -272,10 +272,27 @@ export const dashboardView = {
 
 
         const reviewModel = document.getElementById("review-modal")
-        document.getElementById("pending-assignments-block")?.addEventListener('click', (event)=> {
+        document.getElementById("pending-assignments-block")?.addEventListener('click', async (event)=> {
             if (event.target.classList.contains('review-button')) {
                 reviewModel.dataset.requestid = event.target.dataset.requestid;
-                renderReviewPage(event.target.dataset.requestid);
+                const requestId = event.target.dataset.requestid;
+
+                const [requestInfo] = await Promise.all([
+                    fetch(`/it/api/request?request_id=${requestId}`).then(response => response.json()),
+                ])
+                console.log(requestInfo);
+
+                const newReviewModal = new InfoModal(
+                    'Review Request',
+                    {
+                        input: [
+                            {}
+                        ],
+                        buttons: [],
+                    }
+                )
+
+                // renderReviewPage(event.target.dataset.requestid);
             }
         }) 
         document.getElementById('cancel-review').addEventListener('click', () => {
