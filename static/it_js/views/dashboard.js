@@ -39,44 +39,6 @@ export const dashboardView = {
                     </div>
                 </div>
             </div>
-
-            <div id="issue-modal">
-                <div class="issue-page">
-                    <h3>Issue a device</h3>
-                    <h4>Device Info</h4>
-
-                        <label>Asset Description
-                            <input type="text" id="issue-model" name="model" required>
-                        </label>
-                        <label>Serial Number
-                            <input type="text" id="issue-serial-number" name="serial_number" required>
-                        </label>
-                    <h4>Transfer Info</h4>
-                        <label>Transfer To
-                            <input type="text" id="issue-name" name="issue-name" required>
-                        </label>
-                        <label>Company No.
-                            <input type="text" id="issue-company-no" name="company-no" required>
-                        </label>
-                        <label>Location
-                            <input type="text" id="" name="" required>
-                        </label>
-                        <div class="user-search">
-                            <label>Username
-                                <input type="text" id="issue-tenant-username" name="issue-tenant-username" required>
-                            </label>
-                            <div id="users-results"></div>
-                        </div>
-                        <label>Tenant Email
-                            <input type="text" id="issue-tenant-email" name="issue-tenant-email" required>
-                        </label>
-
-                    <div class="review-buttons">
-                        <button id="confirm-issue" type="button">Confirm</button>
-                        <button id="cancel-issue" type="button">Cancel</button>
-                    </div>
-                </div>
-            </div>
         `
         const [response, deviceResponse, lastSyncResponse] = await Promise.all([
             fetch(`/it/api/requests`),
@@ -329,14 +291,13 @@ export const dashboardView = {
                         fetch(`/it/api/users`).then(response => response.json())
                     ])
 
-                    console.log(requestId)
-
                     issueModal.addDatabaseInfo("devices", devices);
                     issueModal.addDatabaseInfo("users", users);
+                    issueModal.addDatabaseInfo("request_id", requestId);
                     issueModal.open();
                     issueModal.searchBar('asset_number', 'devices', {onSearch: onSearchDevice, onRender: onRenderDevice, onClick: onClickDevice});
                     issueModal.searchBar('tenant_username', 'users', {onSearch: onSearchUsers, onRender: onRenderUsers, onClick: onClickUsers});
-                    issueModal.submitBehaviour(onSubmitAssign);
+                    issueModal.submitBehaviour(onSubmitIssue);
                 }
 
                 renderReviewPage(event.target.dataset.requestid);
@@ -474,7 +435,27 @@ async function onSubmitAssign(event, modal) {
 
 async function onSubmitIssue(event, modal) {
     event.preventDefault();
-    const form = modal.form
+    const form = modal.form;
+    const formObject = new FormData(form);
+    const formData = Object.fromEntries(formObject); // We need the location
+
+    const issueInfo = {
+        device_id: Number(formData.device_id),
+        tenant_id: Number(formData.tenant_id),
+        request_id: Number(modal.databaseCalls['request_id'] ?? null),
+        location: formData.location,
+    };
+    const response = await fetch(`/it/api/assign`, {
+        headers: {"Content-Type": "application/json"},
+        method: "POST",
+        body: JSON.stringify(issueInfo)
+    })
+
+    if(!response.ok){
+        alert("Could not assign device!")
+    } else {
+        window.location.reload()
+    }
 }
 
 ///////////////////////////////////////////////////
