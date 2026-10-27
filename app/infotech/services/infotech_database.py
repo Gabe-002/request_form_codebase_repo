@@ -388,6 +388,20 @@ def collect_devices(db: Session):
 
     return with_sharepoint_id, without_sharepoint_id
 
+def get_tenant_users(db: Session):
+    statement = (
+        select(
+            TenantUsers.id,
+            TenantUsers.display_name,
+            func.coalesce(TenantUsers.email, TenantUsers.upn).label('email')
+            )
+        .where(
+            TenantUsers.account_enabled.is_(True)
+        )
+    )
+    results = db.execute(statement=statement).mappings().all()
+    return results
+
 def get_user_id_by_email(db: Session, email):
     statement = (
         select(TenantUsers.id)
@@ -431,4 +445,4 @@ if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    print(get_device(db, 40))
+    print(get_tenant_users(db))

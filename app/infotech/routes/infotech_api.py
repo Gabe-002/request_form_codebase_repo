@@ -14,7 +14,8 @@ from app.infotech.services.infotech_database import (
     create_assignment,
     get_device_assignments,
     get_device_assignment,
-    device_deallocation)
+    device_deallocation,
+    get_tenant_users)
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
 from app.infotech.models import Devices, AddDevice, CreateAssignment
@@ -100,6 +101,11 @@ def query_devices(query: str, db: Session = Depends(get_db)):
 @router.get("/query/users")
 def query_users(query: str, db: Session = Depends(get_db)):
     users = get_tenant_user_by_query(db=db, query=query)
+    return users
+
+@router.get("/users")
+def api_get_users(db: Session = Depends(get_db)):
+    users = get_tenant_users(db)
     return users
 
 @router.post("/sync/tenant/users")

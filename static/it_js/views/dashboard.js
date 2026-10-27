@@ -78,14 +78,6 @@ export const dashboardView = {
                 </div>
             </div>
         `
-
-                    // <div class="asset-search">
-                    //     <label>Asset Number
-                    //         <input type="text" id="issue-asset-number" name="asset_number" required">
-                    //         <div id="asset-results"></div>
-                    //     </label>
-                    // </div>
-
         const [response, deviceResponse, lastSyncResponse] = await Promise.all([
             fetch(`/it/api/requests`),
             fetch(`/it/api/devices`),
@@ -158,7 +150,6 @@ export const dashboardView = {
             }
         }
 
-        // initAssignModal()
 
         const newAssignmentBtn = document.getElementById('new-assignment')
         newAssignmentBtn.addEventListener('click', async () => {
@@ -182,35 +173,18 @@ export const dashboardView = {
             );
 
             // !!!!! We must add error handling to our fetches (making own fetch funciton)
-            const [devices] = await Promise.all([
-                fetch('/it/api/devices').then(response => response.json())
+            const [devices, users] = await Promise.all([
+                fetch('/it/api/devices').then(response => response.json()),
+                fetch(`/it/api/`)
             ])
 
-            function onSearch(query, info) {
-                console.log(query)
-                const results = info.filter((item) => {
-                    return (
-                        (item.asset_number.toLowerCase().includes(query.toLowerCase()) 
-                        || item.model.toLowerCase().includes(query.toLowerCase()))
-                        && item.status === 'available')
-                })
-                return results
-            }
-            function onRender(result, element) {
-                element.dataset.deviceId = result.id;
-                element.textContent = result.asset_number ?? '-';
-            }
-            function onClick(element) {
-                console.log(element?.dataset.deviceId);
-            }
-            
             newAssignmentModal.addDatabaseInfo("devices", devices);
             newAssignmentModal.open();
-            newAssignmentModal.searchBar('asset_number', 'devices', {onSearch, onRender, onClick});
+            newAssignmentModal.searchBar('asset_number', 'devices', {onSearch: onSearchDevice, onRender: onRenderDevice, onClick: onClickDevice});
+            newAssignmentModal.searchBar('tenant_username', 'users', {});
         })
 
         const addDeviceBtn = document.getElementById('add-device')
-        const modal = document.getElementById('device-modal')
         addDeviceBtn.addEventListener('click', () => {
             // modal.classList.toggle('open')
             const newDeviceModal = new FormModal(
@@ -254,26 +228,6 @@ export const dashboardView = {
             newDeviceModal.open();
         })
 
-        function lastSyncTime(lastSync) {
-            const past = new Date(lastSync)
-
-            const diffMs = (Date.now()-past.getTime())
-            const diffSecs = Math.floor(diffMs/1000)
-            const diffMins = Math.floor(diffSecs/60)
-            const diffHours = Math.floor(diffMins/60)
-            const diffDays = Math.floor(diffHours/24)
-            
-            if (diffDays >= 1) {
-                return `${diffDays} day${diffDays !== 1 ? 's' : ''}`
-            } else if (diffHours >= 1) {
-                return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`
-            } else if (diffMins >= 1) {
-                return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`
-            } else {
-                return `seconds ago`
-            }
-        }
-
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Anything pertaining to the tenant sync
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,35 +266,6 @@ export const dashboardView = {
         })
 
 
-        // const cancelDeviceBtn = document.getElementById('cancel-device');
-        // const deviceForm = document.getElementById('new-device-form');
-
-        // cancelDeviceBtn.addEventListener("click", () => {
-        //     modal.classList.remove('open');
-        //     deviceForm.reset();
-        // })
-
-        // deviceForm.addEventListener("submit", async (event) => {
-        //     event.preventDefault();
-
-        //     const formData = new FormData(deviceForm);
-        //     const payload = Object.fromEntries(formData.entries())
-        //     try {
-        //         const response = await fetch('/it/api/devices', {
-        //             method: 'POST',
-        //             headers: {"Content-Type": "application/json"},
-        //             body: JSON.stringify(payload)
-        //         })
-        //         if (!response.ok) {
-        //             throw new Error("Failed to add new device")
-        //         }
-        //         modal.classList.remove('open')
-        //         deviceForm.reset();
-        //         window.location.reload();
-        //     } catch (err) {
-        //         alert("Could not connect to the database correctly")
-        //     }
-        // })
         const reviewModel = document.getElementById("review-modal")
         document.getElementById("pending-assignments-block")?.addEventListener('click', (event)=> {
             if (event.target.classList.contains('review-button')) {
@@ -366,41 +291,6 @@ export const dashboardView = {
                     input.value =''
                 }
             )
-        })
-
-        const deviceResults = document.getElementById('asset-results')
-        deviceResults.style.display = 'none'
-        document.getElementById('issue-asset-number').addEventListener('input',
-            (event) => searchResults(event, deviceResults, `/it/api/query/devices`, (device)=> `${device.asset_number} - ${device.manufacturer} ${device.model}`))
-        deviceResults.addEventListener('click', (event) => {
-            const item = event.target.closest('.device-item')
-            const assetNumber = document.getElementById('issue-asset-number')
-            const modelNumber = document.getElementById('issue-model')
-            const serialNumber = document.getElementById('issue-serial-number')
-
-            assetNumber.value = item.dataset.assetNumber
-            modelNumber.value = `${item.dataset.manufacturer} ${item.dataset.model}`
-            serialNumber.value = item.dataset.serialNumber
-
-            deviceResults.dataset.deviceId = item.dataset.id
-            deviceResults.style.display = 'none'
-        })
-
-        const userResults = document.getElementById('users-results')
-        userResults.style.display = 'none'
-        document.getElementById('issue-tenant-username').addEventListener('input',
-            (event) => searchResults(event, userResults, `/it/api/query/users`, (user)=> `${user.display_name}`))
-  
-        userResults.addEventListener('click', (event)=>{
-            const item = event.target.closest('.device-item')
-            const displayName = document.getElementById('issue-tenant-username')
-            const email = document.getElementById('issue-tenant-email')
-
-            displayName.value = item.dataset.displayName
-            email.value = item.dataset.email
-
-            userResults.dataset.userId = item.dataset.id
-            userResults.style.display = 'none'
         })
 
         // This if for the issue
@@ -429,6 +319,75 @@ export const dashboardView = {
         })
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Device modal related code
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Assignment modal related code
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function onSearchDevice(query, info) {
+    console.log(query)
+    const results = info.filter((item) => {
+        return (
+            (item.asset_number.toLowerCase().includes(query.toLowerCase()) 
+            || item.model.toLowerCase().includes(query.toLowerCase()))
+            && item.status === 'available')
+    })
+    return results
+}
+function onRenderDevice(result, element) {
+    element.dataset.deviceId = result.id;
+    element.textContent = result.asset_number ?? '-';
+}
+function onClickDevice(result, modal) {
+    const form = modal.form
+
+    const assetNumber = form.elements.asset_number;
+    const assetDescription = form.elements.asset_description;
+    const serialNumber = form.elements.serial_number;
+    
+    assetNumber.value = result.asset_number;
+    assetNumber.dataset.deviceId = result.id;
+    assetDescription.value = `${result.manufacturer} - ${result.model}`;
+    serialNumber.value = result.serial_number;
+}
+
+
+///////////////////////////////////////////////////
+// Functions related to the sync
+///////////////////////////////////////////////////
+
+function lastSyncTime(lastSync) {
+    const past = new Date(lastSync)
+
+    const diffMs = (Date.now()-past.getTime())
+    const diffSecs = Math.floor(diffMs/1000)
+    const diffMins = Math.floor(diffSecs/60)
+    const diffHours = Math.floor(diffMins/60)
+    const diffDays = Math.floor(diffHours/24)
+    
+    if (diffDays >= 1) {
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''}`
+    } else if (diffHours >= 1) {
+        return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`
+    } else if (diffMins >= 1) {
+        return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`
+    } else {
+        return `seconds ago`
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////
+// Some other function I have yet to classify
+////////////////////////////////////////////////////////////////////////////
+
 
 function renderQuickView(devices, numberPending) {
     const stats = devices.reduce((acc, device) => {
@@ -556,26 +515,56 @@ async function renderIssuePage(requestid) {
 }
 
 // This is for the search bars
-async function searchResults(event, container, url, renderItem){
-    const query = event.target.value
-    if (query.length === 0) {
-        container.innerHTML = ''
-        container.style.display = 'none'
-        return
-    }
-    const response = await fetch(`${url}?query=${query}`)
-    if (!response.ok) {
-        alert("An error has occured while fetching results")
-        return
-    }
-    container.style.display = 'flex'
-    const items = await response.json()
-    let body = ``
-    items.forEach((item) => {
-        const attrs = Object.entries(item)
-            .map(([key, value]) => `data-${key.replace(/_/g, '-')}="${value}"`)
-            .join(' ')
-        body += `<p class="device-item" ${attrs}>${renderItem(item)}</p>`
-    })
-    container.innerHTML = body
-}
+// async function searchResults(event, container, url, renderItem){
+//     const query = event.target.value
+//     if (query.length === 0) {
+//         container.innerHTML = ''
+//         container.style.display = 'none'
+//         return
+//     }
+//     const response = await fetch(`${url}?query=${query}`)
+//     if (!response.ok) {
+//         alert("An error has occured while fetching results")
+//         return
+//     }
+//     container.style.display = 'flex'
+//     const items = await response.json()
+//     let body = ``
+//     items.forEach((item) => {
+//         const attrs = Object.entries(item)
+//             .map(([key, value]) => `data-${key.replace(/_/g, '-')}="${value}"`)
+//             .join(' ')
+//         body += `<p class="device-item" ${attrs}>${renderItem(item)}</p>`
+//     })
+//     container.innerHTML = body
+// }
+
+        // const cancelDeviceBtn = document.getElementById('cancel-device');
+        // const deviceForm = document.getElementById('new-device-form');
+
+        // cancelDeviceBtn.addEventListener("click", () => {
+        //     modal.classList.remove('open');
+        //     deviceForm.reset();
+        // })
+
+        // deviceForm.addEventListener("submit", async (event) => {
+        //     event.preventDefault();
+
+        //     const formData = new FormData(deviceForm);
+        //     const payload = Object.fromEntries(formData.entries())
+        //     try {
+        //         const response = await fetch('/it/api/devices', {
+        //             method: 'POST',
+        //             headers: {"Content-Type": "application/json"},
+        //             body: JSON.stringify(payload)
+        //         })
+        //         if (!response.ok) {
+        //             throw new Error("Failed to add new device")
+        //         }
+        //         modal.classList.remove('open')
+        //         deviceForm.reset();
+        //         window.location.reload();
+        //     } catch (err) {
+        //         alert("Could not connect to the database correctly")
+        //     }
+        // })

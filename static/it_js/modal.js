@@ -169,7 +169,7 @@ export class FormModal extends Modal {
     }
 
     searchBar(inputName, infoName, {onSearch, onRender, onClick}) {
-        const inputBar = document.querySelector(`input[name="${inputName}"]`);
+        const inputBar = this.form.elements[inputName]
 
         if (!inputBar) {
             alert("Could not find the search bar of reference");
@@ -200,7 +200,9 @@ export class FormModal extends Modal {
                 onRender(result, resultItem);
 
                 resultItem.addEventListener('click', () => {
-                    onClick(resultItem);
+                    onClick(result, this);
+                    resultsDiv.replaceChildren();
+                    resultsDiv.style.display = 'none';
                 })
 
                 resultsDiv.append(resultItem);
