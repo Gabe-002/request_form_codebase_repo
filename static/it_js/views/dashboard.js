@@ -285,16 +285,98 @@ export const dashboardView = {
                 const newReviewModal = new InfoModal(
                     'Review Request',
                     {
-                        input: [
-                            {}
+                        fields: [
+                            {label: "Full Name", key: 'full_name'},
+                            {label: "Project Code", key: 'project_code'},
+                            {label: "Employee Division", key: 'employee_division'},
+                            {label: "Country", key:'base_country_computer'},
+                            {label: "Computer Required", key: 'computer_required'},
+                            {label: "Desk Phone Required", key: 'desk_phone_required'},
                         ],
-                        buttons: [],
+                        buttons: [
+                            {label: "Issue", onClick: () => onClickReviewIssue()},
+                            {label: "Transfer", onClick: () => {}},
+                        ],
                     }
                 )
+                requestInfo['full_name'] = `${requestInfo.first_name} ${requestInfo.surname}`;
+                newReviewModal.appendInfo(requestInfo);
+                newReviewModal.open();
 
-                // renderReviewPage(event.target.dataset.requestid);
+                async function onClickReviewIssue() {
+                    const issueModal = new FormModal(
+                        "Issue a Devive",
+                        {
+                            inputs: [
+                                {label: "Device Info", name: "", type: "heading"},
+                                {label: "Asset Number", name: "asset_number", type: "input", required: true, search: true},
+                                {label: "Asset Description", name: "asset_description", type: "input"},
+                                {label: "Serial Number", name: "serial_number", type: "input"},
+                                {label: "Transfer Info", name: "", type: "heading"},
+                                {label: "Location", name: "location", type: "input", required: true},
+                                {label: "Username", name: "tenant_username", type: "input", required: true, search: true},
+                                {label: "Email", name: "Tenant Email", type: "input", required: true},
+                            ],
+                            buttons: [
+                                {label: "Confirm", onClick: () => {}, type: "submit", event: "submit"},
+                            ],
+                        }
+                    )
+                    const [devices, users] = await Promise.all([
+                        fetch('/it/api/devices').then(response => response.json()),
+                        fetch(`/it/api/users`).then(response => response.json())
+                    ])
+
+                    issueModal.addDatabaseInfo("devices", devices);
+                    issueModal.addDatabaseInfo("users", users);
+                    issueModal.open();
+                    issueModal.searchBar('asset_number', 'devices', {onSearch: onSearchDevice, onRender: onRenderDevice, onClick: onClickDevice});
+                    issueModal.searchBar('tenant_username', 'users', {onSearch: onSearchUsers, onRender: onRenderUsers, onClick: onClickUsers});
+                    issueModal.submitBehaviour(onSubmitAssign);
+                }
+
+//  <div id="issue-modal">
+//                 <div class="issue-page">
+//                     <h3>Issue a device</h3>
+//                     <h4>Device Info</h4>
+
+//                         <label>Asset Description
+//                             <input type="text" id="issue-model" name="model" required>
+//                         </label>
+//                         <label>Serial Number
+//                             <input type="text" id="issue-serial-number" name="serial_number" required>
+//                         </label>
+//                     <h4>Transfer Info</h4>
+//                         <label>Transfer To
+//                             <input type="text" id="issue-name" name="issue-name" required>
+//                         </label>
+//                         <label>Company No.
+//                             <input type="text" id="issue-company-no" name="company-no" required>
+//                         </label>
+//                         <label>Location
+//                             <input type="text" id="" name="" required>
+//                         </label>
+//                         <div class="user-search">
+//                             <label>Username
+//                                 <input type="text" id="issue-tenant-username" name="issue-tenant-username" required>
+//                             </label>
+//                             <div id="users-results"></div>
+//                         </div>
+//                         <label>Tenant Email
+//                             <input type="text" id="issue-tenant-email" name="issue-tenant-email" required>
+//                         </label>
+
+//                     <div class="review-buttons">
+//                         <button id="confirm-issue" type="button">Confirm</button>
+//                         <button id="cancel-issue" type="button">Cancel</button>
+//                     </div>
+//                 </div>
+//             </div>
+
+                renderReviewPage(event.target.dataset.requestid);
             }
         }) 
+
         document.getElementById('cancel-review').addEventListener('click', () => {
             reviewModel.classList.toggle('open');
         })
@@ -574,7 +656,6 @@ async function renderIssuePage(requestid) {
     const request = await response.json();
     const name = document.getElementById('issue-name')
     name.value = `${request.first_name} ${request.surname}`
-
 
 }
 
