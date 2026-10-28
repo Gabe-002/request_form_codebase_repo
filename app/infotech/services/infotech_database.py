@@ -50,20 +50,7 @@ COLUMN_MAPPINGS = {
     }
 }
 
-
-columnMapping = {
-    "asset_number": "Title",
-    "serial_number": "Serialnumber",
-    "manufacturer": "Manufacturer",
-    "model": "Model",
-    "asset_type": "Assettype",
-    "status": "Status",
-    "purchase_price": "Purchaseprice",
-    "order_number": "Ordernumber",
-    "condition_notes": "Conditionnotes",
-    "current": "CurrentownerLookupId",
-    "previous": "PreviousownerLookupId"
-}
+columnMapping = COLUMN_MAPPINGS[settings.APP_ENV]
 
 list_url = settings.LIST_URL
 devices_id = settings.DEVICES_ID
