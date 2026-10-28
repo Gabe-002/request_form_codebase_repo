@@ -93,7 +93,7 @@ async def add_device_post(
             url=insert_url,
             method="POST", 
             json_body=body)
-
+        print(response)
         response.raise_for_status()
         sharepoint_id = response.json()['id']
         device.sharepoint_id = int(sharepoint_id)
