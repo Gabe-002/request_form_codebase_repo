@@ -21,18 +21,48 @@ from app.ms_api.authentication import (
 )
 from app.database import settings
 
+COLUMN_MAPPINGS = {
+    "production": {
+        "asset_number": "Title",
+        "serial_number": "SerialNumber",
+        "manufacturer": "Manufacturer",
+        "model": "Model",
+        "asset_type": "AssetType",
+        "status": "Status",
+        "purchase_price": "PurchasePrice",
+        "order_number": "OrderNumber",
+        "condition_notes": "ConditionNotes",
+        "current": "CurrentOwnerLookupId",
+        "previous": "PreviousOwnerLookupId"
+    },
+    "development": {
+        "asset_number": "Title",
+        "serial_number": "Serialnumber",
+        "manufacturer": "Manufacturer",
+        "model": "Model",
+        "asset_type": "Assettype",
+        "status": "Status",
+        "purchase_price": "Purchaseprice",
+        "order_number": "Ordernumber",
+        "condition_notes": "Conditionnotes",
+        "current": "CurrentownerLookupId",
+        "previous": "PreviousownerLookupId"
+    }
+}
+
+
 columnMapping = {
     "asset_number": "Title",
-    "serial_number": "SerialNumber",
+    "serial_number": "Serialnumber",
     "manufacturer": "Manufacturer",
     "model": "Model",
-    "asset_type": "AssetType",
+    "asset_type": "Assettype",
     "status": "Status",
-    "purchase_price": "PurchasePrice",
-    "order_number": "OrderNumber",
-    "condition_notes": "ConditionNotes",
-    "current": "CurrentOwnerLookupId",
-    "previous": "PreviousOwnerLookupId"
+    "purchase_price": "Purchaseprice",
+    "order_number": "Ordernumber",
+    "condition_notes": "Conditionnotes",
+    "current": "CurrentownerLookupId",
+    "previous": "PreviousownerLookupId"
 }
 
 list_url = settings.LIST_URL

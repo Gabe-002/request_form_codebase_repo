@@ -132,45 +132,71 @@ if __name__ == "__main__":
     # print(deltaLink)
 
     lists_url = 'https://graph.microsoft.com/v1.0/sites/teichmanngrp.sharepoint.com,fe9f2f2b-d423-4037-943f-b10502afe398,52073d89-7ef3-490a-b6cc-9da368d1e25a/lists'
-    device_list = 'd5bdc95f-5596-4443-adff-255436bc08cc'
+    device_list = 'd94f41cd-d163-45e8-bd20-476f02d13450' # This is the test list url
 
-    items_url = f"{lists_url}/{device_list}/items"
-    update_url = f"{lists_url}/{device_list}/items/{27}/fields"
-    fields = {
-        "CurrentOwnerLookupId": None,
-        "Status": "available"
-    }
+    # response = call_graph_api(lists_url)
+    # lists = response.json()['value']
+    # for list in lists:
+    #     if list.get('name') == 'Devices Test Environment':
+    #         print(list.get('name'),': ', list.get('id'))
+    #         print('----------------------------------------------------------------')
 
-    columnMapping = {
-        "sharepoint_id": "id",
-        "asset_number": "Title",
-        "serial_number": "SerialNumber",
-        "manufacturer": "Manufacturer",
-        "model": "Model",
-        "asset_type": "AssetType",
-        "status": "Status",
-        "purchase_price": "PurchasePrice",
-        "asset_number": "Title",
-        "order_number": "OrderNumber",
-        "condition_notes": "ConditionNotes",
-        "current": "CurrentOwnerLookupId",
-        "previous": "PreviousOwnerLookupId",
-        "location": "location"
-    }
 
-    def format_column(field_items):
-        formatted_dict = {}
-        for key, value in columnMapping.items():
-            if (field_items.get(value)):
-                formatted_dict[key] = field_items.get(value)
-        return formatted_dict
 
-    #call_graph_api(update_url, "PATCH", fields)
-    items = call_graph_api(items_url)
-    for item in items.json()['value']:
-        # print(item.get('fields'))
-        print("Formatted for comparison")
-        print(format_column(item.get('fields')))
-        print()
+    columns_url = f"{lists_url}/{device_list}/columns"
+    response = call_graph_api(columns_url)
+    columns = response.json()['value']
+
+    for column in columns:
+        print("displayName: " ,column.get('displayName'), ", name: ", column.get('name'))
+        print('--------------------------------------------')
+
+    # items_url = f"{lists_url}/{device_list}/items"
+    # update_url = f"{lists_url}/{device_list}/items/{27}/fields"
+    # fields = {
+    #     "CurrentOwnerLookupId": None,
+    #     "Status": "available"
+    # }
+
+    # columnMapping = {
+    #     "sharepoint_id": "id",
+    #     "asset_number": "Title",
+    #     "serial_number": "SerialNumber",
+    #     "manufacturer": "Manufacturer",
+    #     "model": "Model",
+    #     "asset_type": "AssetType",
+    #     "status": "Status",
+    #     "purchase_price": "PurchasePrice",
+    #     "asset_number": "Title",
+    #     "order_number": "OrderNumber",
+    #     "condition_notes": "ConditionNotes",
+    #     "current": "CurrentOwnerLookupId",
+    #     "previous": "PreviousOwnerLookupId",
+    #     "location": "location"
+    # }
+
+    # def format_column(field_items):
+    #     formatted_dict = {}
+    #     for key, value in columnMapping.items():
+    #         if (field_items.get(value)):
+    #             formatted_dict[key] = field_items.get(value)
+    #     return formatted_dict
+
+    # #call_graph_api(update_url, "PATCH", fields)
+    # items = call_graph_api(items_url)
+    # for item in items.json()['value']:
+    #     # print(item.get('fields'))
+    #     print("Formatted for comparison")
+    #     print(format_column(item.get('fields')))
+    #     print()
     # r = call_graph_api(f"{lists_url}/{device_list}/columns?$filter=name eq 'CurrentOwner'")
     # print(r.json())
+
+
+
+
+
+
+
+
+    pass

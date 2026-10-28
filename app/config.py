@@ -35,4 +35,6 @@ class Settings(BaseSettings):
     LIST_URL: str
     DEVICES_ID: str
 
+    APP_ENV: str
+
 settings = Settings()
