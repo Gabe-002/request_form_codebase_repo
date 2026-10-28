@@ -1,2 +1,4 @@
 .env
 sp_key.pem
+*.pyc
+__pycache__/
