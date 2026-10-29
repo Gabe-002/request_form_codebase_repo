@@ -46,29 +46,35 @@ export const devicesView = {
         const buttons = document.querySelectorAll('.search-options button')
         monitorButtons(buttons);
 
+        await getDevices();
+
         // Wire up the modal first so it still works if loading the table fails.
         // After a successful add we re-fetch the rows instead of reloading the page.
         initDeviceModal({ onAdded: refreshDevices })
 
-        await refreshDevices()
+        await refreshDevices(devices)
         await openDeviceModal()
+        deviceSearch();
     }
 }
 
-async function refreshDevices() {
-    const deviceResponse = await fetch(`/it/api/devices`)
+let devices = []
+
+async function getDevices(){
+    const deviceResponse = await fetch(`/it/api/devices`);
     if (!deviceResponse.ok) {
-        alert("Could not load in the devices")
+        alert("Could not load in the devices");
         return
     }
-    const devices = await deviceResponse.json()
-    console.log(devices)
+    const deviceArray = await deviceResponse.json()
+    devices = deviceArray;
+}
 
-    // Clear existing rows (keeps the header; the <template> content isn't matched by this query)
+async function refreshDevices(deviceArray) {
     document.querySelectorAll('#table-container .table-row:not(.table-header)')
         .forEach(row => row.remove())
 
-    loadDevices(document.getElementById('row-template'), devices)
+    loadDevices(document.getElementById('row-template'), deviceArray)
 }
 
 function monitorButtons(buttons) {
@@ -117,8 +123,6 @@ async function openDeviceModal() {
 
         const deviceInfo = await response.json()
         console.log(deviceInfo)
-        // deviceModalFillInfo(deviceInfo)
-
 
         const infoModal = new InfoModal(
             'Device Info',
@@ -145,27 +149,14 @@ async function openDeviceModal() {
     })
 }
 
+function deviceSearch() {
+    const deviceSearchBar = document.getElementById('device-search');
+    deviceSearchBar.addEventListener('input', (event) => {
+        const query = event.target.value; 
+        const filteredDevices = devices.filter((device) => {
+            return device.asset_number?.toLowerCase().includes(query?.toLowerCase());
+        })
+        refreshDevices(filteredDevices);
+    })
 
-// !!!!I need to come back and clean this up
-// function deviceModalButton() {
-//     document.getElementById('update-status').addEventListener('click', () => {
-//         document.getElementById('modal-device-status').hidden = true;
-//         document.getElementById('status-change').hidden = false;
-//         document.getElementById('update-status').hidden = true;
-//         document.getElementById('commit-status').hidden = false;
-//     })
-//     document.getElementById('commit-status').addEventListener('click', () => {
-//         document.getElementById('modal-device-status').textContent = document.getElementById('status-change').value
-//         document.getElementById('modal-device-status').hidden = false;
-//         document.getElementById('status-change').hidden = true;
-//         document.getElementById('update-status').hidden = false;
-//         document.getElementById('commit-status').hidden = true;
-//     })
-
-//     document.getElementById('device-history').addEventListener('click', () => {
-//         console.log("Hello")
-//     })
-//     document.getElementById('cancel-device-info-view').addEventListener('click', () => {
-//         document.getElementById('device-info-modal').classList.remove('open')
-//     })
-// }
+}
