@@ -51,21 +51,6 @@ export const dashboardView = {
         body += `</div>`
         container.innerHTML = body;
 
-
-        function saveAnimation(button, buttonText = "Saving") {
-            let dots = 0;
-            button.textContent = buttonText;
-
-            const timing = setInterval(() => {
-                dots = (dots + 1) % 4;
-                button.textContent = buttonText + '.'.repeat(dots)
-            }, 400)
-
-            return function stopAnimation(finalText) {
-                clearInterval(timing);
-                button.textContent(finalText);
-            }
-        }
         
         // !!!! Another piece of shit function I have to redo
         // !!!! Ok, maybe's its not that bad, but we should generalize form submission
@@ -313,6 +298,23 @@ function onClickUsers(result, modal) {
 // Assignment modal related code
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+function saveAnimation(button, buttonText = "Saving") {
+    let dots = 0;
+    button.textContent = buttonText;
+
+    const timing = setInterval(() => {
+        dots = (dots + 1) % 4;
+        button.textContent = buttonText + '.'.repeat(dots)
+    }, 400)
+
+    return function stopAnimation(finalText) {
+        clearInterval(timing);
+        button.textContent(finalText);
+    }
+}
+
+
 function onSearchDevice(query, info) {
     const results = info.filter((item) => {
         return (
@@ -346,6 +348,10 @@ async function onSubmitAssign(event, modal) {
     const form = modal.form;
     const formObject = new FormData(form);
     const formData = Object.fromEntries(formObject); // We need the location
+
+    const assignBtn = event.submitter;
+    assignBtn.disabled = true;
+    const assignAnimation = saveAnimation(assignBtn, "Assigning")
 
     const assignmentInfo = {
         device_id: Number(formData.device_id),
