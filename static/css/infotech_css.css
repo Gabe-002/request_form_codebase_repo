@@ -781,6 +781,12 @@ textarea {
     background-color: var(--hover);
 }
 
+
+button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
     /* position: absolute;
     z-index: 200;
     font: inherit;

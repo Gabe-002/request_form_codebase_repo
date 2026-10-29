@@ -50,12 +50,32 @@ export const dashboardView = {
         body += renderRecentActivity()
         body += `</div>`
         container.innerHTML = body;
+
+
+        function saveAnimation(button, buttonText = "Saving") {
+            let dots = 0;
+            button.textContent = buttonText;
+
+            const timing = setInterval(() => {
+                dots = (dots + 1) % 4;
+                button.textContent = buttonText + '.'.repeat(dots)
+            }, 400)
+
+            return function stopAnimation(finalText) {
+                clearInterval(timing);
+                button.textContent(finalText);
+            }
+        }
         
         // !!!! Another piece of shit function I have to redo
-        // !!!! Ok, maybe's its not that bad, but we should generalize form submissions
+        // !!!! Ok, maybe's its not that bad, but we should generalize form submission
         async function submitDevice(event, modal) {
             event.preventDefault()
             
+            const submitBtn = event.submitter;
+            const btnAnimation = saveAnimation(submitBtn, 'Saving');
+            submitBtn.disabled = true;
+
             const formData = new FormData(event.target);
             const deviceData = Object.fromEntries(formData.entries());
             try {
@@ -74,29 +94,6 @@ export const dashboardView = {
                 window.location.reload();
             }
         }
-
-        async function submitFormInfo(event, modal, url) {
-            event.preventDefault();
-            const formObject = new FormData(event.target);
-            const formData = Object.fromEntries(formObject.entries());
-            try {
-                const reponse = await fetch(
-                    url,
-                    {
-                        headers: {"Content-Type": "application/json"},
-                        method: "POST",
-                        body: JSON.stringify(formData)
-                    }
-                );
-                if (!response.ok) {
-                    throw new Error("Failed to add a new device");
-                }
-                modal.close();
-            } catch (err) {
-                alert("Could not connect to the database correctly")
-            }
-        }
-
 
         const newAssignmentBtn = document.getElementById('new-assignment')
         newAssignmentBtn.addEventListener('click', async () => {
@@ -170,7 +167,7 @@ export const dashboardView = {
                         {label: "Condition Notes", name: "condition_notes", type: "textarea", required: true}
                     ],
                     buttons: [
-                        {label: "Test", onClick: () => {}, type: "submit", event: "submit"}
+                        {label: "Add Device", onClick: () => {}, type: "submit", event: "submit"}
                     ]
                 }
             );
@@ -484,3 +481,27 @@ function renderRecentActivity(){
         </div>
     `
 }
+
+
+
+// async function submitFormInfo(event, modal, url) {
+//     event.preventDefault();
+//     const formObject = new FormData(event.target);
+//     const formData = Object.fromEntries(formObject.entries());
+//     try {
+//         const reponse = await fetch(
+//             url,
+//             {
+//                 headers: {"Content-Type": "application/json"},
+//                 method: "POST",
+//                 body: JSON.stringify(formData)
+//             }
+//         );
+//         if (!response.ok) {
+//             throw new Error("Failed to add a new device");
+//         }
+//         modal.close();
+//     } catch (err) {
+//         alert("Could not connect to the database correctly")
+//     }
+// }
