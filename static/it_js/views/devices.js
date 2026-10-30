@@ -91,13 +91,12 @@ function monitorStatusSelect() {
 
 
     statusSelect.addEventListener('change', () => {
-        console.log(deviceSearch.value);
-
+        if (deviceSearch.value) {
+            refreshDevices(deviceStatusFilter(deviceSearch.value));
+            return
+        }
 
         const deviceStatus = getStatusSelect();
-
-
-
 
         if (deviceStatus === "all") {
             refreshDevices(devices);
