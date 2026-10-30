@@ -144,7 +144,8 @@ def assign_device(
 def api_get_device_assignments(
     db: Session = Depends(get_db)
     ):
-    return get_device_assignments(db)
+    assignments = get_device_assignments(db)
+    return assignments
 
 @router.get('/get/assignment')
 def api_get_device_assignment(

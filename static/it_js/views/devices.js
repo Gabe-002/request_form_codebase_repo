@@ -19,9 +19,14 @@ export const devicesView = {
             <div>
                 <div class="search-options" id="search-options">
                     <input id="device-search">
-                    <button id="all-devices" class="selected" data-status="all">All</button>
-                    <button id="allocated-devices" data-status="allocated">Allocated</button>
-                    <button id="free-devices" data-status="free">Free</button>
+
+                    <select id="status-select">
+                        <option value="all">All</option>
+                        <option value="available">Available</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="repair">Repair</option>
+                        <option value="retired">Retired</option>
+                    </select>
                 </div>
             </div>
             <div class="table-container" id="table-container">
@@ -55,8 +60,13 @@ export const devicesView = {
         await refreshDevices(devices)
         await openDeviceModal()
         deviceSearch();
+        monitorStatusSelect();
     }
 }
+
+                    // <button id="all-devices" class="selected" data-status="all">All</button>
+                    // <button id="allocated-devices" data-status="allocated">Allocated</button>
+                    // <button id="free-devices" data-status="free">Free</button>
 
 let devices = []
 
@@ -68,6 +78,26 @@ async function getDevices(){
     }
     const deviceArray = await deviceResponse.json()
     devices = deviceArray;
+}
+
+function getStatusSelect() {
+    const statusSelect = document.getElementById('status-select')
+    return statusSelect.value
+}
+
+function monitorStatusSelect() {
+    const statusSelect = document.getElementById('status-select');
+    statusSelect.addEventListener('change', () => {
+        const deviceStatus = getStatusSelect();
+        if (deviceStatus === "all") {
+            refreshDevices(devices);
+            return
+        }
+        const statusFilteredDevices = devices.filter(device => {
+            return device?.status.toLowerCase() === deviceStatus.toLowerCase()
+        })
+        refreshDevices(statusFilteredDevices)
+    })
 }
 
 async function refreshDevices(deviceArray) {
