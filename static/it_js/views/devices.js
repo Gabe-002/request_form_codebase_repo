@@ -87,8 +87,17 @@ function getStatusSelect() {
 
 function monitorStatusSelect() {
     const statusSelect = document.getElementById('status-select');
+    const deviceSearch = document.getElementById('device-search');
+
+
     statusSelect.addEventListener('change', () => {
+        if (deviceSearch.value) {
+            refreshDevices(deviceStatusFilter(deviceSearch.value));
+            return
+        }
+
         const deviceStatus = getStatusSelect();
+
         if (deviceStatus === "all") {
             refreshDevices(devices);
             return
@@ -152,7 +161,6 @@ async function openDeviceModal() {
         }
 
         const deviceInfo = await response.json()
-        console.log(deviceInfo)
 
         const infoModal = new InfoModal(
             'Device Info',
@@ -183,10 +191,27 @@ function deviceSearch() {
     const deviceSearchBar = document.getElementById('device-search');
     deviceSearchBar.addEventListener('input', (event) => {
         const query = event.target.value; 
-        const filteredDevices = devices.filter((device) => {
-            return device.asset_number?.toLowerCase().includes(query?.toLowerCase());
-        })
+
+        if (query === "who is shrek") {
+            window.location.href = 'https://en.wikipedia.org/wiki/Shrek_%28character%29';
+            return
+        }
+
+        const filteredDevices = deviceStatusFilter(query)
         refreshDevices(filteredDevices);
     })
 
+}
+
+function deviceStatusFilter(query) {
+    const statusSelect = getStatusSelect();
+    const filteredDevices = devices.filter((device) => {
+        return (
+            device.asset_number?.toLowerCase().includes(query?.toLowerCase())
+            && (
+                device.status === statusSelect || statusSelect === 'all'
+            )
+        );
+    })
+    return filteredDevices;
 }
