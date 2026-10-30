@@ -1,7 +1,7 @@
 from app.database import get_db
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, insert, update, and_, or_, func, true
+from sqlalchemy import select, insert, update, and_, or_, func, true, case
 from app.models import Requests, People
 from app.infotech.models import (
     Devices, 
@@ -86,7 +86,15 @@ def assignment_requests(db: Session):
     return output
 
 def get_devices(db: Session):
-    statement = select(Devices)
+    status_order = case(
+        {'available': 1, 'assigned': 2, 'repair': 3, 'retired': 4},
+        value=Devices.status,
+        else_=5
+    )
+    statement = (
+        select(Devices)
+        .order_by(status_order)
+    )
     devices = db.execute(statement=statement).scalars().all()
     return simple_format(Devices, devices)
 
@@ -300,6 +308,7 @@ def sync_tenant_users(db: Session):
 def get_device_assignments(
     db: Session
     ):
+
     statement = (
         select(
             Assignments.id,
@@ -312,7 +321,8 @@ def get_device_assignments(
        .join(Devices, Devices.id == Assignments.device_id)
        .where(Assignments.deallocated_at.is_(None))
     )
-    return db.execute(statement=statement).mappings().all()
+    assignments = db.execute(statement=statement).mappings().all()
+    return assignments
 
 def get_device_assignment(
     db: Session,

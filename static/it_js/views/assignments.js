@@ -95,13 +95,17 @@ function renderAssignments(assignments) {
     const surnameLetter = (name) => surname(name).charAt(0)
 
     if (assignments.length === 1) {
-        alphabeticalLetters.add(surnameLetter(assignments[0].display_name))
+        console.log("This is true");
     } else {
         assignments.sort((a, b) => {
-            alphabeticalLetters.add(surnameLetter(a.display_name))
             return collator.compare(surname(a.display_name), surname(b.display_name));
         })
     }
+
+    assignments.forEach(assignment => {
+        alphabeticalLetters.add(surnameLetter(assignment.display_name));
+    })
+
 
     const alphabeticalOrder = new Set([...alphabeticalLetters].sort((a, b) => collator.compare(a, b)))
     const orderedAssignments = {}

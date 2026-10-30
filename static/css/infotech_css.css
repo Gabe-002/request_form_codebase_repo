@@ -511,7 +511,7 @@ textarea {
     margin-bottom: 16px;
 }
 .search-options input {
-    flex: 10;
+    flex: 6;
     padding: 0 12px;
     color: var(--text-color);
     background: var(--base-varient);
@@ -523,10 +523,11 @@ textarea {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
 }
-.search-options button {
+.search-options select {
     flex: 1;
     font-weight: 600;
     font-size: 13px;
+    width: 500px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-s);
     background: var(--base-varient);
@@ -539,7 +540,7 @@ textarea {
     background: var(--row-hover);
 }
 .search-options input,
-.search-options button {
+.search-options select {
     font-family: inherit;
     height: 36px;
 }
