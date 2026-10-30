@@ -310,6 +310,7 @@ def get_device_assignments(
        )
        .join(TenantUsers, TenantUsers.id == Assignments.tenant_id)
        .join(Devices, Devices.id == Assignments.device_id)
+       .order_by()
        .where(Assignments.deallocated_at.is_(None))
     )
     return db.execute(statement=statement).mappings().all()
