@@ -433,7 +433,7 @@ function renderQuickView(devices, numberPending) {
     console.log(stats)
     const totalLaptops = stats.byType.Laptop ? stats.byType.Laptop : 0
     const availableLaptops = stats.byStatus.available ? stats.byStatus.available : 0
-    const assignedLaptops = totalLaptops - availableLaptops
+    const assignedLaptops = stats.byStatus.assigned ? stats.byStatus.assigned : 0;
 
     return `
         <h3>Quick View</h3>
