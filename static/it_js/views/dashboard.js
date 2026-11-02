@@ -144,7 +144,6 @@ export const dashboardView = {
                             type: "select",
                             options: [
                                 {value: "available", label: "Available"},
-                                {value: "assigned", label: "Assigned"},
                                 {value: "repair", label: "Repair"},
                                 {value: "retired", label: "Retired"},
                             ]
