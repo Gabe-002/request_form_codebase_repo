@@ -182,13 +182,14 @@ async function openDeviceModal() {
                 ]
             }
         );
+        infoModal.dataSet("deviceId", deviceRow.dataset.deviceId);
         infoModal.appendInfo(deviceInfo);
         infoModal.open();
     })
 }
 
 function onClickUpdateStatus(event) {
-    console.log(event.target)
+    console.log(event.target.closest('.modal'))
     const statusModal = new InfoModal("Update Device Status");
     statusModal.open();
 }

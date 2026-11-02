@@ -42,9 +42,13 @@ export class Modal {
         })
     }
 
+    dataSet(key, value) {
+        this.modalEl.dataset[key] = value
+    }
+
     open() {
-        document.body.append(this.modalEl)
-        document.body.classList.add("modal-open")
+        document.body.append(this.modalEl);
+        document.body.classList.add("modal-open");
     }
 
     close() {
