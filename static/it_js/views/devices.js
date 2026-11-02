@@ -64,10 +64,6 @@ export const devicesView = {
     }
 }
 
-                    // <button id="all-devices" class="selected" data-status="all">All</button>
-                    // <button id="allocated-devices" data-status="allocated">Allocated</button>
-                    // <button id="free-devices" data-status="free">Free</button>
-
 let devices = []
 
 async function getDevices(){
@@ -140,9 +136,13 @@ function loadDevices(template, devices) {
         }
 
         if (device.status === "available") {
-            item.querySelector('.status').classList.add('free')
+            item.querySelector('.status').classList.add('available')
         } else if (device.status === "assigned") {
-            item.querySelector('.status').classList.add('allocated')
+            item.querySelector('.status').classList.add('assigned')
+        } else if (device.status === "repair") {
+            item.querySelector('.status').classList.add('repair')
+        } else if (device.status === "retired") {
+            item.querySelector('.status').classList.add('retired')
         }
         rowContainer.appendChild(item)
     })

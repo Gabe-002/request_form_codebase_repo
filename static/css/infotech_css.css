@@ -29,6 +29,10 @@
     --free-text: #17622C;
     --allocated: #FBE2DF;
     --allocated-text: #9E211A;
+    --repair: #ECE4FB;
+    --repair-text: #5B2DB0;
+    --retired: #E9E9E6;
+    --retired-text: #55575C;
 
     --radius-s: 6px;
     --radius-m: 10px;
@@ -62,6 +66,10 @@
     --free-text: #6FD68A;
     --allocated: #3A1D1B;
     --allocated-text: #FF8F86;
+    --repair: #2A2140;
+    --repair-text: #B79CFF;
+    --retired: #2A2B2F;
+    --retired-text: #A1A3A9;
 }
 
 html {
@@ -592,7 +600,7 @@ textarea {
     color: var(--text-secondary);
 }
 
-.free, .allocated {
+.available, .assigned, .repair, .retired {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -604,20 +612,28 @@ textarea {
     font-weight: 600;
     text-transform: capitalize;
 }
-.free::before, .allocated::before {
+.available::before, .assigned::before, .repair::before, .retired::before {
     content: '';
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: currentColor;
 }
-.free {
+.available {
     color: var(--free-text);
     background: var(--free);
 }
-.allocated {
+.assigned {
     color: var(--allocated-text);
     background: var(--allocated);
+}
+.repair {
+    color: var(--repair-text);
+    background: var(--repair);
+}
+.retired {
+    color: var(--retired-text);
+    background: var(--retired);
 }
 
 /* ====================================== */
