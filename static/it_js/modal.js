@@ -37,7 +37,7 @@ export class Modal {
     }
 
     buildButtons(buttons) {
-        buttons.forEach(button => {
+        buttons?.forEach(button => {
             this.addButton(button.label, button.onClick, button.type);
         })
     }
@@ -78,7 +78,7 @@ export class InfoModal extends Modal {
     }
 
     #buildModal(fields) {
-        fields.forEach(field => {
+        fields?.forEach(field => {
             this.#field(field.label, field.key);
         });
     }

@@ -177,7 +177,7 @@ async function openDeviceModal() {
                     {label: "Condition Notes", key: "condition_notes"}
                 ],
                 buttons: [
-                    {label: "Update Status", onClick: () => {console.log("Update status button")}},
+                    {label: "Update Status", onClick: onClickUpdateStatus },
                     {label: "Device History", onClick: () => {console.log("Device History")}}
                 ]
             }
@@ -185,6 +185,12 @@ async function openDeviceModal() {
         infoModal.appendInfo(deviceInfo);
         infoModal.open();
     })
+}
+
+function onClickUpdateStatus(event) {
+    console.log(event.target)
+    const statusModal = new InfoModal("Update Device Status");
+    statusModal.open();
 }
 
 function deviceSearch() {
