@@ -191,7 +191,23 @@ async function openDeviceModal() {
 function onClickUpdateStatus(event) {
     const modal = event.target.closest('.modal');
     console.log(modal.dataset);
-    const statusModal = new FormModal("Update Device Status");
+    const statusModal = new FormModal(
+        "Update Device Status",
+        {
+            inputs: [
+                {
+                    label: "Update status to", 
+                    name: "status", 
+                    type: "select", 
+                    options: [
+                        {value: "available", label: "Available"},
+                        {value: "repair", label: "Repair"},
+                        {value: "retired", label: "Retired"}
+                    ]
+                },
+            ]
+        }
+    );
     statusModal.open();
 }
 
