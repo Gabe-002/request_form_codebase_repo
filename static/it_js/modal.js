@@ -5,15 +5,13 @@ export class Modal {
         this.modalEl.className = "modal";
 
         this.modalEl.innerHTML = `
-            <div class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>${this.title}</h3>
-                    </div>
-                    <div class="modal-body"></div>
-                    <div class="form-buttons">
-                        <button type="button" class="cancel-button button-format">Cancel</button>
-                    </div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>${this.title}</h3>
+                </div>
+                <div class="modal-body"></div>
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button button-format">Cancel</button>
                 </div>
             </div>
         `;
@@ -153,7 +151,7 @@ export class FormModal extends Modal {
     }
 
     #buildFields(inputs) {
-        inputs.forEach(input => {
+        inputs?.forEach(input => {
             this.buttons.before(this.#field(input))
         })
     }
@@ -196,7 +194,7 @@ export class FormModal extends Modal {
             const searchResults = onSearch(query, info, this);
             resultsDiv.replaceChildren();
 
-            searchResults.forEach(result => {
+            searchResults?.forEach(result => {
                 const resultItem = document.createElement("div");
                 resultItem.className = 'result-item';
                 onRender(result, resultItem);

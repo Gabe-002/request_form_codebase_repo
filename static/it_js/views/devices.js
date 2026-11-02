@@ -1,5 +1,5 @@
 import { deviceModalHTML, initDeviceModal } from "../Devicemodal.js";
-import { InfoModal } from "../modal.js";
+import { InfoModal, FormModal } from "../modal.js";
 
 export const devicesView = {
     async mount(container) {
@@ -182,15 +182,16 @@ async function openDeviceModal() {
                 ]
             }
         );
-        infoModal.dataSet("deviceId", deviceRow.dataset.deviceId);
         infoModal.appendInfo(deviceInfo);
         infoModal.open();
+        infoModal.dataSet("deviceId", deviceRow.dataset.deviceId);
     })
 }
 
 function onClickUpdateStatus(event) {
-    console.log(event.target.closest('.modal'))
-    const statusModal = new InfoModal("Update Device Status");
+    const modal = event.target.closest('.modal');
+    console.log(modal.dataset);
+    const statusModal = new FormModal("Update Device Status");
     statusModal.open();
 }
 
