@@ -232,6 +232,11 @@ async function onClickUpdateStatus(event) {
     statusModal.open();
 }
 
+function onSubmitUpdate() {
+    
+}
+
+
 function deviceSearch() {
     const deviceSearchBar = document.getElementById('device-search');
     deviceSearchBar.addEventListener('input', (event) => {
