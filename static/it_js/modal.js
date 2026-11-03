@@ -109,7 +109,7 @@ export class FormModal extends Modal {
         this.buildButtons(formOptions.buttons)
     }
 
-    #field({label, name, type, required=false, options=[], placeholder='', search=false}) {
+    #field({label, name, type, required=false, options=[], placeholder='', search=false, value=""}) {
         if (type==="heading") {
             const headingElement = document.createElement("h4");
             headingElement.textContent = label;
@@ -141,6 +141,10 @@ export class FormModal extends Modal {
         }
         input.name = name;
         input.required = required;
+
+        if (value) {
+            input.value = value;
+        }
 
         inputSection.append(input)
 

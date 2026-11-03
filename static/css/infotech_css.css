@@ -385,6 +385,11 @@ textarea {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 9px 10px;
+
+    display: block; 
+    width: 100%;
+    resize: vertical;
+    min-height: 60px;
 }
 #new-device-form {
     display: flex;

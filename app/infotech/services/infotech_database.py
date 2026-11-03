@@ -473,6 +473,7 @@ def status_update_info(db: Session, device_id: int):
     statement = (
         select(
             Devices.status,
+            Devices.condition_notes,
             TenantUsers.display_name,
         )
         .select_from(Devices)
