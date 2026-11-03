@@ -1,5 +1,5 @@
 import { deviceModalHTML, initDeviceModal } from "../Devicemodal.js";
-import { InfoModal } from "../modal.js";
+import { InfoModal, FormModal } from "../modal.js";
 
 export const devicesView = {
     async mount(container) {
@@ -184,12 +184,30 @@ async function openDeviceModal() {
         );
         infoModal.appendInfo(deviceInfo);
         infoModal.open();
+        infoModal.dataSet("deviceId", deviceRow.dataset.deviceId);
     })
 }
 
 function onClickUpdateStatus(event) {
-    console.log(event.target)
-    const statusModal = new InfoModal("Update Device Status");
+    const modal = event.target.closest('.modal');
+    console.log(modal.dataset);
+    const statusModal = new FormModal(
+        "Update Device Status",
+        {
+            inputs: [
+                {
+                    label: "Update status to", 
+                    name: "status", 
+                    type: "select", 
+                    options: [
+                        {value: "available", label: "Available"},
+                        {value: "repair", label: "Repair"},
+                        {value: "retired", label: "Retired"}
+                    ]
+                },
+            ]
+        }
+    );
     statusModal.open();
 }
 

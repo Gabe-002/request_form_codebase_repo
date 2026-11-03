@@ -5,15 +5,13 @@ export class Modal {
         this.modalEl.className = "modal";
 
         this.modalEl.innerHTML = `
-            <div class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>${this.title}</h3>
-                    </div>
-                    <div class="modal-body"></div>
-                    <div class="form-buttons">
-                        <button type="button" class="cancel-button button-format">Cancel</button>
-                    </div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>${this.title}</h3>
+                </div>
+                <div class="modal-body"></div>
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button button-format">Cancel</button>
                 </div>
             </div>
         `;
@@ -42,9 +40,13 @@ export class Modal {
         })
     }
 
+    dataSet(key, value) {
+        this.modalEl.dataset[key] = value
+    }
+
     open() {
-        document.body.append(this.modalEl)
-        document.body.classList.add("modal-open")
+        document.body.append(this.modalEl);
+        document.body.classList.add("modal-open");
     }
 
     close() {
@@ -128,7 +130,9 @@ export class FormModal extends Modal {
                 input.append(optionItem);
             }
         } else if (type === "textarea") {
-            input = document.createElement("textarea")
+            input = document.createElement("textarea");
+        } else if (type === "custon") {
+            
         } else {
             input = document.createElement("input");
             input.type = type
@@ -149,7 +153,7 @@ export class FormModal extends Modal {
     }
 
     #buildFields(inputs) {
-        inputs.forEach(input => {
+        inputs?.forEach(input => {
             this.buttons.before(this.#field(input))
         })
     }
@@ -192,7 +196,7 @@ export class FormModal extends Modal {
             const searchResults = onSearch(query, info, this);
             resultsDiv.replaceChildren();
 
-            searchResults.forEach(result => {
+            searchResults?.forEach(result => {
                 const resultItem = document.createElement("div");
                 resultItem.className = 'result-item';
                 onRender(result, resultItem);
