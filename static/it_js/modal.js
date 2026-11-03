@@ -130,7 +130,9 @@ export class FormModal extends Modal {
                 input.append(optionItem);
             }
         } else if (type === "textarea") {
-            input = document.createElement("textarea")
+            input = document.createElement("textarea");
+        } else if (type === "custon") {
+            
         } else {
             input = document.createElement("input");
             input.type = type
