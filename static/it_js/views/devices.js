@@ -188,14 +188,30 @@ async function openDeviceModal() {
     })
 }
 
-function onClickUpdateStatus(event) {
+async function onClickUpdateStatus(event) {
     const modal = event.target.closest('.modal');
-    console.log(modal.dataset);
+    const deviceId = modal.dataset.deviceId;
+
+    const response = await fetch(`/it/api/status/check?query=${encodeURIComponent(deviceId)}`);
+    if (!response.ok) {
+        alert("Could not get the device id");
+        return;
+    }
+    const statusInfo = await response.json();
+
+    let note;
+    if (statusInfo?.display_name) {
+        note = `This device is marked as "${statusInfo.status}", and is currently in the possession of ${statusInfo.display_name}.
+        Changing the status of the device will deallocated this device from ${statusInfo.display_name}.`
+    } else {
+        note = `You are free to change the status of the device.`
+    }
+
     const statusModal = new FormModal(
         "Update Device Status",
         {
             inputs: [
-                {label: "Note", name: "", type: "note", placeholder: "This is a test to see how it looks when I have a note in there"},
+                {label: "Note", name: "", type: "note", placeholder: note},
                 {
                     label: "Update status to", 
                     name: "status", 
@@ -212,6 +228,7 @@ function onClickUpdateStatus(event) {
             ]
         }
     );
+
     statusModal.open();
 }
 

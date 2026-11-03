@@ -164,7 +164,7 @@ def api_device_deallocation(
 
 @router.get('/status/check')
 def api_status_update_info(
-    device_id: int,
+    query: int,
     db: Session = Depends(get_db)
     ):
-    return status_update_info(db, device_id)
+    return status_update_info(db, int(query))
