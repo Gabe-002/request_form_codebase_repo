@@ -15,7 +15,8 @@ from app.infotech.services.infotech_database import (
     get_device_assignments,
     get_device_assignment,
     device_deallocation,
-    get_tenant_users)
+    get_tenant_users,
+    status_update_info)
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
 from app.infotech.models import Devices, AddDevice, CreateAssignment
@@ -161,3 +162,9 @@ def api_device_deallocation(
     ):
     return device_deallocation(db, assignment_id)
 
+@router.get('/status/check')
+def api_status_update_info(
+    device_id: int,
+    db: Session = Depends(get_db)
+    ):
+    return status_update_info(db, device_id)
