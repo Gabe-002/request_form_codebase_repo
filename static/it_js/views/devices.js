@@ -213,10 +213,11 @@ async function onClickUpdateStatus(event) {
             inputs: [
                 {label: "Note", name: "", type: "note", placeholder: note},
                 {
-                    label: "Update status to", 
+                    label: "Update status to (Leave on select if no change required)", 
                     name: "status", 
                     type: "select", 
                     options: [
+                        {value: "", label: "--- Select ---"},
                         {value: "available", label: "Available"},
                         {value: "repair", label: "Repair"},
                         {value: "retired", label: "Retired"}

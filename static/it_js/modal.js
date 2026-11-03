@@ -127,6 +127,8 @@ export class FormModal extends Modal {
                 const optionItem = document.createElement('option');
                 optionItem.value = option.value;
                 optionItem.textContent = option.label;
+                if (option.disabled)
+                    optionItem.disabled = true;
                 input.append(optionItem);
             }
         } else if (type === "textarea") {
