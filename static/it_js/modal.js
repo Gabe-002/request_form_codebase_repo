@@ -131,8 +131,10 @@ export class FormModal extends Modal {
             }
         } else if (type === "textarea") {
             input = document.createElement("textarea");
-        } else if (type === "custon") {
-            
+        } else if (type === "note") {
+            input = document.createElement("div");
+            input.className = 'note';
+            input.textContent = placeholder;
         } else {
             input = document.createElement("input");
             input.type = type

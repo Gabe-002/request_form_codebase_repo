@@ -195,6 +195,7 @@ function onClickUpdateStatus(event) {
         "Update Device Status",
         {
             inputs: [
+                {label: "Note", name: "", type: "note", placeholder: "This is a test to see how it looks when I have a note in there"},
                 {
                     label: "Update status to", 
                     name: "status", 
@@ -205,6 +206,9 @@ function onClickUpdateStatus(event) {
                         {value: "retired", label: "Retired"}
                     ]
                 },
+            ],
+            buttons: [
+                {label: "Update", onClick: () => {}, type: "submit", event: "submit"},
             ]
         }
     );

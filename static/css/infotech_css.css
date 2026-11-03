@@ -804,6 +804,13 @@ button[type="submit"]:disabled {
     cursor: not-allowed;
 }
 
+.note {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text-color);
+}
+
     /* position: absolute;
     z-index: 200;
     font: inherit;
