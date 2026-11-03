@@ -470,7 +470,6 @@ def device_sharepoint_sync(db: Session):
 
 # This is for the status update
 def status_update_info(db: Session, device_id: int):
-
     statement = (
         select(
             Devices.status,
@@ -491,11 +490,11 @@ def status_update_info(db: Session, device_id: int):
         )
         .where(Devices.id == device_id)
     )
-    result = db.execute(statement=statement)
+    result = db.execute(statement=statement).mappings().one_or_none()
     return result
 
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    print(status_update_info(db, 158))
+    print(status_update_info(db, 164))
