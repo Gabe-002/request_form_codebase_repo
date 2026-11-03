@@ -160,3 +160,4 @@ def api_device_deallocation(
     db: Session = Depends(get_db)
     ):
     return device_deallocation(db, assignment_id)
+

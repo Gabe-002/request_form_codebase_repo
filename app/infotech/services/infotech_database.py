@@ -468,8 +468,34 @@ def device_sharepoint_sync(db: Session):
         if (item_id):
             update_sharepoint_id(db, assignment.get('id'), item_id)
 
+# This is for the status update
+def status_update_info(db: Session, device_id: int):
+
+    statement = (
+        select(
+            Devices.status,
+            TenantUsers.display_name,
+        )
+        .select_from(Devices)
+        .outerjoin(
+            Assignments,
+            and_(
+                Assignments.device_id == Devices.id,
+                Assignments.deallocated_at.is_(None),
+                Devices.status != 'available'
+            )
+        )
+        .outerjoin(
+            TenantUsers,
+            TenantUsers.id == Assignments.tenant_id
+        )
+        .where(Devices.id == device_id)
+    )
+    result = db.execute(statement=statement)
+    return result
+
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    print(get_tenant_users(db))
+    print(status_update_info(db, 158))
