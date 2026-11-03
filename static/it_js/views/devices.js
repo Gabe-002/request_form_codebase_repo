@@ -177,7 +177,7 @@ async function openDeviceModal() {
                     {label: "Condition Notes", key: "condition_notes"}
                 ],
                 buttons: [
-                    {label: "Update Status", onClick: onClickUpdateStatus },
+                    {label: "Update Info", onClick: onClickUpdateStatus },
                     {label: "Device History", onClick: () => {console.log("Device History")}}
                 ]
             }
@@ -208,7 +208,7 @@ async function onClickUpdateStatus(event) {
     }
 
     const statusModal = new FormModal(
-        "Update Device Status",
+        "Update Device Info",
         {
             inputs: [
                 {label: "Note", name: "", type: "note", placeholder: note},
@@ -222,6 +222,7 @@ async function onClickUpdateStatus(event) {
                         {value: "retired", label: "Retired"}
                     ]
                 },
+                {label: "Condition Notes (Previous notes will be overwritten)", name: "condition_notes", type: "textarea", value: statusInfo.condition_notes},
             ],
             buttons: [
                 {label: "Update", onClick: () => {}, type: "submit", event: "submit"},
@@ -233,7 +234,7 @@ async function onClickUpdateStatus(event) {
 }
 
 function onSubmitUpdate() {
-    
+
 }
 
 
