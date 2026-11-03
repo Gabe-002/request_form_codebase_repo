@@ -229,12 +229,16 @@ async function onClickUpdateStatus(event) {
             ]
         }
     );
-
     statusModal.open();
+    statusModal.submitBehaviour(onSubmitUpdate);
 }
 
-function onSubmitUpdate() {
+function onSubmitUpdate(event) {
+    event.preventDefault();
+    const formObject = new FormData(event.target);
+    const formData = Object.fromEntries(formObject);
 
+    console.log(formData);
 }
 
 
