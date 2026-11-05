@@ -177,7 +177,7 @@ async function openDeviceModal() {
                     {label: "Condition Notes", key: "condition_notes"}
                 ],
                 buttons: [
-                    {label: "Update Info", onClick: onClickUpdateStatus },
+                    {label: "Update Info", onClick: (event) =>  onClickUpdateStatus(event, infoModal) },
                     {label: "Device History", onClick: () => {console.log("Device History")}}
                 ]
             }
@@ -188,7 +188,7 @@ async function openDeviceModal() {
     })
 }
 
-async function onClickUpdateStatus(event) {
+async function onClickUpdateStatus(event, infoModal) {
     const modal = event.target.closest('.modal');
     const deviceId = modal.dataset.deviceId;
 
@@ -200,6 +200,7 @@ async function onClickUpdateStatus(event) {
     const statusInfo = await response.json();
     const infoIds = {
         device_id: statusInfo.device_id,
+        sharepoint_id: statusInfo.sharepoint_id,
         assignment_id: statusInfo.assignment_id,
         tenant_id: statusInfo.tenant_id,
     };
@@ -232,14 +233,16 @@ async function onClickUpdateStatus(event) {
             ],
             buttons: [
                 {label: "Update", onClick: () => {}, type: "submit", event: "submit"},
+                {label: "Delete (busy)", onClick: () => {}, type: "button"},
             ]
         }
     );
     statusModal.open();
-    statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds));
+    statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds, infoModal ,statusModal));
+
 }
 
-async function onSubmitUpdate(event, infoIds) {
+async function onSubmitUpdate(event, infoIds, parentModal, childModal) {
     event.preventDefault();
     const formObject = new FormData(event.target);
     const formData = Object.fromEntries(formObject);
@@ -253,21 +256,29 @@ async function onSubmitUpdate(event, infoIds) {
         body['status'] = null;
     }
     body['condition_notes'] = formData.condition_notes;
-    console.log(body);
 
-    const response = await fetch(`/it/api/status/update`,
+    console.log(body);
+    const response = await fetch(
+        `/it/api/status/update`,
         {
             headers: {"Content-Type": "application/json"},
             method: "POST",
             body: JSON.stringify(body),
         }
+      
     )
     if (!response.ok) {
         console.log("Could not successfully update the deviec information")
         return
     }
-    window.location.reload();
-}
+    
+    const device = devices.find(dev => dev.id === infoIds.device_id);
+    device.status = formData.status ? formData.status : device.status; 
+    refreshDevices(devices);
+
+    parentModal.close();
+    childModal.close();
+}   
 
 
 function deviceSearch() {

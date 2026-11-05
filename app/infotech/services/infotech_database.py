@@ -476,6 +476,7 @@ def status_check_info(db: Session, device_id: int):
         select(
             Devices.status,
             Devices.condition_notes,
+            Devices.sharepoint_id.label('sharepoint_id'),
             Devices.id.label('device_id'),
             Assignments.id.label('assignment_id'),
             TenantUsers.id.label('tenant_id'),
@@ -500,17 +501,29 @@ def status_check_info(db: Session, device_id: int):
     return result
 
 def status_update_info(db: Session, payload: UpdateInfo):
-
+    patch_body = {
+        columnMapping['current']: None,
+    }
     try:   
         device = db.get(Devices, payload.device_id) 
         if (payload.status):
             device.status = payload.status
+            patch_body[columnMapping['status']] = payload.status
+
         device.condition_notes = payload.condition_notes
+        patch_body[columnMapping['condition_notes']] = payload.condition_notes
 
         if (payload.assignment_id):
             assignment = db.get(Assignments, payload.assignment_id)
             assignment.deallocated_at = func.now()
 
+        patch_url = f"{insert_url}/{payload.sharepoint_id}/fields"
+
+        call_graph_api(
+            url=patch_url, 
+            method="PATCH", 
+            json_body=patch_body,
+        )
         db.commit()
     except: 
         db.rollback()
