@@ -200,6 +200,7 @@ async function onClickUpdateStatus(event, infoModal) {
     const statusInfo = await response.json();
     const infoIds = {
         device_id: statusInfo.device_id,
+        sharepoint_id: statusInfo.sharepoint_id,
         assignment_id: statusInfo.assignment_id,
         tenant_id: statusInfo.tenant_id,
     };
@@ -256,7 +257,7 @@ async function onSubmitUpdate(event, infoIds, parentModal, childModal) {
     }
     body['condition_notes'] = formData.condition_notes;
 
-       
+    console.log(body);
     const response = await fetch(
         `/it/api/status/update`,
         {
