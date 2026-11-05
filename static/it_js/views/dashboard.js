@@ -486,27 +486,3 @@ function renderRecentActivity(){
         </div>
     `
 }
-
-
-
-// async function submitFormInfo(event, modal, url) {
-//     event.preventDefault();
-//     const formObject = new FormData(event.target);
-//     const formData = Object.fromEntries(formObject.entries());
-//     try {
-//         const reponse = await fetch(
-//             url,
-//             {
-//                 headers: {"Content-Type": "application/json"},
-//                 method: "POST",
-//                 body: JSON.stringify(formData)
-//             }
-//         );
-//         if (!response.ok) {
-//             throw new Error("Failed to add a new device");
-//         }
-//         modal.close();
-//     } catch (err) {
-//         alert("Could not connect to the database correctly")
-//     }
-// }

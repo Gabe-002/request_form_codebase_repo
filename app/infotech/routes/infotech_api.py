@@ -182,5 +182,5 @@ def api_remove_device(
     query: int,
     db: Session = Depends(get_db),  
     ):
+    print('Hello')
     
-    pass
