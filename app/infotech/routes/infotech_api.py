@@ -176,3 +176,11 @@ def api_status_update_info(
     db: Session = Depends(get_db),
     ):
     status_update_info(db, payload)
+
+@router.delete('/remove/device')
+def api_remove_device(
+    query: int,
+    db: Session = Depends(get_db),  
+    ):
+    
+    pass
