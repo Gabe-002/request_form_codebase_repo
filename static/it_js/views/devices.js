@@ -232,11 +232,13 @@ async function onClickUpdateStatus(event) {
             ],
             buttons: [
                 {label: "Update", onClick: () => {}, type: "submit", event: "submit"},
+                {label: "Delete (busy)", onClick: () => {}, type: "button"},
             ]
         }
     );
     statusModal.open();
     statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds));
+    console.log(devices);
 }
 
 async function onSubmitUpdate(event, infoIds) {
@@ -253,21 +255,25 @@ async function onSubmitUpdate(event, infoIds) {
         body['status'] = null;
     }
     body['condition_notes'] = formData.condition_notes;
-    console.log(body);
 
-    const response = await fetch(`/it/api/status/update`,
+       
+    const response = await fetch(
+        `/it/api/status/update`,
         {
             headers: {"Content-Type": "application/json"},
             method: "POST",
             body: JSON.stringify(body),
         }
+      
     )
     if (!response.ok) {
         console.log("Could not successfully update the deviec information")
         return
     }
-    window.location.reload();
-}
+    const device = devices.find(dev => dev.id === infoIds.device_id);
+    device.status = formData.status ? formData.status : device.status; 
+    
+}   
 
 
 function deviceSearch() {
