@@ -204,7 +204,7 @@ async function onClickUpdateStatus(event) {
         note = `This device is marked as "${statusInfo.status}", and is currently in the possession of ${statusInfo.display_name}.
         Changing the status of the device will deallocated this device from ${statusInfo.display_name}.`
     } else {
-        note = `You are free to change the status of the device.`
+        note = `You are free to change the information of this device.`
     }
 
     const statusModal = new FormModal(
@@ -231,7 +231,7 @@ async function onClickUpdateStatus(event) {
         }
     );
     statusModal.open();
-    statusModal.submitBehaviour(onSubmitUpdate);
+    statusModal.submitBehaviour((event) => onSubmitUpdate(event));
 }
 
 function onSubmitUpdate(event) {
@@ -240,6 +240,9 @@ function onSubmitUpdate(event) {
     const formData = Object.fromEntries(formObject);
 
     console.log(formData);
+    if (formData.status) {
+        console.log("You see, it's picking up that it's true");
+    }
 }
 
 
