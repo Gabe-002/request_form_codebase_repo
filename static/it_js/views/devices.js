@@ -177,7 +177,7 @@ async function openDeviceModal() {
                     {label: "Condition Notes", key: "condition_notes"}
                 ],
                 buttons: [
-                    {label: "Update Info", onClick: onClickUpdateStatus },
+                    {label: "Update Info", onClick: (event) =>  onClickUpdateStatus(event, infoModal) },
                     {label: "Device History", onClick: () => {console.log("Device History")}}
                 ]
             }
@@ -188,7 +188,7 @@ async function openDeviceModal() {
     })
 }
 
-async function onClickUpdateStatus(event) {
+async function onClickUpdateStatus(event, infoModal) {
     const modal = event.target.closest('.modal');
     const deviceId = modal.dataset.deviceId;
 
@@ -237,11 +237,11 @@ async function onClickUpdateStatus(event) {
         }
     );
     statusModal.open();
-    statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds));
-    console.log(devices);
+    statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds, infoModal ,statusModal));
+
 }
 
-async function onSubmitUpdate(event, infoIds) {
+async function onSubmitUpdate(event, infoIds, parentModal, childModal) {
     event.preventDefault();
     const formObject = new FormData(event.target);
     const formData = Object.fromEntries(formObject);
@@ -270,9 +270,13 @@ async function onSubmitUpdate(event, infoIds) {
         console.log("Could not successfully update the deviec information")
         return
     }
+    
     const device = devices.find(dev => dev.id === infoIds.device_id);
     device.status = formData.status ? formData.status : device.status; 
-    
+    refreshDevices(devices);
+
+    parentModal.close();
+    childModal.close();
 }   
 
 

@@ -476,6 +476,7 @@ def status_check_info(db: Session, device_id: int):
         select(
             Devices.status,
             Devices.condition_notes,
+            Devices.sharepoint_id.label('sharepoint_id'),
             Devices.id.label('device_id'),
             Assignments.id.label('assignment_id'),
             TenantUsers.id.label('tenant_id'),

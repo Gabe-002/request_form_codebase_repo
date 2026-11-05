@@ -127,6 +127,7 @@ class AddAssignment(BaseModel):
 
 class UpdateInfo(BaseModel):
     device_id: int
+    sharepoint_id: int
     assignment_id: Optional[int] = None
     tenant_id: Optional[int] = None
     status: Optional[str] = None
