@@ -16,10 +16,11 @@ from app.infotech.services.infotech_database import (
     get_device_assignment,
     device_deallocation,
     get_tenant_users,
+    status_check_info,
     status_update_info)
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
-from app.infotech.models import Devices, AddDevice, CreateAssignment
+from app.infotech.models import Devices, AddDevice, CreateAssignment, UpdateInfo
 from app.config import settings
 from uuid import UUID
 import requests
@@ -163,8 +164,15 @@ def api_device_deallocation(
     return device_deallocation(db, assignment_id)
 
 @router.get('/status/check')
-def api_status_update_info(
+def api_status_check_info(
     query: int,
     db: Session = Depends(get_db)
     ):
-    return status_update_info(db, int(query))
+    return status_check_info(db, int(query))
+
+@router.post('/status/update')
+def api_status_update_info(
+    payload: UpdateInfo,
+    db: Session = Depends(get_db),
+    ):
+    status_update_info(db, payload)

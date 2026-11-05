@@ -198,13 +198,18 @@ async function onClickUpdateStatus(event) {
         return;
     }
     const statusInfo = await response.json();
+    const infoIds = {
+        device_id: statusInfo.device_id,
+        assignment_id: statusInfo.assignment_id,
+        tenant_id: statusInfo.tenant_id,
+    };
 
     let note;
     if (statusInfo?.display_name) {
         note = `This device is marked as "${statusInfo.status}", and is currently in the possession of ${statusInfo.display_name}.
         Changing the status of the device will deallocated this device from ${statusInfo.display_name}.`
     } else {
-        note = `You are free to change the status of the device.`
+        note = `You are free to change the information of this device.`
     }
 
     const statusModal = new FormModal(
@@ -231,15 +236,37 @@ async function onClickUpdateStatus(event) {
         }
     );
     statusModal.open();
-    statusModal.submitBehaviour(onSubmitUpdate);
+    statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds));
 }
 
-function onSubmitUpdate(event) {
+async function onSubmitUpdate(event, infoIds) {
     event.preventDefault();
     const formObject = new FormData(event.target);
     const formData = Object.fromEntries(formObject);
 
+    const body = {...infoIds};
+
     console.log(formData);
+    if (formData.status) {
+        body['status'] = formData.status;
+    } else {
+        body['status'] = null;
+    }
+    body['condition_notes'] = formData.condition_notes;
+    console.log(body);
+
+    const response = await fetch(`/it/api/status/update`,
+        {
+            headers: {"Content-Type": "application/json"},
+            method: "POST",
+            body: JSON.stringify(body),
+        }
+    )
+    if (!response.ok) {
+        console.log("Could not successfully update the deviec information")
+        return
+    }
+    window.location.reload();
 }
 
 

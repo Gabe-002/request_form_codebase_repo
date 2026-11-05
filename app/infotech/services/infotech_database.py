@@ -11,7 +11,8 @@ from app.infotech.models import (
     CreateAssignment,
     CreateTenantUser, 
     UpdateTenantUser, 
-    TenantSyncState)
+    TenantSyncState,
+    UpdateInfo,)
 from uuid import UUID
 from datetime import datetime, timezone
 from fastapi import HTTPException
@@ -371,6 +372,7 @@ def device_deallocation(
     )
     assignment.deallocated_at = datetime.now(timezone.utc)
     device.status = 'available'
+    device.location = 'IT Storage'
     db.commit()
 
 
@@ -469,11 +471,14 @@ def device_sharepoint_sync(db: Session):
             update_sharepoint_id(db, assignment.get('id'), item_id)
 
 # This is for the status update
-def status_update_info(db: Session, device_id: int):
+def status_check_info(db: Session, device_id: int):
     statement = (
         select(
             Devices.status,
             Devices.condition_notes,
+            Devices.id.label('device_id'),
+            Assignments.id.label('assignment_id'),
+            TenantUsers.id.label('tenant_id'),
             TenantUsers.display_name,
         )
         .select_from(Devices)
@@ -494,8 +499,25 @@ def status_update_info(db: Session, device_id: int):
     result = db.execute(statement=statement).mappings().one_or_none()
     return result
 
+def status_update_info(db: Session, payload: UpdateInfo):
+
+    try:   
+        device = db.get(Devices, payload.device_id) 
+        if (payload.status):
+            device.status = payload.status
+        device.condition_notes = payload.condition_notes
+
+        if (payload.assignment_id):
+            assignment = db.get(Assignments, payload.assignment_id)
+            assignment.deallocated_at = func.now()
+
+        db.commit()
+    except: 
+        db.rollback()
+        print("There is an error here")
+
 if __name__ == '__main__':
     db = get_db()
     db = next(db)
 
-    print(status_update_info(db, 164))
+    print(status_check_info(db, 164))
