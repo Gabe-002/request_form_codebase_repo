@@ -124,3 +124,10 @@ class AddAssignment(BaseModel):
     assignee_email: str
     deallocated_at: Optional[datetime] = None
     transferred_from: Optional[str] = None
+
+class UpdateInfo(BaseModel):
+    device_id: int
+    assignment_id: int
+    tenant_id: int
+    status: Optional[str] = None
+    condition_notes: Optional[str] = None

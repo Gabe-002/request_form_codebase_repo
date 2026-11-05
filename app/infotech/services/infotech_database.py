@@ -474,6 +474,9 @@ def status_update_info(db: Session, device_id: int):
         select(
             Devices.status,
             Devices.condition_notes,
+            Devices.id.label('device_id'),
+            Assignments.id.label('assignment_id'),
+            TenantUsers.id.label('tenant_id'),
             TenantUsers.display_name,
         )
         .select_from(Devices)

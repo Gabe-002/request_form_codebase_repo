@@ -198,6 +198,11 @@ async function onClickUpdateStatus(event) {
         return;
     }
     const statusInfo = await response.json();
+    const infoIds = {
+        device_id: statusInfo.device_id,
+        assignment_id: statusInfo.assignment_id,
+        tenant_id: statusInfo.tenant_id,
+    };
 
     let note;
     if (statusInfo?.display_name) {
@@ -231,18 +236,32 @@ async function onClickUpdateStatus(event) {
         }
     );
     statusModal.open();
-    statusModal.submitBehaviour((event) => onSubmitUpdate(event));
+    statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds));
 }
 
-function onSubmitUpdate(event) {
+async function onSubmitUpdate(event, infoIds) {
     event.preventDefault();
     const formObject = new FormData(event.target);
     const formData = Object.fromEntries(formObject);
 
+    const body = {...infoIds};
+
     console.log(formData);
     if (formData.status) {
-        console.log("You see, it's picking up that it's true");
+        body['status'] = formData.status;
+    } else {
+        body['status'] = null;
     }
+    body['condition_notes'] = formData.condition_notes;
+    console.log(body);
+
+    const response = await fetch(`/it/api/status/update`,
+        {
+            headers: {"Content-Type": "application/json"},
+            method: "POST",
+            body: JSON.stringify(body),
+        }
+    )
 }
 
 
