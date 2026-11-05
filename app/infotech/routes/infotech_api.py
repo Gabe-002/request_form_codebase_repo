@@ -178,7 +178,7 @@ def api_status_update_info(
     try:   
         device = db.get(Devices, payload.device_id) 
         if (payload.status):
-            print(payload.status)
+            device.status = payload.status
 
     except: 
         print("There is an error here")
