@@ -372,6 +372,7 @@ def device_deallocation(
     )
     assignment.deallocated_at = datetime.now(timezone.utc)
     device.status = 'available'
+    device.location = 'IT Storage'
     db.commit()
 
 
@@ -509,7 +510,7 @@ def status_update_info(db: Session, payload: UpdateInfo):
         if (payload.assignment_id):
             assignment = db.get(Assignments, payload.assignment_id)
             assignment.deallocated_at = func.now()
-            
+
         db.commit()
     except: 
         db.rollback()
