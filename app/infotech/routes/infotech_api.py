@@ -16,6 +16,7 @@ from app.infotech.services.infotech_database import (
     get_device_assignment,
     device_deallocation,
     get_tenant_users,
+    status_check_info,
     status_update_info)
 from app.services.request_forms import infotech_request_info
 import app.ms_api.authentication as msapi
@@ -167,18 +168,11 @@ def api_status_check_info(
     query: int,
     db: Session = Depends(get_db)
     ):
-    return status_update_info(db, int(query))
+    return status_check_info(db, int(query))
 
 @router.post('/status/update')
 def api_status_update_info(
     payload: UpdateInfo,
     db: Session = Depends(get_db),
     ):
-    print(payload)
-    try:   
-        device = db.get(Devices, payload.device_id) 
-        if (payload.status):
-            device.status = payload.status
-
-    except: 
-        print("There is an error here")
+    status_update_info(db, payload)

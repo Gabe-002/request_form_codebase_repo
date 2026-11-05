@@ -262,6 +262,11 @@ async function onSubmitUpdate(event, infoIds) {
             body: JSON.stringify(body),
         }
     )
+    if (!response.ok) {
+        console.log("Could not successfully update the deviec information")
+        return
+    }
+    window.location.reload();
 }
 
 

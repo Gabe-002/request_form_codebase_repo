@@ -127,7 +127,7 @@ class AddAssignment(BaseModel):
 
 class UpdateInfo(BaseModel):
     device_id: int
-    assignment_id: int
-    tenant_id: int
+    assignment_id: Optional[int] = None
+    tenant_id: Optional[int] = None
     status: Optional[str] = None
     condition_notes: Optional[str] = None
