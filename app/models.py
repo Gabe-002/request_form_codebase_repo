@@ -36,7 +36,7 @@ class Requests(Base):
     person_id = Column(Integer, nullable=False)
     submitted_at = Column(DateTime(timezone=True), server_default=func.now())
     starting_date = Column(Text, nullable=False)
-    expiry_date = Column(Text)
+    expiry_date = Column(Text, nullable=True)
     project_code = Column(Text, nullable=False)
     employee_number = Column(Text, nullable=True)
     employee_division = Column(Text, nullable=False)
