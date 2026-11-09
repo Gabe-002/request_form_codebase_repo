@@ -370,6 +370,11 @@ async function onSubmitAssign(event, modal) {
 
 async function onSubmitIssue(event, modal) {
     event.preventDefault();
+    const issueBtn = event.submitter
+    
+    const issueAnimation = saveAnimation(issueBtn, "Issuing");
+    issueBtn.disabled = true;
+
     const form = modal.form;
     const formObject = new FormData(form);
     const formData = Object.fromEntries(formObject); // We need the location
@@ -387,7 +392,9 @@ async function onSubmitIssue(event, modal) {
     })
 
     if(!response.ok){
-        alert("Could not assign device!")
+        alert("Could not assign device!");
+        issueAnimation.stopAnimation("Re-issue");
+        issueBtn.disabled = false;
     } else {
         window.location.reload()
     }
@@ -481,7 +488,7 @@ function renderRecentActivity(){
         <div class="recent-activity-block">
             <h3>Recent Activity</h3>
             <div class="recent-activity">
-                <p>Here is some holder text</p>
+                <p>Recent activity coming soon</p>
             </div>
         </div>
     `
