@@ -30,7 +30,7 @@
 
         {% set ns = namespace(project_codes=[], software=[], project_managers=[], countries=[], divisions=[]) %}
         {% for project_code in project_codes %}
-            {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
+            {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code") + ": " + project_code.get("description"))] %}
         {% endfor %}
         {% for software_item in software %}
             {% set ns.software = ns.software + [(software_item.get("software"), software_item.get("display_name"))] %}
