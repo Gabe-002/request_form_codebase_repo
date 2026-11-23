@@ -1,41 +1,47 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, Text
+from sqlalchemy import Column, Integer, Text, Identity, CheckConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 
 class Users(Base):
     __tablename__ = 'users'
+    __table_args__ = (
+        CheckConstraint("role IN ('admin', 'pm', 'fd', 'super_user')", name="role"),
+        CheckConstraint("status IN ('active', 'deactivated')", name="status"),
+    )
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    username = Column(Text, nullable=False)
-    password = Column(Text, nullable=False)
-    role = Column(Text, nullable=False)
-    user_first_name = Column(Text, nullable=False)
-    user_surname = Column(Text, nullable=False)
-    database_id = Column(Text, nullable=False)
-    user_email = Column(Text, nullable=False)
-    sharepoint_id = Column(Integer, nullable=True, default=None)
+    id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
+    username: Mapped[str] = mapped_column(unique=True)
+    password: Mapped[str]
+    role: Mapped[str]
+    user_first_name: Mapped[str]
+    user_surname: Mapped[str]
+    database_id: Mapped[str]
+    user_email: Mapped[str | None]
+    sharepoint_id: Mapped[int | None]
+    status: Mapped[str] = mapped_column(server_default="active")
 
 class ProjectCodes(Base):
     __tablename__ = 'project_codes'
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    project_code = Column(Text, nullable=False)
-    description = Column(Text, nullable=False)
+    id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
+    project_code: Mapped[str]
+    description: Mapped[str]
 
 class Software(Base):
     __tablename__ = 'software'
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    software = Column(Text, nullable=False)
-    display_name = Column(Text, nullable=False)
+    id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
+    software: Mapped[str]
+    display_name: Mapped[str]
 
 class EmployeeDivisions(Base):
     __tablename__ = 'employee_divisions'
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    division_name = Column(Text, nullable=False)
+    id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
+    division_name: Mapped[str]
 
 class BaseCountry(Base):
     __tablename__ = 'base_country'
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    country_name = Column(Text, nullable=False)
+    id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
+    country_name: Mapped[str]

@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, ARRAY, text
+from sqlalchemy import Text, ForeignKey, ARRAY, text, CheckConstraint, Identity
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
@@ -20,56 +20,60 @@ class SessionsTable(Base):
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     expires_at: Mapped[datetime]
 
-    # id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
-    # session_token = Column(Text, nullable=False)
-    # user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
-    # created_at = Column(DateTime(timezone=True), server_default=func.now())
-    # expires_at = Column(DateTime(timezone=True), nullable=False)
-
 class People(Base):
     __tablename__ = 'people'
+    __table_args__ = (
+        CheckConstraint("person_status IN ('pending_request', 'no_request')", name="person_status"),
+    )
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    first_name = Column(Text, nullable=False)
-    surname = Column(Text, nullable=False)
-    national_id_number = Column(Text, nullable=False)
-    work_number = Column(Text)
-    mobile_number = Column(Text, nullable=False)
-    contact_email = Column(Text, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    person_status = Column(Text, server_default='pending_request')
+    id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
+    first_name: Mapped[str]
+    surname: Mapped[str]
+    national_id_number: Mapped[str] = mapped_column(unique=True) # This will be removed later on
+    work_number: Mapped[str | None] # This will be removed later on
+    mobile_number: Mapped[str] # This will be removed later on
+    contact_email: Mapped[str] # This will be removed later on
+    created_at: Mapped[datetime | None] = mapped_column(server_default=func.now())
+    person_status: Mapped[str | None] = mapped_column(server_default='pending_request')
 
 class Requests(Base):
     __tablename__ = 'requests'
+    __table_args__ = (
+        CheckConstraint("pm_review_status IN ('pending_review', 'approved', 'rejected')", name="pm_review_status"),
+        CheckConstraint("fd_review_status IN ('pending_review', 'approved', 'rejected')", name="fd_review_status"),
+        CheckConstraint("it_review IN ('pending', 'allocated', 'incomplete')", name="it_review"),
+        CheckConstraint("sharepoint_sync_status IN ('success', 'failure')", name="sharepoint_sync_status"),
+    )
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    person_id = Column(Integer, nullable=False)
-    submitted_at = Column(DateTime(timezone=True), server_default=func.now())
-    starting_date = Column(Text, nullable=False)
-    expiry_date = Column(Text, nullable=True)
-    project_code = Column(Text, nullable=False)
-    employee_number = Column(Text, nullable=True)
-    employee_division = Column(Text, nullable=False)
-    base_country_computer = Column(Text, nullable=False)
-    desk_phone_required = Column(Text, nullable=False)
-    computer_required = Column(Text, nullable=False)
-    required_software = Column(ARRAY(Text))
-    other_it_requirements = Column(Text)
-    sharepoint_file_rights = Column(Text)
-    professional_title = Column(Text, nullable=False)
-    employee_type = Column(Text, nullable=False)
-    direct_line_manager = Column(Text, nullable=False)
-    pm_review_status = Column(Text, nullable=False, server_default='pending_review')
-    fd_review_status = Column(Text, nullable=False, server_default='pending_review')
-    requestor_user_id = Column(Text, nullable=False)
-    reject_description = Column(Text)
-    pm_review_date = Column(DateTime(timezone=True))
-    fd_review_date = Column(DateTime(timezone=True))
-    sharepoint_item_id = Column(Integer)
-    sharepoint_sync_status = Column(Text)
-    project_manager_id = Column(Integer, ForeignKey('users.id'))
-    it_review = Column(Text, nullable=True, server_default='pending')
+    id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
+    person_id: Mapped[int] = mapped_column(ForeignKey('people.id'))
+    submitted_at: Mapped[datetime | None] = mapped_column(server_default=func.now())
+    starting_date: Mapped[str]
+    expiry_date: Mapped[str | None]
+    project_code: Mapped[str]
+    employee_number: Mapped[str | None] # This will be removed later on
+    employee_division: Mapped[str]
+    base_country_computer: Mapped[str]
+    desk_phone_required: Mapped[str]
+    computer_required: Mapped[str]
+    required_software: Mapped[list[str] | None] = mapped_column(ARRAY(Text))
+    other_it_requirements: Mapped[str | None]
+    sharepoint_file_rights: Mapped[str | None]
+    professional_title: Mapped[str]
+    employee_type: Mapped[str]
+    direct_line_manager: Mapped[str]
+    pm_review_status: Mapped[str] = mapped_column(server_default='pending_review')
+    fd_review_status: Mapped[str] = mapped_column(server_default='pending_review')
+    requestor_user_id: Mapped[int]
+    reject_description: Mapped[str | None]
+    pm_review_date: Mapped[datetime | None]
+    fd_review_date: Mapped[datetime | None]
+    sharepoint_item_id: Mapped[int | None]
+    sharepoint_sync_status: Mapped[str | None]
+    project_manager_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'))
+    it_review: Mapped[str | None] = mapped_column(server_default='pending')
 
+    # Will have to add a few more requirements here
 
 # We'll create a decorator that acts constructor like
 def from_data(cls):
