@@ -1,8 +1,9 @@
 from app.config import settings
-from sqlalchemy import create_engine, MetaData, Text, DateTime, UUID
+from sqlalchemy import create_engine, MetaData, Text, DateTime, UUID, NUMERIC
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from datetime import datetime
 import uuid
+from decimal import Decimal
 
 # This is the url which create engine needs, to set up the connection to the postgreSQL database
 DATABASE_URL = (f"postgresql+psycopg2://{settings.db_user}:{settings.db_password}"
@@ -31,6 +32,7 @@ class Base(DeclarativeBase):
         str: Text(),
         datetime: DateTime(timezone=True),
         uuid.UUID: UUID(as_uuid=True),
+        Decimal: NUMERIC,
     }
 
 def get_db():
