@@ -1,5 +1,6 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, Text, Numeric, ForeignKey, DateTime, Boolean
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, Integer, Text, Numeric, ForeignKey, DateTime, Boolean, CheckConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from pydantic import BaseModel
@@ -12,39 +13,53 @@ from decimal import Decimal
 
 class Devices(Base):
     __tablename__ = 'devices'
+    __table_args__ = (
+        CheckConstraint("status IN ('available', 'assigned', 'repair', 'retired')", name="status"),
+    )
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    status = Column(Text, nullable=False)
-    asset_number = Column(Text, nullable=True)
-    asset_type = Column(Text, nullable=False)
-    manufacturer = Column(Text, nullable=False)
-    model = Column(Text, nullable=False)
-    serial_number = Column(Text, nullable=False)
-    purchase_price = Column(Numeric, nullable=False)
-    order_number = Column(Text, nullable=True)
-    condition_notes = Column(Text, nullable=True)
-    sharepoint_id = Column(Integer, nullable=True)
-    location = Column(Text, nullable=True, server_default='IT Storage')
+    id: Mapped[int] = mapped_column(primary_key=True)
+    status: Mapped[str] = mapped_column(server_default="available")
+    asset_number: Mapped[str] = mapped_column(unique=True)
+    asset_type: Mapped[str]
+    manufacturer: Mapped[str]
+    model: Mapped[str]
+    serial_number: Mapped[str]
+    purchase_price: Mapped[Decimal]
+    order_number: Mapped[str | None]
+    condition_notes: Mapped[str]
+    sharepoint_id: Mapped[int | None]
+    location: Mapped[str | None] = mapped_column(server_default="IT Storage")
     
 
 class TenantUsers(Base):
     __tablename__ = 'tenant_users'
 
-    id = Column(Integer, primary_key=True)
-    graph_id = Column(UUID(as_uuid=True), nullable=False, unique=True)
-    display_name = Column(Text, nullable=False)
-    email = Column(Text, nullable=True)
-    account_enabled = Column(Boolean, nullable=True)
-    upn = Column(Text, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    graph_id: Mapped[universal_unique_id] = mapped_column(unique=True)
+    email: Mapped[str | None]
+    display_name: Mapped[str]
+    account_enabled: Mapped[bool | None]
+    upn: Mapped[str]
+
 
 class TenantSyncState(Base):
     __tablename__ = 'tenant_sync_state'
 
-    id = Column(Integer, primary_key=True)
-    delta_link = Column(Text, nullable=True)
-    last_sync_at = Column(DateTime(timezone=True), server_default=func.now())
-    sync_status = Column(Text, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    delta_link: Mapped[str | None]
+    last_sync_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    sync_status: Mapped[str]
 
+class Assignments(Base):
+    __tablename__ = 'assignments'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_id: Mapped[int] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"))
+    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenant_users.id"))
+    allocated_at: Mapped[datetime | None] = mapped_column(server_default=func.now())
+    deallocated_at: Mapped[datetime | None]
+    sharepoint_id: Mapped[int | None]
+    request_id: Mapped[int | None] = mapped_column(ForeignKey("requests.id"))
 
 class CreateTenantUser(BaseModel):
     graph_id: universal_unique_id
@@ -65,16 +80,6 @@ class SetSyncState(BaseModel):
     sync_status: Optional[str] = None
     last_sync_at: Optional[datetime] = None
 
-class Assignments(Base):
-    __tablename__ = 'assignments'
-
-    id = Column(Integer, primary_key=True)
-    device_id = Column(Integer, ForeignKey('devices.id'), nullable=False)
-    tenant_id = Column(Integer, ForeignKey('tenant_users.id'), nullable=False)
-    allocated_at = Column(DateTime(timezone=True), server_default=func.now())
-    deallocated_at = Column(DateTime(timezone=True))
-    sharepoint_id = Column(Integer)
-    request_id = Column(Integer, ForeignKey('requests.id'))
 
 class CreateAssignment(BaseModel):
     device_id: int

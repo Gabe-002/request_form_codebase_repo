@@ -233,13 +233,24 @@ async function onClickUpdateStatus(event, infoModal) {
             ],
             buttons: [
                 {label: "Update", onClick: () => {}, type: "submit", event: "submit"},
-                {label: "Delete (busy)", onClick: () => {}, type: "button"},
+                {label: "Remove (busy)", onClick: () => deleteDevice(deviceId), type: "button"},
             ]
         }
     );
     statusModal.open();
     statusModal.submitBehaviour((event) => onSubmitUpdate(event, infoIds, infoModal ,statusModal));
+}
 
+async function deleteDevice(deviceId) {
+    const conf = confirm("You are about to delete this device. Are you sure you'd like to delete this device?")
+    if (!conf) return
+
+    const response = await fetch(`/it/api/remove/device?query=${encodeURIComponent(deviceId)}`, {method: "DELETE"});
+    if (!response.ok) {
+        alert("Could not remove the device")
+        return
+    }
+    window.location.reload();
 }
 
 async function onSubmitUpdate(event, infoIds, parentModal, childModal) {

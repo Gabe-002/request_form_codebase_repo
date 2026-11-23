@@ -37,4 +37,6 @@ class Settings(BaseSettings):
 
     APP_ENV: str
 
+    ALEMBIC_URL: str
+
 settings = Settings()
