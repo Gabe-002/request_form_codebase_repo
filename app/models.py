@@ -1,20 +1,30 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, ARRAY
+from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, ARRAY, text
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from pydantic import BaseModel
 from typing import List, Optional
 import inspect
 from fastapi import Form
+from datetime import datetime
+
+import uuid
 
 class SessionsTable(Base):
     __tablename__ = 'sessions'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
-    session_token = Column(Text, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    expires_at = Column(DateTime(timezone=True), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
+    session_token: Mapped[str] = mapped_column(unique=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    expires_at: Mapped[datetime]
+
+    # id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    # session_token = Column(Text, nullable=False)
+    # user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
+    # created_at = Column(DateTime(timezone=True), server_default=func.now())
+    # expires_at = Column(DateTime(timezone=True), nullable=False)
 
 class People(Base):
     __tablename__ = 'people'
