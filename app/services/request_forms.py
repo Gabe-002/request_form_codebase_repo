@@ -12,36 +12,21 @@ def create_dictionary(obj, table_name):
 def person_info(db: Session,
     first_name: str,
     surname: str,
-    national_id_number: str,
-    mobile_number: str,
-    contact_email: str,
-    work_number: str = "",
     ):
     # This search looks for any open requests for the given person. If one is open, then no new request will be put forward
     pending_search = select(People).where(
-        People.national_id_number == national_id_number,
         People.person_status == 'pending_request')
     pending_status = db.execute(statement=pending_search).scalar()
     if pending_status: # This means that the person has a request pending
         print(pending_status.first_name)
         return "pending"
 
-    # This the above search comes back empty, we then check if the person exists within the database
-    # If so, we procedd with the request, but do not create a new person
-    national_id_search = select(People).where(People.national_id_number == national_id_number)
-    person = db.execute(statement=national_id_search).scalar()
-    if person: # It means the user already exists, so no need to make a new user
-        print(person.first_name)
-        return "exists"
 
     # Then, if the above search comes back empty, we create the person's request
     statement = insert(People).values(
         first_name=first_name,
         surname=surname, 
-        national_id_number=national_id_number,
-        work_number=work_number,
-        mobile_number=mobile_number,
-        contact_email=contact_email)
+    )
     db.execute(statement=statement)
     db.commit()
     return "created"
@@ -49,17 +34,10 @@ def person_info(db: Session,
 # This appends the person info, making the request
 def append_person(db: Session, person_requesting: RequestPersonInfo):
     statement = insert(People).values(**person_requesting.model_dump()).returning(People.id)
-    try:   
-        returning = db.execute(statement=statement)
-        db.commit()
-        return returning.scalar_one()
-    except IntegrityError:
-        db.rollback()
-        national_id_number = person_requesting.model_dump().get("national_id_number")
-        existing = db.execute(
-            select(People.id).where(People.national_id_number == national_id_number)
-        ).scalar_one()
-        return existing
+    returning = db.execute(statement=statement)
+    db.commit()
+    return returning.scalar_one()
+
 
 # This appends the request info
 def append_request(db: Session, request_form: RequestForm, person_id: int):
