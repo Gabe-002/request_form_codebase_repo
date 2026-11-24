@@ -1,11 +1,13 @@
-{% from "_macros.html" import standard_field, select_field, drop_down_checkbox, noteblock_form_field, select_field_display %}
+{% from "_macros.html" import standard_field, select_field, drop_down_checkbox, noteblock_form_field %}
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Holder</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Edit Request | T3 Projects</title>
         <link rel="stylesheet" href="/static/css/base.css">
         <link rel="stylesheet" href="/static/css/requests_page.css">
+        <link rel="stylesheet" href="/static/css/edit_page.css">
         <script src="/static/js/back_to_portal.js" defer></script>
         <script src="/static/js/edit_page.js" defer></script>
     </head>
@@ -13,82 +15,139 @@
     <body>
         <header>
             <div class="header-content">
-                <h1>Edit Request</h1>
-                <button id="return-to-portal-button" type="button">Back to Portal</button>
+                <div class="left-header-side">
+                    <img src="/static/images/getsitelogo.jpeg" alt="TEICHMANN PROJECTS" class="responsive-img">
+                    <div class="greeting">
+                        <span>Request Portal</span>
+                        <h1>Edit Request</h1>
+                    </div>
+                </div>
+                <button id="return-to-portal-button" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                    Back to Portal
+                </button>
             </div>
         </header>
 
-        <form method="POST" action="/requests/pending/edit/{{request_info.id}}">
-            <input name="requestor_user_id" type="hidden" value={{request_info.requestor_user_id}}>
-            <input name="person_id" type="hidden" value={{person_info.id}}>
-            <h3>Section A (Personal Info)</h3>
+        {% set ns = namespace(project_codes=[], software=[], project_managers=[], countries=[], divisions=[]) %}
+        {% for project_code in project_codes %}
+            {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
+        {% endfor %}
+        {% for software_item in software %}
+            {% set ns.software = ns.software + [(software_item.get("software"), software_item.get("display_name"))] %}
+        {% endfor %}
+        {% for manager in project_managers %}
+            {% set ns.project_managers = ns.project_managers + [(manager.get("id"), manager.get("user_first_name") + " " + manager.get("user_surname"))] %}
+        {% endfor %}
+        {% for country in countries %}
+            {% set ns.countries = ns.countries + [(country.get("country_name"), country.get("country_name"))] %}
+        {% endfor %}
+        {% for division in divisions %}
+            {% set ns.divisions = ns.divisions + [(division.get("division_name"), division.get("division_name"))] %}
+        {% endfor %}
 
-            {{ standard_field("first_name", "First Name", value=person_info.first_name, required=false) }}
-            {{ standard_field("surname", "Surname", value=person_info.surname, required=false) }}
-            {{ standard_field("national_id_number", "National ID Number", value=person_info.national_id_number, required=false) }}
+        <form method="POST" action="/requests/pending/edit/{{ request_info.id }}" class="request-form edit-form">
+            <input name="requestor_user_id" type="hidden" value="{{ request_info.requestor_user_id }}">
+            <input name="person_id" type="hidden" value="{{ person_info.id }}">
 
-            <fieldset class="contact-details">
-                <legend>Contact Details</legend>
-                    <div class="contact-numbers">
-                        {{ standard_field("work_number", "Work Number", value=person_info.work_number, required=false) }}
-                        {{ standard_field("mobile_number", "Mobile Number", value=person_info.mobile_number, required=false) }}
-                    </div>
-                    {{ standard_field("contact_email", "Contact Email", value=person_info.contact_email, required=false) }}
-            </fieldset>
-
-            {{ standard_field("employee_type", "Employee Type", value=request_info.employee_type, required=false) }}
-            {{ standard_field("direct_line_manager", "Direct Line Manager", value=request_info.direct_line_manager, required=false) }}
-            {{ standard_field("professional_title", "Professional Title", value=request_info.professional_title, required=false) }}
-
-            {{ standard_field("starting_date", "Starting Date", type="date", value=request_info.starting_date, required=false) }}
-            {{ standard_field("expiry_date", "Expiry Date", type="date", value=request_info.expiry_date, required=false) }}
-
-            {% set ns = namespace(project_codes=[], software=[], project_managers=[]) %}
-            {% for project_code in project_codes %}
-                {% set ns.project_codes = ns.project_codes + [(project_code.get("project_code"), project_code.get("project_code"))] %}
-            {% endfor %}
-            {% for software_item in software %}
-                {% set ns.software = ns.software + [(software_item.get("software"), software_item.get("display_name"))] %}
-            {% endfor %}
-            {% for manager in project_managers %}
-                {% set ns.project_managers = ns.project_managers + [(manager.get("id"), manager.get("user_first_name") + " " + manager.get("user_surname"))]%}
-            {% endfor %}
-            {{ select_field("project_code", "Project Code", ns.project_codes, value=request_info.project_code) }}
-
-            {{ standard_field("employee_number", "Employee Number", value=request_info.employee_number, required=false) }}
-
-            {{ select_field_display("employee_division", "Employee Division", value=request_info.employee_division.title() )}}
-            {{ select_field_display("base_country_computer", "Country (where computer is based)", value=request_info.base_country_computer.title())}}
-
-            <h3>Section B (IT Requirements)</h3>
-
-            {{ select_field_display("computer_required", "Does the User Require a Computer?", value=request_info.computer_required.title() )}}
-            {{ select_field_display("desk_phone_required", "Does the User Require a Desk Phone?", value=request_info.desk_phone_required.title() )}}
-
-            {{ drop_down_checkbox("Please Select Required Software", ns.software, selected_values=request_info.required_software) }}
-
-            {{ noteblock_form_field(name="other_it_requirements", field_description="Are there any other IT requirements?", value=request_info.other_it_requirements) }}
-            {{ noteblock_form_field(name="sharepoint_file_rights", field_description="Any SharePoint files that need view rights?",value=request_info.sharepoint_file_rights) }}
-
-            <h3>Section C (Authorization)</h3>
-
-            <fieldset class="address-block">
-                <legend>Request By</legend>
-                <div class="standard-address-line">
-                    {{ standard_field("requested_by_name", "Name", required=true, value=user[0].user_first_name) }}
+            <div class="form-intro">
+                <span class="intro-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                </span>
+                <div>
+                    <h2>Editing request for {{ person_info.first_name }} {{ person_info.surname }}</h2>
+                    <p>Update any details below. Fields you don't change keep their current values.</p>
                 </div>
-                <div class="standard-address-line">
-                    {{ standard_field("requested_by_surname", "Surname", required=true, value=user[0].user_surname) }}
-                </div>         
-            </fieldset>
+            </div>
 
-            {{ select_field("project_manager_id", "Project Manager", ns.project_managers, value=request_info.project_manager_id) }}
+            <!-- SECTION A -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">A</span>
+                    <div>
+                        <h3>Personal Info</h3>
+                        <p>Who is joining, and where they fit in.</p>
+                    </div>
+                </div>
 
-            <div id="edit-buttons">
-                <button id="cancel-edit" type="button" class="button-item cancel-color">Cancel Edit</button>
-                <button id="commit-edit" type="submit" class="button-item commit-color">Commit Edit</button>
+                <div class="field-row">
+                    {{ standard_field("first_name", "First Name", value=person_info.first_name, required=false) }}
+                    {{ standard_field("surname", "Surname", value=person_info.surname, required=false) }}
+                </div>
+                <div class="field-row">
+                    {{ standard_field("employee_type", "Employee Type", value=request_info.employee_type, required=false) }}
+                    {{ standard_field("direct_line_manager", "Direct Line Manager", value=request_info.direct_line_manager, required=false) }}
+                </div>
+                <div class="field-row">
+                    {{ standard_field("professional_title", "Professional Title", value=request_info.professional_title, required=false) }}
+                    {{ select_field("project_code", "Project Code", ns.project_codes, value=request_info.project_code) }}
+                </div>
+                <div class="field-row">
+                    {{ standard_field("starting_date", "Starting Date", type="date", value=request_info.starting_date, required=false) }}
+                    {{ standard_field("expiry_date", "Expiry Date (optional)", type="date", value=request_info.expiry_date, required=false) }}
+                </div>
+                <div class="field-row">
+                    {{ select_field("employee_division", "Employee Division", ns.divisions, value=request_info.employee_division) }}
+                    {{ select_field("base_country_computer", "Country (where computer is based)", ns.countries, value=request_info.base_country_computer) }}
+                </div>
+            </section>
+
+            <!-- SECTION B -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">B</span>
+                    <div>
+                        <h3>IT Requirements</h3>
+                        <p>Hardware, software and access the user will need.</p>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    {{ select_field("computer_required", "Does the user require a computer?", [("yes", "Yes"), ("no", "No")], value=request_info.computer_required) }}
+                    {{ select_field("desk_phone_required", "Does the user require a desk phone?", [("yes", "Yes"), ("no", "No")], value=request_info.desk_phone_required) }}
+                </div>
+
+                {{ drop_down_checkbox("Please Select Required Software", ns.software, selected_values=request_info.required_software) }}
+
+                {{ noteblock_form_field(name="other_it_requirements", field_description="Any other IT requirements?", value=request_info.other_it_requirements) }}
+                {{ noteblock_form_field(name="sharepoint_file_rights", field_description="Any SharePoint files that need view rights?", value=request_info.sharepoint_file_rights) }}
+            </section>
+
+            <!-- SECTION C -->
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-badge">C</span>
+                    <div>
+                        <h3>Authorization</h3>
+                        <p>Who is requesting this, and who approves it.</p>
+                    </div>
+                </div>
+
+                <fieldset class="address-block">
+                    <legend>Requested By</legend>
+                    <div class="field-row">
+                        <div class="standard-address-line">
+                            {{ standard_field("requested_by_name", "Name", required=true, value=user[0].user_first_name) }}
+                        </div>
+                        <div class="standard-address-line">
+                            {{ standard_field("requested_by_surname", "Surname", required=true, value=user[0].user_surname) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                {{ select_field("project_manager_id", "Project Manager", ns.project_managers, value=request_info.project_manager_id) }}
+            </section>
+
+            <div class="form-actions">
+                <p>Changes are saved to the pending request straight away.</p>
+                <div id="edit-buttons">
+                    <button id="cancel-edit" type="button" class="button-item cancel-color">Cancel Edit</button>
+                    <button id="commit-edit" type="submit" class="button-item commit-color">
+                        Commit Edit
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </button>
+                </div>
             </div>
         </form>
     </body>
-
 </html>

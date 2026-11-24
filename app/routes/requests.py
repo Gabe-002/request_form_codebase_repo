@@ -53,6 +53,7 @@ def new_request(request: Request,
     countries = Depends(get_countries),
     divisions = Depends(get_divisions)
     ):
+    print(project_codes)
     return templates.TemplateResponse(request, "requests_page.html", {
         "user": user[0], 
         "project_codes": project_codes, 
@@ -132,8 +133,10 @@ def edit_form(
     request_id: int,
     user = Depends(get_current_user),
     project_codes = Depends(get_project_codes),
-    software = Depends(get_software), 
-    project_managers = Depends(get_project_managers), 
+    software = Depends(get_software),
+    project_managers = Depends(get_project_managers),
+    countries = Depends(get_countries),
+    divisions = Depends(get_divisions),
     db: Session = Depends(get_db)
     ):
     request_info, person_info, requestor_info, pm_info = get_request(db, request_id)
@@ -142,9 +145,11 @@ def edit_form(
         "project_codes": project_codes,
         "software": software,
         "project_managers": project_managers,
-        "request_info": request_info, 
-        "person_info": person_info, 
-        "requestor_info": requestor_info, 
+        "countries": countries,
+        "divisions": divisions,
+        "request_info": request_info,
+        "person_info": person_info,
+        "requestor_info": requestor_info,
         "pm_info": pm_info
         })
 

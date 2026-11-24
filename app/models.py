@@ -29,10 +29,6 @@ class People(Base):
     id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
     first_name: Mapped[str]
     surname: Mapped[str]
-    national_id_number: Mapped[str] = mapped_column(unique=True) # This will be removed later on
-    work_number: Mapped[str | None] # This will be removed later on
-    mobile_number: Mapped[str] # This will be removed later on
-    contact_email: Mapped[str] # This will be removed later on
     created_at: Mapped[datetime | None] = mapped_column(server_default=func.now())
     person_status: Mapped[str | None] = mapped_column(server_default='pending_request')
 
@@ -51,7 +47,6 @@ class Requests(Base):
     starting_date: Mapped[str]
     expiry_date: Mapped[str | None]
     project_code: Mapped[str]
-    employee_number: Mapped[str | None] # This will be removed later on
     employee_division: Mapped[str]
     base_country_computer: Mapped[str]
     desk_phone_required: Mapped[str]
@@ -73,7 +68,10 @@ class Requests(Base):
     project_manager_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'))
     it_review: Mapped[str | None] = mapped_column(server_default='pending')
 
-    # Will have to add a few more requirements here
+    monitor_required: Mapped[str | None]
+    mouse_and_keyboard: Mapped[str | None]
+    laptop_bag_required: Mapped[str | None]
+
 
 # We'll create a decorator that acts constructor like
 def from_data(cls):
@@ -98,7 +96,6 @@ class RequestForm(BaseModel):
     starting_date: str
     expiry_date: Optional[str] = None
     project_code: str
-    employee_number: Optional[str] = None
     employee_division: str
     base_country_computer: str
     desk_phone_required: str
@@ -112,6 +109,11 @@ class RequestForm(BaseModel):
     project_manager_id: int
     requestor_user_id: int
 
+    monitor_required: str
+    mouse_and_keyboard: str
+    laptop_bag_required: str
+
+  
     # Create an alternative constructor
     @classmethod
     def from_data(cls, **data):
@@ -121,10 +123,6 @@ class RequestForm(BaseModel):
 class RequestPersonInfo(BaseModel):
     first_name: str
     surname: str
-    national_id_number: str
-    work_number: Optional[str] = None
-    mobile_number: str
-    contact_email: str
 
     @classmethod
     def from_data(cls, **data):

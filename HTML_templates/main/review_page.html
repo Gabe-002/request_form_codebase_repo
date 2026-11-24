@@ -62,16 +62,18 @@
                     {{ standard_field("first_name", "First Name", value=person_info.first_name, readonly=true, required=false) }}
                     {{ standard_field("surname", "Surname", value=person_info.surname, readonly=true, required=false) }}
                 </div>
-                {{ standard_field("national_id_number", "National ID Number", value=person_info.national_id_number, readonly=true, required=false) }}
+                <!-- Remove the following -->
+                <!-- {{ standard_field("national_id_number", "National ID Number", value=person_info.national_id_number, readonly=true, required=false) }} -->
 
-                <fieldset class="contact-details">
+                <!-- Remove the following -->
+                <!-- <fieldset class="contact-details">
                     <legend>Contact Details</legend>
                     <div class="contact-numbers">
                         {{ standard_field("work_number", "Work Number", value=person_info.work_number, readonly=true, required=false) }}
                         {{ standard_field("mobile_number", "Mobile Number", value=person_info.mobile_number, readonly=true, required=false) }}
                     </div>
                     {{ standard_field("contact_email", "Contact Email", value=person_info.contact_email, readonly=true, required=false) }}
-                </fieldset>
+                </fieldset> -->
 
                 <div class="field-row">
                     {{ standard_field("employee_type", "Employee Type", value=request_info.employee_type, readonly=true, required=false) }}
@@ -86,7 +88,8 @@
                     {{ standard_field("expiry_date", "Expiry Date", type="date", value=request_info.expiry_date, readonly=true, required=false) }}
                 </div>
                 <div class="field-row">
-                    {{ standard_field("employee_number", "Employee Number", value=request_info.employee_number, readonly=true, required=false) }}
+                    <!-- Remove the following -->
+                    <!-- {{ standard_field("employee_number", "Employee Number", value=request_info.employee_number, readonly=true, required=false) }} -->
                     {{ select_field_display("employee_division", "Employee Division", value=request_info.employee_division.title()) }}
                 </div>
                 {{ select_field_display("base_country_computer", "Country (where computer is based)", value=request_info.base_country_computer.title()) }}
