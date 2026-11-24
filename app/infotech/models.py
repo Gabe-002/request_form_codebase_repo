@@ -29,6 +29,8 @@ class Devices(Base):
     condition_notes: Mapped[str]
     sharepoint_id: Mapped[int | None]
     location: Mapped[str | None] = mapped_column(server_default="IT Storage")
+
+    itan: Mapped[str | None] # ITAN is an acronym for IT Asset Number
     
 
 class TenantUsers(Base):

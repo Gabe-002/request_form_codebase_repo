@@ -74,7 +74,9 @@
                 </div>
 
                 <div class="field-row">
-                    {{ standard_field("employee_type", "Employee Type", placeholder="e.g. Employee or External") }}
+                    <!-- Remove the following -->
+                    <!-- {{ standard_field("employee_type", "Employee Type", placeholder="e.g. Employee or External") }} -->
+                    {{ select_field("employee_type", "Employee Type", [("Teichmann Employee", "Teichmann Employee"), ("Contractor", "Contractor")]) }}
                     {{ standard_field("direct_line_manager", "Direct Line Manager") }}
                 </div>
                 <div class="field-row">
