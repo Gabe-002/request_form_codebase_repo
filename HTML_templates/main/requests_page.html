@@ -73,19 +73,6 @@
                     {{ standard_field("surname", "Surname", placeholder="Doe") }}
                 </div>
 
-                <!-- Remove the following -->
-                <!-- {{ standard_field("national_id_number", "National ID Number") }} -->
-
-                <!-- Remove the following -->
-                <!-- <fieldset class="contact-details">
-                    <legend>Contact Details</legend>
-                    <div class="contact-numbers">
-                        {{ standard_field("work_number", "Work Number (optional)", required=false) }}
-                        {{ standard_field("mobile_number", "Mobile Number", placeholder="+27 12 345 6789") }}
-                    </div>
-                    {{ standard_field("contact_email", "Contact Email", placeholder="johndoe@t3projects.com") }}
-                </fieldset> -->
-
                 <div class="field-row">
                     {{ standard_field("employee_type", "Employee Type", placeholder="e.g. Employee or External") }}
                     {{ standard_field("direct_line_manager", "Direct Line Manager") }}
@@ -99,8 +86,6 @@
                     {{ standard_field("expiry_date", "Expiry Date (optional)", type="date", required=false) }}
                 </div>
                 <div class="field-row">
-                    <!-- Remove the following -->
-                    <!-- {{ standard_field("employee_number", "Employee Number (optional)", required=false, placeholder="Only for existing employees") }} -->
                     {{ select_field("employee_division", "Employee Division", ns.divisions) }}
                 </div>
                 {{ select_field("base_country_computer", "Country (where computer is based)", ns.countries) }}
@@ -119,6 +104,10 @@
                 <div class="field-row">
                     {{ select_field("computer_required", "Does the user require a computer?", [("yes", "Yes"), ("no", "No")]) }}
                     {{ select_field("desk_phone_required", "Does the user require a desk phone?", [("yes", "Yes"), ("no", "No")]) }}
+
+                    {{ select_field("monitor_required", "Does the user require a monitor/screen?", [("yes", "Yes"), ("no", "No")]) }}
+                    {{ select_field("mouse_and_keyboard", "Does the user require a mouse and keyboard?", [("yes", "Yes"), ("no", "No")]) }}
+                    {{ select_field("laptop_bag_required", "Does the user require a laptop bag?", [("yes", "Yes"), ("no", "No")]) }}
                 </div>
 
                 {{ drop_down_checkbox("Please Select Required Software", ns.software) }}

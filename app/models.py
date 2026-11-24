@@ -68,7 +68,10 @@ class Requests(Base):
     project_manager_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'))
     it_review: Mapped[str | None] = mapped_column(server_default='pending')
 
-    # Will have to add a few more requirements here
+    monitor_required: Mapped[str | None]
+    mouse_and_keyboard: Mapped[str | None]
+    laptop_bag_required: Mapped[str | None]
+
 
 # We'll create a decorator that acts constructor like
 def from_data(cls):
@@ -106,6 +109,11 @@ class RequestForm(BaseModel):
     project_manager_id: int
     requestor_user_id: int
 
+    monitor_required: str
+    mouse_and_keyboard: str
+    laptop_bag_required: str
+
+  
     # Create an alternative constructor
     @classmethod
     def from_data(cls, **data):
