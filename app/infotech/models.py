@@ -19,12 +19,12 @@ class Devices(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     status: Mapped[str] = mapped_column(server_default="available")
-    asset_number: Mapped[str] = mapped_column(unique=True)
+    asset_number: Mapped[str | None] = mapped_column(unique=True)
     asset_type: Mapped[str]
     manufacturer: Mapped[str]
     model: Mapped[str]
     serial_number: Mapped[str]
-    purchase_price: Mapped[Decimal]
+    purchase_price: Mapped[Decimal | None]
     order_number: Mapped[str | None]
     condition_notes: Mapped[str]
     sharepoint_id: Mapped[int | None]
@@ -62,6 +62,14 @@ class Assignments(Base):
     deallocated_at: Mapped[datetime | None]
     sharepoint_id: Mapped[int | None]
     request_id: Mapped[int | None] = mapped_column(ForeignKey("requests.id"))
+
+class AssetNumberTracking(Base):
+    __tablename__ = 'asset_number_tracking'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_type: Mapped[str] = mapped_column(unique=True)
+    device_abv: Mapped[str]
+    asset_number: Mapped[int]
 
 class CreateTenantUser(BaseModel):
     graph_id: universal_unique_id
@@ -116,7 +124,7 @@ class AddDevice(BaseModel):
     model: str
     asset_type: str
     status: str
-    purchase_price: Decimal
+    purchase_price: Optional[Decimal] = None
     asset_number: Optional[str] = None
     order_number: Optional[str] = None
     condition_notes: Optional[str] = None

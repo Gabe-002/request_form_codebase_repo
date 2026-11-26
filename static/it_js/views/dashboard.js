@@ -43,6 +43,8 @@ export const dashboardView = {
             lastSyncResponse.json()
         ])
 
+        console.log(devices);
+
         const numberPending = awaiting_assignments.length;
         body += renderQuickView(devices, numberPending)
         body += `<div class="activity-and-assignments">`
@@ -87,7 +89,7 @@ export const dashboardView = {
                 {
                     inputs: [
                         {label: "Device Info", name: "", type: "heading"},
-                        {label: "Asset Number", name: "asset_number", type: "input", required: true, search: true},
+                        {label: "Sage Asset Number (if available)", name: "asset_number", type: "input", required: true, search: true},
                         {label: "", name: "device_id", type: "hidden", required: false},
                         {label: "Asset Description", name: "asset_description", type: "input"},
                         {label: "Serial Number", name: "serial_number", type: "input"},
@@ -123,12 +125,9 @@ export const dashboardView = {
                 "Add a New Devive",
                 {
                     inputs: [
-                        {label: "Asset Number", name: "asset_number", type: "input", required: true},
                         {label: "Serial Number", name: "serial_number", type: "input", required: true},
                         {label: "Manufacturer", name: "manufacturer", type: "input", required: true},
                         {label: "Model", name: "model", type: "input", required: true},
-                        {label: "Purchase Price", name: "purchase_price", type: "number", required: true},
-                        {label: "Order Number", name: "order_number", type: "input", required: true},
                         {
                             label: "Asset Type", 
                             name: "asset_type", 
@@ -138,6 +137,10 @@ export const dashboardView = {
                                 {value: "Monitor", label: "Monitor"}
                             ]
                         },
+                        {label: "IT Asset Number", name: "itan", type: "input", required: true},
+                        {label: "Sage Asset Number (if applicable)", name: "asset_number", type: "input", required: false},
+                        {label: "Purchase Price", name: "purchase_price", type: "number", required: false},
+                        {label: "Order Number", name: "order_number", type: "input", required: true},
                         {
                             label: "Status",
                             name: "status",
@@ -232,7 +235,7 @@ export const dashboardView = {
                         {
                             inputs: [
                                 {label: "Device Info", name: "", type: "heading"},
-                                {label: "Asset Number", name: "asset_number", type: "input", required: true, search: true},
+                                {label: "Asset Number", name: "asset_number", type: "input", required: false, search: true},
                                 {label: "Asset Description", name: "asset_description", type: "input"},
                                 {label: "", name: "device_id", type: "hidden"},
                                 {label: "Serial Number", name: "serial_number", type: "input"},
