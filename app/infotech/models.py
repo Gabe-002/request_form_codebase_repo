@@ -63,6 +63,14 @@ class Assignments(Base):
     sharepoint_id: Mapped[int | None]
     request_id: Mapped[int | None] = mapped_column(ForeignKey("requests.id"))
 
+class AssetNumberTracking(Base):
+    __tablename__ = 'asset_number_tracking'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_type: Mapped[str] = mapped_column(unique=True)
+    device_abv: Mapped[str]
+    asset_number: Mapped[int]
+
 class CreateTenantUser(BaseModel):
     graph_id: universal_unique_id
     display_name: str
