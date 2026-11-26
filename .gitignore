@@ -3,3 +3,4 @@ sp_key.pem
 *.pyc
 __pycache__/
 testing.py
+itan_config.py
